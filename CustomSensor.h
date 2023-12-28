@@ -6,15 +6,15 @@ int readSensor()
 	// This is called after the standard message is sent.
 	// Note - If this routine takes more than 3 sec, the telemetry message will be delayed 2 minutes
 	// Use this functin to call one or more sensors
-	unsigned int sensorValue = analogRead(SENSOR_PIN);
+	unsigned int sensorValue = analogRead(SENSOR_PIN0);
 	delay(500);
-    sensorValue += analogRead(SENSOR_PIN);
+    sensorValue += analogRead(SENSOR_PIN0);
 	delay(500);
-    sensorValue += analogRead(SENSOR_PIN);
+    sensorValue += analogRead(SENSOR_PIN0);
 	delay(500);
-    sensorValue += analogRead(SENSOR_PIN);
+    sensorValue += analogRead(SENSOR_PIN0);
 	delay(500);
-    sensorValue += analogRead(SENSOR_PIN);
+    sensorValue += analogRead(SENSOR_PIN0);
     sensorValue = ((float)sensorValue / 5.) ;
     
 	lastSensorReading = sensorValue;

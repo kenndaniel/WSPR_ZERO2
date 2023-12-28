@@ -1,7 +1,7 @@
 /*
    HABalloon by KD2NDR, Miami Florida October 25 2018
    Improvements by YO3ICT, Bucharest Romania, April-May 2019 
-   Modified to be simpler and work on standard Arduino by K9YO Chicago IL 2019 - March 2022
+   Modified to be simpler and work on standard Arduino by K9YO Chicago IL 2019 - 2024
    You may use and modify the following code to suit
    your needs so long as it remains open source
    and it is for non-commercial use only.
@@ -96,6 +96,7 @@ void waitForEvenMinute();
 #else
 #define POUTPUTLN(x)
 #endif
+// ** Calibration is not functional in the
 //  There is code in this project that can calibrate the SI5351 frequency against the
 // highly accurate gps pulse per second (pps).  This requires a pin for the clock and a pin for the pps.
 // This was necessary in the past when using commericial
@@ -116,11 +117,16 @@ void waitForEvenMinute();
 #define RFPIN 13 // Can be used to turn off si5351 see rf_off() and sleep()
 #define SLEEP_PIN 13 // Not used - can be used to turn off system between transmissions see sleep()
 #define DBGPIN 13
-#define SENSOR_PIN 0 // Generic analog sensor -- can be changed to any unused pin
+#define SENSOR_PIN0 0 // Generic analog sensor -- can be changed to any unused pin
+#define SENSOR_PIN1 0
+#define INPUT_VOLTAGE 2
 #define GPS_POWER 13 // Pull down to turn on GPS module (not used) see sleep()
 static const uint32_t GPSBaud = 9600;
 
-//SoftwareSerial ss(RxPin, TxPin);
+
+#include "./src/TemperatureZero.h" // for reading the cpu internal temperature
+TemperatureZero Temp = TemperatureZero();
+
 #include "./src/GPS.h"            // code to set U-Blox GPS into airborne mode
 //#include "./src/SI5351Interface.h" // Sends messages using SI5351
 #include "./src/SI5351Interface-16QFN.h" 
@@ -143,18 +149,24 @@ void setup()
   delay(10000);
   POUTPUTLN((F("STARTING")));
   HF_init();
-
+  for (int j = 1; j<5;++j)
+    {
+      beep();
+      delay(3000);
+    }
 
   //pinMode(SENSOR_PIN, INPUT);
   pinMode(RFPIN, OUTPUT);
   pinMode(SLEEP_PIN, OUTPUT);
   pinMode(GPS_POWER, OUTPUT);
+  pinMode(INPUT_VOLTAGE, INPUT);
   digitalWrite(RFPIN, LOW);
   digitalWrite(SLEEP_PIN, LOW);
   #ifdef CALIBRATION
     si5351_calibrate_init();
   #endif
-  float cpuTemp = getTempCPU();
+  Temp.init(); 
+  float cpuTemp = Temp.readInternalTemperature();
   POUTPUT((F(" Temperture ")));
   POUTPUTLN((cpuTemp));
 
@@ -162,7 +174,6 @@ void setup()
   volts = readVcc();
   POUTPUTLN((volts));
   //if (volts <= MIN_VOLTAGE) sleep();
-  HF_init();
 
   digitalWrite(DBGPIN, HIGH);
 
@@ -263,9 +274,6 @@ bool gpsGetInfo()
      }
 
     loopi++;
-
-
-    if (gps.charsProcessed() < 10 && millis() % 3000 < 5) beep();
 
     if (gps.charsProcessed() < 10 && millis() % 1500 < 5)
     {

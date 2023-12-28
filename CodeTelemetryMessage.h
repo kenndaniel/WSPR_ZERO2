@@ -17,7 +17,8 @@ void code_std_telem_characters(char Callsign[],  float volts , float temp, int s
 
 void code_standard_telemetry_callsign()
 {
-  float tempCPU = getTempCPU();
+  //float tempCPU = getTempCPU();
+  float tempCPU = Temp.readInternalTemperature();
   float volts = readVcc();
   // code telemetry callsign
   code_std_telem_characters(call_telemetry, volts, tempCPU, satellites);
