@@ -7,7 +7,9 @@
  * The 16QFN package of the SI5351 package has a different register layout
  * than the other package types (see document AN1234).  The only modifications that
  * have been made to the source are changes to the registers that are called an updated.  
- * In all other cases the code is identical to the source. The modificatins are being 
+ * In all other cases the code is identical to the source. See additional comments in .cpp
+ * This code is not fully debugged.
+ * The modificatins are being 
  * provided with the GNU General Public License as described below.
  *
  * Copyright (C) 2015 - 2019 Jason Milldrum <milldrum@gmail.com>
