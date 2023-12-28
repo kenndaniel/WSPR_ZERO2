@@ -142,10 +142,9 @@ void setup()
   #endif
   delay(10000);
   POUTPUTLN((F("STARTING")));
-  Serial.println("Hello World");
+  HF_init();
 
-  //randomSeed(analogRead( RANDOM_PIN ));  // Initialize random number generator
-  randomSeed(7);
+
   //pinMode(SENSOR_PIN, INPUT);
   pinMode(RFPIN, OUTPUT);
   pinMode(SLEEP_PIN, OUTPUT);
@@ -264,6 +263,9 @@ bool gpsGetInfo()
      }
 
     loopi++;
+
+
+    if (gps.charsProcessed() < 10 && millis() % 3000 < 5) beep();
 
     if (gps.charsProcessed() < 10 && millis() % 1500 < 5)
     {

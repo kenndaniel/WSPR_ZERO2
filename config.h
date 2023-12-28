@@ -13,20 +13,12 @@ const char call[] = "K9YO";     // Amateur callsign
 const char std_telemID[] = "07";  // Standard telemetry prefix e.g. Q1 is Qx1xxx
 const int send_time_slot = 2;   // the time slot for the telemetry transmission : 0,2,4,6 or 8
 
-// WSPR Band Center Frequencies (Do not change)
-#define WSPR_30m      10140200UL  // Center of WSPR 30m band - actual frequency is random each transmission
-#define WSPR_20m      14097100UL  // Center of WSPR 20m band - actual frequency is random each transmission
-#define WSPR_17m      18106100UL  // Center of WSPR 17m band - actual frequency is random each transmission
-#define WSPR_15m      21096100UL  // Center of WSPR 15m band - actual frequency is random each transmission
-#define WSPR_12m      24926100UL  // Center of WSPR 12m band - actual frequency is random each transmission
-#define WSPR_10m      28126100UL  // Center of WSPR 10m band - actual frequency is random each transmission
-
 // Technician license holders should set both WSPR_FREQ to WSPR_10m
 // First band to transmit on
-#define WSPR_FREQ1      WSPR_20m  
+#define WSPR_FREQ1      0  
 
 // Second band to transmit on
-#define WSPR_FREQ2      WSPR_20m  
+//#define WSPR_FREQ2      WSPR_20m  
 // Note that the standard telemetry time slot for FREQ2 will be send_time_slot + 3 for WSPR_FREQ2
 // Information for the custom telemetry message
 const char telemID[] = "T1";   // Not implemented -- optional non-standard telemetry for additional sensors

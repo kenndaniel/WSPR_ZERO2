@@ -264,7 +264,19 @@ void Set_WSPR_frequency(int tone)
   return;
 }
 
-
+void beep()
+{
+  unsigned long period = 500;
+  unsigned long time_now = 0;
+  rf_on();
+  time_now = millis();
+    Set_WSPR_frequency(1);
+    while (millis() < time_now + period) // Found to be more accruate than delay()
+    {
+    }
+  
+  rf_off();
+}
 
 /*
    Message encoding
@@ -321,14 +333,3 @@ void rf_enable()
 
 
 
-void setToFrequency2()
-{
-  rf_on();
-}
-
-bool firstFreq = true;
-void setToFrequency1()
-{
-
-  rf_on();
-}

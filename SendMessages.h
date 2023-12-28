@@ -94,19 +94,9 @@ void SendMessages() // Timing
   digitalWrite(DBGPIN, HIGH);
   transmit();            // begin radio transmission
   
-  // Send custom telemetry message
-  //code_custom_telemetry_callsign();    // Set the telemetry callsign 
-  //code_telemety_loc();          // Set the telemetry location
-  //code_telemetry_power();       // Set the telemetry power
-  //POUTPUTLN((F("Waiting for  Custom Telemetry Message ")));
-  //setModeWSPR_telem(); // set WSPR telemetry message mode
-  //waitForEvenMinute();
-  //POUTPUTLN((F("Sending Custom Telemetry Message ")));
-  //digitalWrite(DBGPIN, HIGH);
-  //transmit();            // begin radio transmission
-
+ 
   // Send standard wspr message on Frequency 2
-  POUTPUTLN((F("Waiting for Standard WSPR Message on Frequency 2 ")));
+/*   POUTPUTLN((F("Waiting for Standard WSPR Message on Frequency 2 ")));
   setModeWSPR(); // set WSPR standard message mode
   setToFrequency2();
   waitForEvenMinute();
@@ -119,7 +109,7 @@ void SendMessages() // Timing
   code_standard_telemetry_callsign();    // Set the telemetry callsign 
   code_telemety_loc();          // Set the telemetry truelocation
   code_telemetry_power();       // Set the telemetry power
-  setModeWSPR_telem(); // set WSPR telemetry message mode
+  setModeWSPR_telem(); // set WSPR telemetry message mode */
 
   waitForEvenMinute();
   POUTPUTLN((F("Sending Telemetry Message")));
