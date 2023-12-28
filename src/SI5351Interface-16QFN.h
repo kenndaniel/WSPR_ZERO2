@@ -80,7 +80,7 @@ bool si5351_init()
 }
 
 #define CLK_CAL SI5351_CLK3 // the clock used for crystal calibration
-
+// This is not used in the latest version of the hardware
 void si5351_calibrate_init()
 {
   // Initialize SI5351 for gps calibration
@@ -264,7 +264,7 @@ void Set_WSPR_frequency(int tone)
 
 void beep()
 {
-  unsigned long period = 500;
+  unsigned long period = 3000;
   unsigned long time_now = 0;
   rf_on();
   time_now = millis();
@@ -281,9 +281,8 @@ void beep()
 */
 void transmit() // Loop through the string, transmitting one character at a time
 {
-  bool twoChanel = false; // set true to use channel 0 and 1 set false to use only channel 0
-  uint8_t i;
 
+  uint8_t i;
   const unsigned long period = tone_delay;
   unsigned long time_now = 0;
   uint8_t one = 1;

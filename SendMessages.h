@@ -6,7 +6,6 @@
 void resetFunc() // Reset the Arduino
 {
 //wdt_init ( WDT_CONFIG_PER_8  );
-delay(1000);
 }
 
 
@@ -108,12 +107,12 @@ void SendMessages() // Timing
   code_standard_telemetry_callsign();    // Set the telemetry callsign 
   code_telemety_loc();          // Set the telemetry truelocation
   code_telemetry_power();       // Set the telemetry power
-  setModeWSPR_telem(); // set WSPR telemetry message mode */
+  setModeWSPR_telem(); // set WSPR telemetry message mode 
 
   waitForEvenMinute();
   POUTPUTLN((F("Sending Telemetry Message")));
   transmit();      // begin radio transmission
-  
+  */
   
   POUTPUTLN((F("****** lOOP RESET RESET RESET RESET **********")));
   resetFunc();  // Reset Arduino - program stats from the beginning
