@@ -77,7 +77,6 @@ void SendMessages() // Timing
 
   // Send standard WSPR message Frequency 1
  
-  setToFrequency1();
   rf_on();  //  turn on transmitter
   POUTPUTLN(F(" Sending Standard Message "));
   digitalWrite(DBGPIN, HIGH);

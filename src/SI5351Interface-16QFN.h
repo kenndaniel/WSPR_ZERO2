@@ -256,10 +256,8 @@ void Set_WSPR_frequency(int tone)
       Serial.println((int)regStatus);
     }
   }
-
-  //si5351.pll_reset(SI5351_PLLA);
   regStatus = si5351.si5351_write(0x0003, 0x00);  // Turn on
-  // si5351.pll_reset(SI5351_PLLB);
+
 
   return;
 }
@@ -286,12 +284,6 @@ void transmit() // Loop through the string, transmitting one character at a time
   bool twoChanel = false; // set true to use channel 0 and 1 set false to use only channel 0
   uint8_t i;
 
-  // rf_enable();
-  // si5351.output_enable(SI5351_CLK5, 1); // Reset the tone to the base frequency and turn on the output
-  // si5351.output_enable(SI5351_CLK3, 0);
-  // if (twoChanel)
-  //   si5351.output_enable(SI5351_CLK3, 1);
-
   const unsigned long period = tone_delay;
   unsigned long time_now = 0;
   uint8_t one = 1;
@@ -299,20 +291,8 @@ void transmit() // Loop through the string, transmitting one character at a time
   for (i = 0; i < symbol_count; i++) // Now transmit the channel symbols
   {
     time_now = millis();
-    // si5351.output_enable(SI5351_CLK5, 0);
-    // si5351.set_freq((freq * 100) + (tx_buffer[i] * tone_spacing), SI5351_CLK5); // not needed for inverted output on CLK!
-    // if (twoChanel)
-    // {
 
-    //   si5351.set_freq((freq * 100) + (tx_buffer[i] * tone_spacing), SI5351_CLK3);
-    //   si5351.set_clock_invert(SI5351_CLK3, one);
-    //   si5351.pll_reset(SI5351_PLLA);
-    //   // si5351.pll_reset(SI5351_PLLB);
-    //   // si5351.output_enable(SI5351_CLK0, 1);
-    // }
     Set_WSPR_frequency(tx_buffer[i]);
-    //si5351.pll_reset(SI5351_PLLA);
-    // si5351.pll_reset(SI5351_PLLB);
 
     while (millis() < time_now + period) // Found to be more accruate than delay()
     {
@@ -320,9 +300,6 @@ void transmit() // Loop through the string, transmitting one character at a time
   }
   rf_off();
 
-  // si5351.output_enable(SI5351_CLK0, 0); // Turn off the output
-  // if (twoChanel)
-  //   si5351.output_enable(SI5351_CLK1, 0);
 }
 
 void rf_enable()
