@@ -2,11 +2,21 @@
    HABalloon by KD2NDR, Miami Florida October 25 2018
    Improvements by YO3ICT, Bucharest Romania, April-May 2019 
    Modified to be simpler and work on standard Arduino by K9YO Chicago IL 2019 - 2024
-   You may use and modify the following code to suit
-   your needs so long as it remains open source
-   and it is for non-commercial use only.
-   Please see readme file for more information.
-*/
+
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 
 // Modify the callsign and telemetry channel info in this file
 #include "config.h" 
@@ -25,14 +35,12 @@ volatile int32_t FreqCorrection_ppb = 0;
 volatile float correction = 1;
 unsigned long freq = (unsigned long) (WSPR_FREQ1);
 
-
+#include <Wire.h>  // For aprs
 #include <TimeLib.h>
-#include <avr/interrupt.h> 
+//#include <avr/interrupt.h> 
 //#include <avr/io.h> 
-//#include <si5351.h>
 #include "src/si5351-16QFN.h"
 #include <JTEncode.h>
-//#include <SoftwareSerial.h>
 #include <TinyGPS++.h>
 
 //TinyGPSPlus gps;

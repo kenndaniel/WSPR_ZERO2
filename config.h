@@ -19,6 +19,11 @@ const int send_time_slot = 2;   // the time slot for the telemetry transmission 
 #define SI5351_XTAL 27000000  // Standard
 //#define SI5351_XTAL 25000000
 
+// APRS Variables included in case of combination of WSPR with APRS
+#define APRS_SID  11
+#define VCXO_GAIN 52 // 45 should be ok - Adjustment of the difference between the low and high tone frequencies 9-9.5MHz Critical
+
+
 // Optional
 const char telemID[] = "T1";   // Not implemented -- optional non-standard telemetry for additional sensors
 // Custom telemetry message code modifications are required for additonal sensors
