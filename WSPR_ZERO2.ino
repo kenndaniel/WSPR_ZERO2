@@ -76,7 +76,7 @@ char loc6[7]; // 6 digit grid square locator
 char loc8[3]; // Last 2 digits of the 8-digit locator
 
 byte Hour, Minute, Second; // used for timing
-long lat, lon;             // used for location
+//long lat, lon;             // used for location
 //uint8_t tx_buffer[255];            // WSPR Tx buffer
 uint8_t tx_buffer[165];
 uint8_t symbol_count = WSPR_SYMBOL_COUNT; 
