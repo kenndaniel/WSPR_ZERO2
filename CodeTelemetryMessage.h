@@ -68,3 +68,69 @@ void code_custom_telemetry_power()
 
   dbm_telemetry = codeFineFineAltitude(gpsAltitude);
 }
+
+/**************************************************************************/
+// Special programming for high precision temperature, pressure and humitity
+
+void code_high_precision_temp_pres_humid()
+{
+  float temp, pres;
+  float temp = get_temperature();
+  float pres = get_pressure();
+  temp = -79.5;
+  pres = 256.3;
+  int humidity =36;
+
+  int valueT = (temp+80.)*10;
+  int valueP = (pres*10.);
+  int valueh = (humidity*10)
+
+  int coded_values = valueh*100000000+valueP*1000+valueT;
+ 
+  uint8_t power = code_dbField( 0, 18,  coded_values%19);
+   Serial.print(coded_values%19);
+  coded_values = coded_values/19;
+  char grid4 = codeNumberField(0, 9, coded_values%10)
+   Serial.print(coded_values%19);
+  coded_values = coded_values/10;
+   char grid3 = codeNumberField(0, 9, coded_values%10)
+    Serial.print(coded_values%19);
+  coded_values = coded_values/10;
+   char grid2 = codeCharacterField(0, 25, coded_values%18)
+    Serial.print(coded_values%19);
+  coded_values = coded_values/18;
+   char grid1 = codeCharacterField(0, 25, coded_values%18)
+    Serial.print(coded_values%19);
+  coded_values = coded_values/18;
+  char call3 = codeCharacterField(0, 25, coded_values%26)
+   Serial.print(coded_values%19);
+  coded_values = coded_values/26;
+  char call2 = codeCharacterField(0, 25, coded_values%26)
+   Serial.print(coded_values%19);
+  coded_values = coded_values/26;
+  char call1 = codeCharacterField(0, 25, coded_values%26)
+   Serial.print(coded_values%19);
+  coded_values = coded_values/26;
+  char calln = codeCharacterField(0, 25, coded_values%10)
+   Serial.println(coded_values%19);
+  coded_values = coded_values/10; // Should be zero
+   Serial.println(coded_values);
+
+        Callsign[0] = telemID[0]; // first part of telem call  e.g. T
+        Callsign[1] = telemID[1]; // second part of telem call e.g. 1
+        Callsign[2] = calln;
+        Callsign[3] = call1;
+        Callsign[4] = call2;  
+        Callsign[5] = call3; 
+        Callsign[6] = '\0';
+        Serial.println(Callsign);
+
+  dbm_telemetry = power;
+
+  loc4_telemetry[0] = grid1;
+  loc4_telemetry[1] = grid2;
+  loc4_telemetry[2] = grid3;
+  loc4_telemetry[3] = grid4;
+  loc4_telemetry[4] = '\0';
+
+}

@@ -92,27 +92,17 @@ void SendMessages() // Timing
   digitalWrite(DBGPIN, HIGH);
   transmit();            // begin radio transmission
   
- 
-  // Send standard wspr message on Frequency 2
-/*   POUTPUTLN((F("Waiting for Standard WSPR Message on Frequency 2 ")));
-  setModeWSPR(); // set WSPR standard message mode
-  setToFrequency2();
-  waitForEvenMinute();
-  POUTPUTLN((F("Sending WSPR Msg ")));
-  transmit();      // begin radio transmission
 
-  // Send standard telemetry message
-  POUTPUTLN((F("Waiting for Standard Telemetry Message on Frequency 2")));
+  // Send additional telemetry message
+  POUTPUTLN((F("Waiting for Additional Telemetry Message ")));
 
-  code_standard_telemetry_callsign();    // Set the telemetry callsign 
-  code_telemety_loc();          // Set the telemetry truelocation
-  code_telemetry_power();       // Set the telemetry power
+  code_high_precision_temp_pres_humid()
   setModeWSPR_telem(); // set WSPR telemetry message mode 
 
   waitForEvenMinute();
   POUTPUTLN((F("Sending Telemetry Message")));
   transmit();      // begin radio transmission
-  */
+  
   
   POUTPUTLN((F("****** lOOP RESET RESET RESET RESET **********")));
   resetFunc();  // Reset Arduino - program stats from the beginning
