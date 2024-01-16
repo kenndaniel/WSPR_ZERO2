@@ -247,7 +247,7 @@ bool gpsGetInfo()
       hiAltitudeSet = true;
     }
 
-    if (gps.time.isUpdated() && gps.satellites.value() > 0)
+    if (gps.time.isUpdated() && gps.satellites.value() > 0 && clockSet == false)
     {
       if (SetCPUClock( gps))
       {

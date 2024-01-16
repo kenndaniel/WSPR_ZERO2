@@ -64,7 +64,7 @@ void setModeWSPR_telem()
   POUTPUT((F("-")));
   POUTPUTLN((dbm_telemetry));
   jtencode.wspr_encode(call_telemetry, loc4_telemetry, dbm_telemetry, tx_buffer);
-}
+  }
 
 
 bool si5351_init()

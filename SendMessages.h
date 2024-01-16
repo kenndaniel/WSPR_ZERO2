@@ -96,7 +96,7 @@ void SendMessages() // Timing
   // Send additional telemetry message
   POUTPUTLN((F("Waiting for Additional Telemetry Message ")));
 
-  code_high_precision_temp_pres_humid()
+  code_high_precision_temp_pres_humid();
   setModeWSPR_telem(); // set WSPR telemetry message mode 
 
   waitForEvenMinute();
