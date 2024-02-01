@@ -132,8 +132,8 @@ void waitForEvenMinute();
 static const uint32_t GPSBaud = 9600;
 
 
-#include "./src/TemperatureZero.h" // for reading the cpu internal temperature
-TemperatureZero Temp = TemperatureZero();
+//#include "./src/TemperatureZero.h" // for reading the cpu internal temperature
+//TemperatureZero Temp = TemperatureZero();
 
 #include "./src/GPS.h"            // code to set U-Blox GPS into airborne mode
 //#include "./src/SI5351Interface.h" // Sends messages using SI5351
@@ -173,8 +173,9 @@ void setup()
   #ifdef CALIBRATION
     si5351_calibrate_init();
   #endif
-  Temp.init(); 
-  float cpuTemp = Temp.readInternalTemperature();
+  //Temp.init(); 
+  //float cpuTemp = Temp.readInternalTemperature();
+  float cpuTemp = 0;
   POUTPUT((F(" Temperture ")));
   POUTPUTLN((cpuTemp));
 
