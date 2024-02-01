@@ -102,7 +102,7 @@ void SendMessages() // Timing
   setModeWSPR_telem(); // set WSPR telemetry message mode 
 
   waitForEvenMinute();
-  POUTPUTLN((F("Sending Telemetry Message")));
+  POUTPUTLN((F("Sending Additional Telemetry Message")));
   transmit();      // begin radio transmission
   
   
