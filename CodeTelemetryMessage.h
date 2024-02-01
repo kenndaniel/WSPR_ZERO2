@@ -16,7 +16,8 @@ void code_std_telem_characters(char Callsign[], float volts, float temp, int sat
 void code_standard_telemetry_callsign()
 {
   // float tempCPU = getTempCPU();
-  float tempCPU = Temp.readInternalTemperature();
+  //float tempCPU = Temp.readInternalTemperature();
+  float tempCPU = 0;
   float volts = readVcc();
   // code telemetry callsign
   code_std_telem_characters(call_telemetry, volts, tempCPU, satellites);
@@ -84,10 +85,6 @@ void code_high_precision_temp_pres_humid()
   valueT = 777;
   valueP = 9999;
   valueh = 888;
-
-  Serial.print(valueh);
-  Serial.print(valueP);
-  Serial.println(valueT);
 
   int divid1 = valueP;
   int divid2 = valueh * 1000 + valueT;

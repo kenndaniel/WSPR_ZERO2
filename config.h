@@ -13,14 +13,24 @@ const char call[] = "K9YO";     // Amateur callsign
 const char std_telemID[] = "Q3";  // Standard telemetry prefix e.g. Q1 is Qx1xxx
 const int send_time_slot = 4;   // the time slot for the telemetry transmission : 0,2,4,6 or 8
 
-#define WSPR_FREQ1      0  
+// WSPR Band Center Frequencies (Do not change)
+#define WSPR_30m      10140200UL  // Center of WSPR 30m band - actual frequency is random each transmission
+#define WSPR_20m      14097100UL  // Center of WSPR 20m band - actual frequency is random each transmission
+#define WSPR_17m      18106100UL  // Center of WSPR 17m band - actual frequency is random each transmission
+#define WSPR_15m      21096100UL  // Center of WSPR 15m band - actual frequency is random each transmission
+#define WSPR_12m      24926100UL  // Center of WSPR 12m band - actual frequency is random each transmission
+#define WSPR_10m      28126100UL  // Center of WSPR 10m band - actual frequency is random each transmission
+
+// Technician license holders should set both WSPR_FREQ to WSPR_10m
+// First band to transmit on
+#define WSPR_FREQ1      WSPR_20m  
 
 // Reference txco frequency for SI5351
 #define SI5351_XTAL 27000000  // Standard
 //#define SI5351_XTAL 25000000
 
 // APRS Variables included in case of combination of WSPR with APRS
-#define APRS_SID  11
+#define APRS_SID  6
 #define VCXO_GAIN 52 // 45 should be ok - Adjustment of the difference between the low and high tone frequencies 9-9.5MHz Critical
 
 

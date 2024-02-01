@@ -13,7 +13,7 @@ void SetHighAltitude()
 bool SetCPUClock(TinyGPSPlus gps)
 {
   // Sets the cpu clock with the latest available GPS time
-
+  Serial.print("Hellow World");
 
     byte h, m, s, mon, d;
     int y;
@@ -24,6 +24,7 @@ bool SetCPUClock(TinyGPSPlus gps)
     h = gps.time.hour();
     m = gps.time.minute();
     s = gps.time.second();
+    Serial.println(" "+String(h)+" "+String(m)+" "+String(s)+" "+String(age));
     age = gps.time.age();  // Time since sat syncronization - add to sat time
 
     if (age > 1000 && age < (195000)) // limited to size of byte 255-60
@@ -43,18 +44,33 @@ bool SetCPUClock(TinyGPSPlus gps)
         }
       }
     }
+// Conversion to real time clock on SAMD21 processor
+clock.setTime(h, m, s);
+clock.setDate(d, m, y);
 
-    setTime((int)h, (int)m, (int)s, (int)d, (int)mon, (int)y);
-    if (timeStatus() != timeSet)
-    {
-      POUTPUTLN((F(" Time not set")));
-      return false;
+    // setTime((int)h, (int)m, (int)s, (int)d, (int)mon, (int)y);
+    // if (timeStatus() != timeSet)
+    // {
+    //   POUTPUTLN((F(" Time not set")));
+    //   return false;
 
-    }
+    // }
       POUTPUTLN((s));
       POUTPUTLN((F("cpu time set - waiting for position")));
       return true;
   
+}
+
+int minute()
+{
+  //Serial.println(clock.getMinutes());
+  return clock.getMinutes();
+}
+
+int second()
+{
+    //Serial.println(clock.getSeconds());
+  return clock.getSeconds();
 }
 
 

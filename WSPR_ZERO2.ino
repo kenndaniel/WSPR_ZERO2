@@ -36,10 +36,12 @@ volatile float correction = 1;
 unsigned long freq = (unsigned long) (WSPR_FREQ1);
 
 #include <Wire.h>  // For aprs
-#include <TimeLib.h>
+//#include <TimeLib.h>
+#include <RTCZero.h>
 //#include <avr/interrupt.h> 
 //#include <avr/io.h> 
-#include "src/si5351-16QFN.h"
+//#include "src/si5351-16QFN.h"
+#include <si5351.h>
 #include <JTEncode.h>
 #include <TinyGPS++.h>
 
@@ -54,7 +56,7 @@ enum mode
 
 Si5351 si5351;
 JTEncode jtencode;
-
+RTCZero clock;
 
 #define MIN_VOLTAGE 2.6
 
@@ -75,7 +77,7 @@ char loc4_telemetry[5]; // 4 digit grid square used for the telemetry message
 char loc6[7]; // 6 digit grid square locator
 char loc8[3]; // Last 2 digits of the 8-digit locator
 
-byte Hour, Minute, Second; // used for timing
+//byte Hour, Minute, Second; // used for timing
 //long lat, lon;             // used for location
 //uint8_t tx_buffer[255];            // WSPR Tx buffer
 uint8_t tx_buffer[165];
@@ -136,8 +138,8 @@ static const uint32_t GPSBaud = 9600;
 //TemperatureZero Temp = TemperatureZero();
 
 #include "./src/GPS.h"            // code to set U-Blox GPS into airborne mode
-//#include "./src/SI5351Interface.h" // Sends messages using SI5351
-#include "./src/SI5351Interface-16QFN.h" 
+#include "./src/SI5351Interface.h" // Sends messages using SI5351
+//#include "./src/SI5351Interface-16QFN.h" 
 #include "SendMessages.h"        // schedules the sending of messages
 #ifdef CALIBRATION
   #include "./src/FrequencyCorrection.h"
@@ -154,14 +156,15 @@ void setup()
   #ifdef DEBUG
     Serial.begin(9600);
   #endif
-  delay(10000);
+  delay(1000);
   POUTPUTLN((F("STARTING")));
+  clock.begin();
   HF_init();
-  for (int j = 1; j<5;++j)
-    {
-      beep();
-      delay(3000);
-    }
+  // for (int j = 1; j<5;++j)
+  //   {
+  //     beep();
+  //     delay(3000);
+  //   }
 
   //pinMode(SENSOR_PIN, INPUT);
   pinMode(RFPIN, OUTPUT);
@@ -250,11 +253,7 @@ bool gpsGetInfo()
 
     if (gps.time.isUpdated() && gps.satellites.value() > 0 && clockSet == false)
     {
-      if (SetCPUClock( gps))
-      {
         clockSet = true;
-      }
-
     }
     if (gps.altitude.isUpdated())
      {
@@ -278,11 +277,14 @@ bool gpsGetInfo()
       satellites = gps.satellites.value();
       POUTPUT((F(" Number of satellites found ")));
       POUTPUTLN((satellites));
+      SetCPUClock( gps);
       // start transmission loop
       return true;
      }
 
     loopi++;
+
+    if (loopi%300000 == 0) Serial.print("G ");
 
     if (gps.charsProcessed() < 10 && millis() % 1500 < 5)
     {
@@ -312,7 +314,9 @@ bool gpsGetInfo()
 
   }
   POUTPUTLN((F(" GPS Timeout - no satellites found ")));
-  if(clockSet==true)
+
+  return false;
+ /*  if(clockSet==true)
   {
     // Send report anyway if only the clock has been set
     clockSet = false; // needed for testing only
@@ -324,6 +328,8 @@ bool gpsGetInfo()
   else
   {
     return false;
-  }
+  } */
+
+
 }
 

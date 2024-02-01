@@ -32,6 +32,8 @@ void SendMessages() // Timing
   POUTPUTLN((gpsAltitude));
   POUTPUT((F("Standard Message ")));
   setModeWSPR(); // set WSPR standard message mode
+  rf_on();  //  turn on transmitter but disabled
+  setToFrequency1();  // Initialize the transmit frequency
 
   int stopSecond = 0;
   int curSecond = 0;
@@ -76,7 +78,7 @@ void SendMessages() // Timing
 
   // Send standard WSPR message Frequency 1
  
-  rf_on();  //  turn on transmitter
+
   POUTPUTLN(F(" Sending Standard Message "));
   digitalWrite(DBGPIN, HIGH);
   transmit();      // begin radio transmission
