@@ -10,8 +10,8 @@
 #define DEBUG // Debug output is generated if DEBUG is defined
 //#define DEBUG_SI5351  // Uncomment when testing without the GPS module attached.
 const char call[] = "K9YO";     // Amateur callsign
-const char std_telemID[] = "Q3";  // Standard telemetry prefix e.g. Q1 is Qx1xxx
-const int send_time_slot = 4;   // the time slot for the telemetry transmission : 0,2,4,6 or 8
+const char std_telemID[] = "Q8";  // Standard telemetry prefix e.g. Q1 is Qx1xxx
+const int send_time_slot = 6;   // the time slot for the telemetry transmission : 0,2,4,6 or 8
 
 // WSPR Band Center Frequencies (Do not change)
 #define WSPR_30m      10140200UL  // Center of WSPR 30m band - actual frequency is random each transmission
@@ -30,7 +30,7 @@ const int send_time_slot = 4;   // the time slot for the telemetry transmission 
 //#define SI5351_XTAL 25000000
 
 // APRS Variables included in case of combination of WSPR with APRS
-#define APRS_SID  6
+#define APRS_SID  7
 #define VCXO_GAIN 52 // 45 should be ok - Adjustment of the difference between the low and high tone frequencies 9-9.5MHz Critical
 
 
