@@ -21,7 +21,7 @@ bool SetCPUClock(TinyGPSPlus gps)
   h = gps.time.hour();
   m = gps.time.minute();
   s = gps.time.second();
-  Serial.println(" " + String(h) + " " + String(m) + " " + String(s) + " " + String(age));
+  //Serial.println(" d" + String(d) + " m" + String(mon) + " y" + String(y) + " a" + String(age));
   age = gps.time.age(); // Time since sat syncronization - add to sat time
 
   if (age > 1000 && age < (195000)) // limited to size of byte 255-60
@@ -43,7 +43,7 @@ bool SetCPUClock(TinyGPSPlus gps)
   }
   // Conversion to real time clock on SAMD21 processor
   clock.setTime(h, m, s);
-  clock.setDate(d, m, y%2000);
+  clock.setDate(d, mon, y%2000);
 
   // setTime((int)h, (int)m, (int)s, (int)d, (int)mon, (int)y);
   // if (timeStatus() != timeSet)
@@ -69,8 +69,6 @@ int second()
   return clock.getSeconds();
 }
 
-// not needed for newer gps units
-
 bool gpsSearch = true;
 void beep()
 {   // turn led on and off while searching for satellites
@@ -86,6 +84,8 @@ void beep()
   }
 }
 
+
+// not needed for newer gps units
 void gpsOn()
 {
   // not used

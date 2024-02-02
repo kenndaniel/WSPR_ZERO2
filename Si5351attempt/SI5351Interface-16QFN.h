@@ -108,7 +108,7 @@ void rf_on()
 
 void rf_off()
 {
-  Serial.println("HF Off");
+  POUTPUTLN((F("HF Off")));
   uint8_t regStatus = si5351.si5351_write(0x0003, 0x06);
   digitalWrite(RFPIN, LOW);
 }
@@ -197,7 +197,7 @@ void HF_init()
     uint8_t regStatus = si5351.si5351_write(si5351b_revb_registers[i].address, si5351b_revb_registers[i].value);
     if (regStatus != 0)
     {
-      Serial.print(" XXX Register Write error HF_init ");
+      POUTPUTLN((F("  XXX Register Write error HF_init ")));
       Serial.println((int)regStatus);
     }
 
@@ -262,19 +262,6 @@ void Set_WSPR_frequency(int tone)
   return;
 }
 
-void beep()
-{
-  unsigned long period = 3000;
-  unsigned long time_now = 0;
-  rf_on();
-  time_now = millis();
-    Set_WSPR_frequency(1);
-    while (millis() < time_now + period) // Found to be more accruate than delay()
-    {
-    }
-  
-  rf_off();
-}
 
 /*
    Message encoding

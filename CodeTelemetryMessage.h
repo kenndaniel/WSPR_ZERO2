@@ -48,7 +48,7 @@ void code_characters(char Callsign[], float gpsSpeed)
   Callsign[4] = loc6[4]; // Example 5th character of grid square
   Callsign[5] = loc6[5]; // Example 6th character of grid square
   Callsign[6] = '\0';
-  Serial.println(Callsign);
+  POUTPUTLN((F(Callsign)));
 }
 
 void code_custom_telemetry_callsign()
@@ -93,7 +93,7 @@ void code_high_precision_temp_pres_humid()
 
   int divisor[] = {19, 10, 10, 18, 18, 26, 26, 26, 10};
   int msg[9];
-  char cmsg[] = "00000000";
+  char cmsg[] = "000000000";
   for (int i = 0; i < 9; i++)
   {
     // because of the restricted size of int, division must be done in two parts
