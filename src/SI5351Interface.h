@@ -185,11 +185,4 @@ void HF_init()
   setToFrequency1();
 }
 
-void beep()
-{   // beep once for 2 seconds
-      si5351.set_freq((freq  * 100 ), XMIT_CLOCK0); // not needed for inverted output on CLK!
-      si5351.output_enable(XMIT_CLOCK0, 1); // Reset the tone to the base frequency and turn on the output
-      si5351.drive_strength(SI5351_CLK0, SI5351_DRIVE_6MA); // Set for max power if desired. Check datasheet.
-      delay(2000);
-      si5351.output_enable(XMIT_CLOCK0, 0); // Turn off the output
-}
+

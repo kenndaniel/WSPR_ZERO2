@@ -70,6 +70,22 @@ int second()
 }
 
 // not needed for newer gps units
+
+bool gpsSearch = true;
+void beep()
+{   // turn led on and off while searching for satellites
+  if(gpsSearch)
+  {
+    digitalWrite(GPS_POWER, HIGH);
+    gpsSearch = false;
+  }
+  else
+  {
+    digitalWrite(GPS_POWER, LOW);
+    gpsSearch = true;
+  }
+}
+
 void gpsOn()
 {
   // not used

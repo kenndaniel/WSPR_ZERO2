@@ -129,7 +129,8 @@ void waitForEvenMinute();
 #define DBGPIN 13
 #define SENSOR_PIN0 0 // Generic analog sensor -- can be changed to any unused pin
 #define SENSOR_PIN1 0
-#define INPUT_VOLTAGE 2
+#define GPS_SEARCHING 13
+#define INPUT_VOLTAGE 2  // measures solar panel voltage
 #define GPS_POWER 13 // Pull down to turn on GPS module (not used) see sleep()
 static const uint32_t GPSBaud = 9600;
 
@@ -284,7 +285,7 @@ bool gpsGetInfo()
 
     loopi++;
 
-    if (loopi%300000 == 0) Serial.print("G ");
+    if (loopi%50000 == 0) beep();  // still looking for satellites
 
     if (gps.charsProcessed() < 10 && millis() % 1500 < 5)
     {
