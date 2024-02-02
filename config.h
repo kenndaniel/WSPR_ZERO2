@@ -7,7 +7,7 @@
    and it is for non-commercial use only.
    Please see readme file for more information.
 */
-#define DEBUG // Debug output is generated if DEBUG is defined
+//#define DEBUG // Debug output is generated if DEBUG is defined
 //#define DEBUG_SI5351  // Uncomment when testing without the GPS module attached.
 const char call[] = "K9YO";     // Amateur callsign
 const char std_telemID[] = "Q8";  // Standard telemetry prefix e.g. Q1 is Qx1xxx
