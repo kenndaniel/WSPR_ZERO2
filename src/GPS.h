@@ -69,6 +69,7 @@ int second()
   return clock.getSeconds();
 }
 
+
 bool gpsSearch = true;
 void beep()
 {   // turn led on and off while searching for satellites
