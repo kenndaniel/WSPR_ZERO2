@@ -16,7 +16,7 @@ void code_std_telem_characters(char Callsign[], float volts, float temp, int sat
 void code_standard_telemetry_callsign()
 {
   // float tempCPU = getTempCPU();
-  //float tempCPU = Temp.readInternalTemperature();
+  // float tempCPU = Temp.readInternalTemperature();
   float tempCPU = 0;
   float volts = readVcc();
   // code telemetry callsign
@@ -74,34 +74,35 @@ void code_high_precision_temp_pres_humid()
   // temp = get_temperature();
   // pres = get_pressure();
   // humidity = get_humidity();
-  temp = -15.8;
-  pres = 256.3;
-  humidity = 3.6;
+  temp = -10.5;
+  pres = 233.1;
+  humidity = 2.1;
 
-  int valueT = (temp + 80.) * 10;
-  int valueP = (pres * 10);
-  int valueh = (humidity * 10);
+  long int valueT = (temp + 80.) * 10;
+  long int valueP = (pres * 10);
+  long int valueh = (humidity * 10);
 
-  valueT = 777;
-  valueP = 9999;
-  valueh = 888;
 
-  int divid1 = valueP;
-  int divid2 = valueh * 1000 + valueT;
-  int remainder1 = 0;
-  int remainder2 = 0;
+  // Add telemTrkID from config.h
 
+  long int divid1 = valueh;
+  //int divid1 =  valueP;
+
+  long int divid2 = valueP * 1000 + valueT;
+  long int remainder1 = 0;
+  long int remainder2 = 0;
   int divisor[] = {19, 10, 10, 18, 18, 26, 26, 26, 10};
   int msg[9];
   char cmsg[] = "000000000";
   for (int i = 0; i < 9; i++)
   {
-    // because of the restricted size of int, division must be done in two parts
+
+    // because of the restricted size of long int, division must be done in two parts
     remainder1 = divid1 % divisor[i];
     divid1 = divid1 / divisor[i];
 
-    remainder2 = (remainder1 * 1000000 + divid2) % divisor[i];
-    divid2 = (remainder1 * 1000000 + divid2) / divisor[i];
+    remainder2 = (remainder1 * 10000000 + divid2) % divisor[i];
+    divid2 = (remainder1 * 10000000 + divid2) / divisor[i];
 
     msg[i] = remainder2;
   }
@@ -110,16 +111,17 @@ void code_high_precision_temp_pres_humid()
 
   cmsg[1] = codeNumberField(0, 9, msg[1]);
   cmsg[2] = codeNumberField(0, 9, msg[2]);
-  cmsg[3] = codeCharacterField(0, 25, msg[3]);
+  cmsg[3] = codeCharacterField(0, 25, msg[3]);  // 25 is correct
   cmsg[4] = codeCharacterField(0, 25, msg[4]);
   cmsg[5] = codeCharacterField(0, 25, msg[5]);
   cmsg[6] = codeCharacterField(0, 25, msg[6]);
   cmsg[7] = codeCharacterField(0, 25, msg[7]);
   cmsg[8] = codeNumberField(0, 9, msg[8]);
 
-  call_telemetry[0] = telemID[0]; // first part of telem call  e.g. T
-  call_telemetry[1] = telemID[1]; // second part of telem call e.g. 1
-  call_telemetry[2] = cmsg[8];
+  call_telemetry[0] = telemID[0]; // first part of telem message id  e.g. T
+  call_telemetry[1] = telemID[1]; // second part of telem message id e.g. 1
+  //call_telemetry[2] = cmsg[8]; 
+  call_telemetry[2] = codeNumberField(0, 9, telemTrkID);  // Tracker identifier
   call_telemetry[3] = cmsg[7];
   call_telemetry[4] = cmsg[6];
   call_telemetry[5] = cmsg[5];

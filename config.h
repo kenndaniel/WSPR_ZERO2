@@ -7,11 +7,12 @@
    and it is for non-commercial use only.
    Please see readme file for more information.
 */
-//#define DEBUG // Debug output is generated if DEBUG is defined
-//#define DEBUG_SI5351  // Uncomment when testing without the GPS module attached.
-const char call[] = "K9YO";     // Amateur callsign
-const char std_telemID[] = "Q8";  // Standard telemetry prefix e.g. Q1 is Qx1xxx
-const int send_time_slot = 6;   // the time slot for the telemetry transmission : 0,2,4,6 or 8
+
+#define DEBUG // Debug output is generated if DEBUG is defined
+#define DEBUG_SI5351  // Uncomment when testing without the GPS module attached.
+const char call[] = "KD9ITO";     // Amateur callsign
+const char std_telemID[] = "Q7";  // Standard telemetry prefix e.g. Q1 is Qx1xxx
+const int send_time_slot = 2;   // the time slot for the telemetry transmission : 0,2,4,6 or 8
 
 // WSPR Band Center Frequencies (Do not change)
 #define WSPR_30m      10140200UL  // Center of WSPR 30m band - actual frequency is random each transmission
@@ -31,18 +32,19 @@ const int send_time_slot = 6;   // the time slot for the telemetry transmission 
 
 // APRS Variables included in case of combination of WSPR with APRS
 #define APRS_SID  7
-#define VCXO_GAIN 52 // 45 should be ok - Adjustment of the difference between the low and high tone frequencies 9-9.5MHz Critical
+//#define VCXO_GAIN 52 // 45 should be ok - Adjustment of the difference between the low and high tone frequencies 9-9.5MHz Critical
 
 
 // Optional
-const char telemID[] = "T1";   // Not implemented -- optional non-standard telemetry for additional sensors
+// Not implemented -- optional non-standard telemetry for additional sensors
 // Custom telemetry message code modifications are required for additonal sensors
 // The user is reguired to look into the code and make custom modifications. Start with the bottom of SendMessages.h
-// call prefix  T1 is T1xxx  Note that no non standard telemetry transmission is implemented in the this code
+// call prefix  T1 is T1nxxx  Note that no non standard telemetry transmission is implemented in the this code
 // These provide slightly less space for data encoding because it must be of the format e.g. T1abc.  There are only three 
 // positions available for encoding.
 //If you go to Wikipedia and look up ITU prefix you will find that there are many more prefixes available. 
 //For example "any letter other than A,B,F,G,I,K,M,N,W,R, + 1", "X + any number", E8, E9,J9, " letter O + any number" , T9, "U + any number"
 // End of user definable information
-
+const int telemTrkID = 8; // Single digit (0-9) to indicate the tracker. 
+const char telemID[] = "T1";   // Message identifier - first two characters of telemetery call 
 
