@@ -137,7 +137,7 @@ static const uint32_t GPSBaud = 9600;
 
 //#include "./src/TemperatureZero.h" // for reading the cpu internal temperature
 //TemperatureZero Temp = TemperatureZero();
-
+#include "./src/Sensors.h"
 #include "./src/GPS.h"            // code to set U-Blox GPS into airborne mode
 #include "./src/SI5351Interface.h" // Sends messages using SI5351
 //#include "./src/SI5351Interface-16QFN.h" 
@@ -200,8 +200,8 @@ bool rfpinon = false;
 void loop()
 {
   bool getInfo = gpsGetInfo();
-  if ( getInfo == false)
-    sleep(); // did not sync with sats
+  if ( getInfo == false) return;  // try again
+
 
   #ifdef CALIBRATION
       // Calibrate Si5351 Xtal

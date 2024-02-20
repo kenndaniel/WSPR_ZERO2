@@ -19,6 +19,7 @@ void charArrayCpy(char dest[], char src[], int cnt)
   dest[cnt] = '\0';
 }
 
+#include "CustomSensor.h"
 #include "ConvertData.h"
 #include "./src/CodeStandardMessage.h"
 #include "CodeTelemetryMessage.h"
@@ -93,7 +94,8 @@ void SendMessages() // Timing
   POUTPUTLN((F("Sending  Standard Telemetry Message ")));
   digitalWrite(DBGPIN, HIGH);
   transmit();            // begin radio transmission
-  
+  initSensors();
+  readSensors();
 
   // Send additional telemetry message
   POUTPUTLN((F("Waiting for Additional Telemetry Message ")));
@@ -157,7 +159,7 @@ void sleep()
     digitalWrite(SLEEP_PIN, HIGH);  // Not used
     digitalWrite(DBGPIN, LOW);
     unsigned long duration = (unsigned long)(SEND_INTERVAL*60000);
-    delay(duration);  // Wait until it is time for the next transmission
+    //delay(duration);  // Wait until it is time for the next transmission
     resetFunc();  // Reset Arduino - program stats from the beginning
     
 }

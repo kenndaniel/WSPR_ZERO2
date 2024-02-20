@@ -1,5 +1,5 @@
 
-#include "CustomSensor.h"
+//#include "CustomSensor.h"
 
 void code_std_telem_characters(char Callsign[], float volts, float temp, int sats)
 {                               // compose the standard WB8ELK telemtry callsign -- convert values to characters and numbers
@@ -15,9 +15,9 @@ void code_std_telem_characters(char Callsign[], float volts, float temp, int sat
 
 void code_standard_telemetry_callsign()
 {
-  // float tempCPU = getTempCPU();
+  float tempCPU = getTemperature();
   // float tempCPU = Temp.readInternalTemperature();
-  float tempCPU = 0;
+  //float tempCPU = 0;
   float volts = readVcc();
   // code telemetry callsign
   code_std_telem_characters(call_telemetry, volts, tempCPU, satellites);
@@ -74,16 +74,19 @@ void code_high_precision_temp_pres_humid()
   // temp = get_temperature();
   // pres = get_pressure();
   // humidity = get_humidity();
-  temp = -10.5;
-  pres = 233.1;
-  humidity = 2.1;
+  // temp = -10.5;
+  // pres = 233.1;
+  // humidity = 2.1;
 
-  long int valueT = (temp + 80.) * 10;
-  long int valueP = (pres * 10);
-  long int valueh = (humidity * 10);
+  temp = getTemperature();
+  pres = getPressure();
+  humidity = getHumidity();
 
-
-  // Add telemTrkID from config.h
+  long int valueT = (temp + 75.) * 10.;
+  long int valueP = (pres * 10.);
+  long int valueh = (humidity * 10.);
+  POUTPUTLN((F("Temperature Humidity Pressure  ")));
+  POUTPUT((valueT));POUTPUT((F(", ")));POUTPUT((valueh));POUTPUT((F(", ")));POUTPUTLN((valueP));
 
   long int divid1 = valueh;
   //int divid1 =  valueP;
