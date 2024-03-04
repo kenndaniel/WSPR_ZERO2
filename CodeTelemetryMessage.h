@@ -62,7 +62,7 @@ void code_custom_telemetry_callsign()
 void code_custom_telemetry_power()
 { // Altitude 0-60 is coded into the power field of the telemetry field
 
-  dbm_telemetry = codeFineFineAltitude(gpsAltitude);
+  dbm_telemetry = codeFineFineAltitude(gpsAltitude+30);
 }
 
 /**************************************************************************/
@@ -138,3 +138,98 @@ void code_high_precision_temp_pres_humid()
   loc4_telemetry[3] = cmsg[1];
   loc4_telemetry[4] = '\0';
 }
+
+
+int encodeSD(unsigned int a, unsigned int b) {
+  // create a number using 2 bits from each number
+  // numbers must be between 0 and 3
+  if (a > 3) a = 3;
+  if ( a < 0 ) a = 0;
+  if (b > 3) b = 3;
+  if ( b < 0 ) b = 0;
+  
+    // Mask the first two bits of a and b
+    a = a & 0b00000011;
+    b = b & 0b00000011;
+    // Shift a left by 2 bits
+    a = a << 2;
+    //b = b << 2;
+    // Combine a and b with bitwise OR
+    return a | b;
+}
+
+void code_speed_direction_message()
+{
+
+char telemID[] = "T9";
+int telemTrkID = 9;  // balloon designator
+//float speed = 143.9;  // Speed maximum value is 150.0 m/s
+float speed = gps.speed.mps();
+//float direction = 355.;  // degrees
+float direction = gps.course.deg();
+
+POUTPUTLN((F(" Speed, Direction ")));
+ POUTPUT((speed));POUTPUT((F(", ")));POUTPUTLN((direction));
+
+
+  long int divid1 = direction;
+
+  unsigned int remainder1 = 0;
+
+  int divisor[] = { 10, 10, 4, 26, 18, 4};
+  int dmsg[3];
+  char cmsg[] = "000000000";
+  
+ for (int i = 0; i < 3; i++)
+  {
+    // code direction 
+    remainder1 = divid1 % divisor[i];
+    divid1 = divid1 / divisor[i];
+
+    dmsg[i] = remainder1;
+  }
+
+  int smsg[3];
+
+  divid1 = speed*10;
+ for (int i = 3; i < 6; i++)
+  {
+    // cpde speed
+    remainder1 = divid1 % divisor[i];
+    //Serial.println(divid1);
+    divid1 = divid1 / divisor[i];
+
+    smsg[i-3] = remainder1;
+    //Serial.println(smsg[i-3]);
+  }
+int grid2;
+// left two bits speed, right two bits direction
+grid2 = encodeSD(smsg[2],dmsg[2]);
+
+  //uint8_t power = code_dbField(0, 18, msg[0]);
+  cmsg[0] = '>';
+  cmsg[1] = codeNumberField(0, 9, dmsg[0]);
+  cmsg[2] = codeNumberField(0, 9, dmsg[1]);
+  cmsg[3] = codeCharacterField(0, 25, grid2);  // 25 is correct - max is 16
+  cmsg[4] = codeCharacterField(0, 25, smsg[1]); // max is 18
+  cmsg[5] = codeCharacterField(0, 25, smsg[0]);
+  cmsg[6] = '\0';
+  //Serial.println(cmsg);
+
+  call_telemetry[0] = telemID2[0]; // first part of telem message id  e.g. T
+  call_telemetry[1] = telemID2[1]; // second part of telem message id e.g. 1
+  call_telemetry[2] = codeNumberField(0, 9, telemTrkID);  // Tracker identifier
+  call_telemetry[3] = loc6[4];
+  call_telemetry[4] = loc6[5];
+  call_telemetry[5] = cmsg[5];
+  call_telemetry[6] = '\0';
+
+
+  loc4_telemetry[0] = cmsg[4];
+  loc4_telemetry[1] = cmsg[3];
+  loc4_telemetry[2] = cmsg[2];
+  loc4_telemetry[3] = cmsg[1];
+  loc4_telemetry[4] = '\0';
+  
+}
+

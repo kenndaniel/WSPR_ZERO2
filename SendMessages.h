@@ -104,10 +104,17 @@ void SendMessages() // Timing
   setModeWSPR_telem(); // set WSPR telemetry message mode 
 
   waitForEvenMinute();
-  POUTPUTLN((F("Sending Additional Telemetry Message")));
+  POUTPUTLN((F("Sending Pressure/Temp/Humidity Telemetry Message")));
   transmit();      // begin radio transmission
   
-  
+  code_speed_direction_message();
+  code_telemetry_power();       // Set the telemetry power
+  setModeWSPR_telem(); // set WSPR telemetry message mode 
+  waitForEvenMinute();
+  POUTPUTLN((F("Sending Speed/Direction Telemetry Message")));
+  transmit();      // begin radio transmission
+
+
   POUTPUTLN((F("****** lOOP RESET RESET RESET RESET **********")));
   resetFunc();  // Reset Arduino - program stats from the beginning
 }

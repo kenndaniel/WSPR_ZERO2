@@ -97,9 +97,10 @@ void si5351_calibrate_init()
 /*
    Message encoding
 */
+bool twoChanel = true; // set true to use channel 0 and 1 set false to use only channel 0
+
 void transmit() // Loop through the string, transmitting one character at a time
 {
-  bool twoChanel = true; // set true to use channel 0 and 1 set false to use only channel 0
   uint8_t i;
   digitalWrite(RFPIN, HIGH);
   si5351.output_enable(XMIT_CLOCK0, 1); // Reset the tone to the base frequency and turn on the output
@@ -123,10 +124,10 @@ void transmit() // Loop through the string, transmitting one character at a time
     {
     }
   }
-
-  si5351.output_enable(XMIT_CLOCK0, 0); // Turn off the output
   if (twoChanel)
     si5351.output_enable(XMIT_CLOCK1, 0);
+
+  si5351.output_enable(XMIT_CLOCK0, 0); // Turn off the output
   digitalWrite(RFPIN, LOW);
 }
 
@@ -138,15 +139,17 @@ void rf_on()
   si5351.pll_reset(SI5351_PLLA);
   si5351.pll_reset(SI5351_PLLB);
 
-  si5351.drive_strength(SI5351_CLK0, SI5351_DRIVE_6MA); // Set for max power if desired. Check datasheet.
-  si5351.drive_strength(SI5351_CLK1, SI5351_DRIVE_6MA); // Set for max power if desired. Check datasheet.
+  si5351.drive_strength(XMIT_CLOCK0, SI5351_DRIVE_6MA); // Set for max power if desired. Check datasheet.
+  si5351.drive_strength(XMIT_CLOCK1, SI5351_DRIVE_6MA); // Set for max power if desired. Check datasheet.
 
-  si5351.output_enable(SI5351_CLK0, 0); // Disable the clock initially
-  si5351.output_enable(SI5351_CLK1, 0);
+  si5351.output_enable(XMIT_CLOCK0, 0); // Disable the clock initially
+  si5351.output_enable(XMIT_CLOCK1, 0);
 }
 
 void rf_off()
 {
+  si5351.output_enable(XMIT_CLOCK0, 0); 
+  si5351.output_enable(XMIT_CLOCK1, 0);
   digitalWrite(RFPIN, LOW);
 }
 
@@ -181,7 +184,7 @@ void setToFrequency1()
 }
 void HF_init()
 {
-  void rf_on();
+  rf_on();
   setToFrequency1();
 }
 

@@ -62,8 +62,8 @@ void readSensors()
     {
       sPressure = 0;
     }
-    Serial.print(sPressure, 2);
-    Serial.print(',');
+    //Serial.print(sPressure, 2);
+    //Serial.print(',');
 
     // Request data from SHT42
     sensors_event_t humidity, temp;
@@ -77,8 +77,8 @@ void readSensors()
     {
       sHumidity = 0;
     }
-    Serial.print(sHumidity, 1);
-    Serial.print(',');
+    //Serial.print(sHumidity, 1);
+    //Serial.print(',');
 
     float solarVolts = readVcc();
     // Request data from MCP3221A5T
@@ -106,7 +106,7 @@ void readSensors()
       {
         sTemperature = -75.;
       }
-      Serial.println(sTemperature, 1);
+      //Serial.println(sTemperature, 1);
     }
     else
     {

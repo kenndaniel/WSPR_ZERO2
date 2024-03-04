@@ -8,10 +8,10 @@
    Please see readme file for more information.
 */
 
-//#define DEBUG // Debug output is generated if DEBUG is defined
+#define DEBUG // Debug output is generated if DEBUG is defined
 //#define DEBUG_SI5351  // Uncomment when testing without the GPS module attached.
-const char call[] = "KD9TPM";     // Amateur callsign
-const char std_telemID[] = "Q7";  // Standard telemetry prefix e.g. Q1 is Qx1xxx
+const char call[] = "NE9JJ";     // Amateur callsign
+const char std_telemID[] = "Q2";  // Standard telemetry prefix e.g. Q1 is Qx1xxx
 const int send_time_slot = 4;   // the time slot for the telemetry transmission : 0,2,4,6 or 8
 
 // WSPR Band Center Frequencies (Do not change)
@@ -22,7 +22,7 @@ const int send_time_slot = 4;   // the time slot for the telemetry transmission 
 #define WSPR_12m      24926100UL  // Center of WSPR 12m band - actual frequency is random each transmission
 #define WSPR_10m      28126100UL  // Center of WSPR 10m band - actual frequency is random each transmission
 
-// Technician license holders should set both WSPR_FREQ to WSPR_10m
+// Technician license holders should set WSPR_FREQ to WSPR_10m
 // First band to transmit on
 #define WSPR_FREQ1      WSPR_20m  
 
@@ -45,6 +45,6 @@ const int send_time_slot = 4;   // the time slot for the telemetry transmission 
 //If you go to Wikipedia and look up ITU prefix you will find that there are many more prefixes available. 
 //For example "any letter other than A,B,F,G,I,K,M,N,W,R, + 1", "X + any number", E8, E9,J9, " letter O + any number" , T9, "U + any number"
 // End of user definable information
-const int telemTrkID = 6; // Single digit (0-9) to indicate the tracker (BDD). 
+const int telemTrkID = 8; // Single digit (0-9) to indicate the balloon being tracked (BD). 
 const char telemID[] = "T1";   // Message identifier - first two characters of telemetery call 
-
+const char telemID2[] = "T9";  // Message identifier for second custom message

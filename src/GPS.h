@@ -2,6 +2,17 @@
    GPS functions
 */
 
+void gps_reset()
+{
+  rf_off();  // RF sometimes gets stuck on - make sure it is off
+  Serial1.write("$PCAS10,0*1D\r\n");
+}
+
+void atgm336h_SingleGPSworkingMode()
+{
+  Serial1.write("$PCAS04,1*18\r\n"); //Sets navsystem of the ATGM to GPS only new code for ATGM335H 021922 BB
+}
+
 void SetHighAltitude()
 {
   // put the gps in high altitude mode
@@ -75,12 +86,12 @@ void beep()
 {   // turn led on and off while searching for satellites
   if(gpsSearch)
   {
-    digitalWrite(GPS_POWER, HIGH);
+    digitalWrite(DBGPIN, HIGH);
     gpsSearch = false;
   }
   else
   {
-    digitalWrite(GPS_POWER, LOW);
+    digitalWrite(DBGPIN, LOW);
     gpsSearch = true;
   }
 }
