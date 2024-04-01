@@ -13,6 +13,7 @@
 
 #define JT9_FREQ 14000000UL
 
+#define CLK_CAL SI5351_CLK2 // the clock used for crystal calibration
 #define XMIT_CLOCK0 SI5351_CLK0
 #define XMIT_CLOCK1 SI5351_CLK1
 
@@ -82,8 +83,6 @@ bool si5351_init()
   return true;
 }
 
-#define CLK_CAL SI5351_CLK4 // the clock used for crystal calibration
-
 void si5351_calibrate_init()
 {
   // Initialize SI5351 for gps calibration
@@ -102,6 +101,7 @@ bool twoChanel = true; // set true to use channel 0 and 1 set false to use only 
 void transmit() // Loop through the string, transmitting one character at a time
 {
   uint8_t i;
+  POUTPUTLN((F(" SI5351 Start Transmission ")));
   digitalWrite(RFPIN, HIGH);
   si5351.output_enable(XMIT_CLOCK0, 1); // Reset the tone to the base frequency and turn on the output
   if (twoChanel)
@@ -124,10 +124,11 @@ void transmit() // Loop through the string, transmitting one character at a time
     {
     }
   }
+   // Turn off the output
   if (twoChanel)
     si5351.output_enable(XMIT_CLOCK1, 0);
+  si5351.output_enable(XMIT_CLOCK0, 0);
 
-  si5351.output_enable(XMIT_CLOCK0, 0); // Turn off the output
   digitalWrite(RFPIN, LOW);
 }
 
@@ -148,8 +149,9 @@ void rf_on()
 
 void rf_off()
 {
-  si5351.output_enable(XMIT_CLOCK0, 0); 
-  si5351.output_enable(XMIT_CLOCK1, 0);
+  if (twoChanel)
+    si5351.output_enable(XMIT_CLOCK1, 0);
+  si5351.output_enable(XMIT_CLOCK0, 0);
   digitalWrite(RFPIN, LOW);
 }
 
@@ -172,20 +174,22 @@ void setToFrequency1()
 
   freq = (unsigned long)(WSPR_FREQ1 * (correction));
   // random number to create random frequency -spread spectrum
-  float randomChange = random(-70, 70);
-  //float randomChange =0.;
-  freq = freq + (unsigned long)randomChange; // random freq in middle 150 Hz of wspr band
+  // float randomChange = random(-70, 70);
+  float randomChange = 0;
 
+  freq = freq + (unsigned long)randomChange; // random freq in middle 150 Hz of wspr band
+#ifdef CALIBRATION
+  POUTPUT(F(" Correction fraction from Band Center "));
+  POUTPUTLN((String(correction, 7)));
+#endif
   POUTPUT(F(" Random Change from Band Center "));
   POUTPUTLN((randomChange));
   POUTPUT(F(" Frequency "));
   POUTPUTLN((WSPR_FREQ1 + randomChange));
   firstFreq = false;
 }
-void HF_init()
+void RF_init()
 {
   rf_on();
   setToFrequency1();
 }
-
-

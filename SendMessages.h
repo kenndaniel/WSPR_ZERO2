@@ -50,6 +50,7 @@ void SendMessages() // Timing
   while (!((int)minute() % 2 == 0 && (int)second() < 2 && CalibrationDone == true && sendMinute == true))
   {
       #ifdef DEBUG_SI5351
+        waitForEvenMinute();
         break;
       #endif
 
@@ -83,7 +84,7 @@ void SendMessages() // Timing
   POUTPUTLN(F(" Sending Standard Message "));
   digitalWrite(DBGPIN, HIGH);
   transmit();      // begin radio transmission
-
+  rf_off(); 
   // Send standard telemetry message
   code_standard_telemetry_callsign();    // Set the telemetry callsign 
   code_telemety_loc();          // Set the telemetry location
@@ -94,26 +95,29 @@ void SendMessages() // Timing
   POUTPUTLN((F("Sending  Standard Telemetry Message ")));
   digitalWrite(DBGPIN, HIGH);
   transmit();            // begin radio transmission
-  initSensors();
-  readSensors();
+   rf_off(); 
 
-  // Send additional telemetry message
-  POUTPUTLN((F("Waiting for Additional Telemetry Message ")));
+  // initSensors();
+  // readSensors();
 
-  code_high_precision_temp_pres_humid();
-  setModeWSPR_telem(); // set WSPR telemetry message mode 
+  // // Send additional telemetry message
+  // POUTPUTLN((F("Waiting for Additional Telemetry Message ")));
 
-  waitForEvenMinute();
-  POUTPUTLN((F("Sending Pressure/Temp/Humidity Telemetry Message")));
-  transmit();      // begin radio transmission
-  
-  code_speed_direction_message();
-  code_telemetry_power();       // Set the telemetry power
-  setModeWSPR_telem(); // set WSPR telemetry message mode 
-  waitForEvenMinute();
-  POUTPUTLN((F("Sending Speed/Direction Telemetry Message")));
-  transmit();      // begin radio transmission
+  // code_high_precision_temp_pres_humid();
+  // setModeWSPR_telem(); // set WSPR telemetry message mode 
 
+  // waitForEvenMinute();
+  // POUTPUTLN((F("Sending Pressure/Temp/Humidity Telemetry Message")));
+  // transmit();      // begin radio transmission
+  //  rf_off(); 
+
+  // code_speed_direction_message();
+  // code_telemetry_power();       // Set the telemetry power
+  // setModeWSPR_telem(); // set WSPR telemetry message mode 
+  // waitForEvenMinute();
+  // POUTPUTLN((F("Sending Speed/Direction Telemetry Message")));
+  // transmit();      // begin radio transmission
+  // rf_off(); 
 
   POUTPUTLN((F("****** lOOP RESET RESET RESET RESET **********")));
   resetFunc();  // Reset Arduino - program stats from the beginning

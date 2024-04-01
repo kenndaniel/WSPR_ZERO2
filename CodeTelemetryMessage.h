@@ -162,7 +162,7 @@ void code_speed_direction_message()
 {
 
 char telemID[] = "T9";
-int telemTrkID = 9;  // balloon designator
+//int telemTrkID = 9;  // balloon designator
 //float speed = 143.9;  // Speed maximum value is 150.0 m/s
 float speed = gps.speed.mps();
 //float direction = 355.;  // degrees

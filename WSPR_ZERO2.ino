@@ -119,17 +119,18 @@ void waitForEvenMinute();
 #define COUNTER_PIN 1 // Use cpu pin 1 for XIOA this corresponds to pin A1.
 // #define COUNTER_PIN 18  //  Use cpu pin 18 for MKE Zero this coresponds to pin A3
 
-#define interruptPinPPS 2 // pin connected to the GPS pps output pin.
+#define interruptPinPPS 2 // pin connected to the GPS pps output pin for XIAO
+#define interruptPinPPS 17 // pin connected to the GPS pps output pin for mkr zero
 
 #define RANDOM_PIN 0 // used to generate a seed for the random number gerator
-#define RFPIN 13     // Can be used to turn off si5351 see rf_off() and sleep()
-#define SLEEP_PIN 13 // Not used - can be used to turn off system between transmissions see sleep()
-#define DBGPIN 13
+#define RFPIN LED_BUILTIN     // Can be used to turn off si5351 see rf_off() and sleep()
+#define SLEEP_PIN LED_BUILTIN // Not used - can be used to turn off system between transmissions see sleep()
+#define DBGPIN LED_BUILTIN
 #define SENSOR_PIN0 0 // Generic analog sensor -- can be changed to any unused pin
 #define SENSOR_PIN1 0
-#define GPS_SEARCHING 13
+#define GPS_SEARCHING LED_BUILTIN
 #define INPUT_VOLTAGE 2 // measures solar panel voltage
-#define GPS_POWER 13    // Pull down to turn on GPS module (not used) see sleep()
+#define GPS_POWER LED_BUILTIN    // Pull down to turn on GPS module (not used) see sleep()
 static const uint32_t GPSBaud = 9600;
 
 // #include "./src/TemperatureZero.h" // for reading the cpu internal temperature
