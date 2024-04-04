@@ -121,3 +121,111 @@ void gpsBounce()
   // delay(500);
   // gpsOn();
 }
+
+// gps must lock position within 15 minutes or system will sleep or use the default location if the clock was set
+unsigned long gpsTimeout = GPS_TIMEOUT; // in milliseconds
+unsigned long gpsStartTime = 0;
+long loopi = 0;
+/*
+  This function get gps data and makes it ready for transmission
+*/
+bool gpsGetData()
+{
+  bool clockSet = false, locSet = false, altitudeSet = false, speedSet = false;
+  Serial1.begin(GPSBaud);
+  delay(100);
+  gpsStartTime = millis();
+  bool hiAltitudeSet = false;
+  POUTPUTLN((F("Waiting for GPS to find satellites - 5-10 min")));
+  while (millis() < gpsStartTime + gpsTimeout)
+  {
+    // wdt_reset();
+    while (Serial1.available() > 0)
+      gps.encode(Serial1.read());
+
+    if (gps.charsProcessed() > 10 && hiAltitudeSet == false)
+    { // put the gps module into high altitude mode
+      SetHighAltitude();
+      // ss.write("$PMTK886,3*2B\r\n");
+      hiAltitudeSet = true;
+    }
+
+    if (gps.time.isUpdated() && gps.satellites.value() > 0 && clockSet == false)
+      {
+        clockSet = true;
+      }
+    if (gps.altitude.isUpdated())
+    {
+      gpsAltitude = gps.altitude.meters();
+      altitudeSet = true;
+    }
+    if (gps.speed.isUpdated())
+    {
+      gpsSpeed = gps.speed.kmph();
+      gpsCourse = gps.course.deg();
+      speedSet = true;
+    }
+    if (gps.location.isUpdated())
+    {
+      latitude = gps.location.lat();
+      longitude = gps.location.lng();
+      locSet = true;
+    }
+
+    if (locSet && speedSet && altitudeSet && clockSet)
+    {
+      satellites = gps.satellites.value();
+      POUTPUT((F(" Number of satellites found ")));
+      POUTPUTLN((satellites));
+      SetCPUClock(gps);
+      // start transmission loop
+      return true;
+    }
+
+    loopi++;
+
+    if (loopi % 5000 == 0)
+      beep(); // still looking for satellites
+
+    if (gps.charsProcessed() < 10 && millis() % 1500 < 5)
+    {
+
+      POUTPUTLN((F("WARNING: No GPS data.  Check wiring.")));
+      // blink moris code "w" for wiring
+      digitalWrite(DBGPIN, LOW);
+      delay(50);
+      digitalWrite(DBGPIN, HIGH);
+      delay(50);
+      digitalWrite(DBGPIN, LOW);
+      delay(50);
+      digitalWrite(DBGPIN, HIGH);
+      delay(150);
+      digitalWrite(DBGPIN, LOW);
+      delay(50);
+      digitalWrite(DBGPIN, HIGH);
+      delay(150);
+      digitalWrite(DBGPIN, LOW);
+    }
+    // If DEBUG_SI5351 is defined, the system will transmit, but not on the correct minute
+    // Use this for unit testing when there is no gps attached.
+#ifdef DEBUG_SI5351
+    return true;
+#endif
+  }
+    POUTPUTLN((F(" GPS Timeout - no satellites found ")));
+  
+  return false;
+   /*  if(clockSet==true)
+  {
+    // Send report anyway if only the clock has been set
+    clockSet = false; // needed for testing only
+    locSet = false;
+    altitudeSet = false;
+    speedSet = false;
+    return true;
+  }
+  else
+  {
+    return false;
+  } */
+}

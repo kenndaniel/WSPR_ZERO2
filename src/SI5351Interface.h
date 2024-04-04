@@ -73,7 +73,7 @@ bool si5351_init()
 
   POUTPUTLN((F(" SI5351 Start Initialization ")));
   bool siInit = si5351.init(SI5351_CRYSTAL_LOAD_8PF, SI5351_XTAL, 0);
-  delay(2000);
+  delay(200);
   if (siInit == false)
   {
     Serial.println(" XXXXXXXXX Si5351 initializaton failure - Check wiring");
@@ -93,44 +93,7 @@ void si5351_calibrate_init()
   si5351.output_enable(CLK_CAL, 1);        // Enable output
 }
 
-/*
-   Message encoding
-*/
 bool twoChanel = true; // set true to use channel 0 and 1 set false to use only channel 0
-
-void transmit() // Loop through the string, transmitting one character at a time
-{
-  uint8_t i;
-  POUTPUTLN((F(" SI5351 Start Transmission ")));
-  digitalWrite(RFPIN, HIGH);
-  si5351.output_enable(XMIT_CLOCK0, 1); // Reset the tone to the base frequency and turn on the output
-  if (twoChanel)
-    si5351.output_enable(XMIT_CLOCK1, 1);
-  const unsigned long period = tone_delay;
-  unsigned long time_now = 0;
-  uint8_t one = 1;
-
-  for (i = 0; i < symbol_count; i++) // Now transmit the channel symbols
-  {
-    time_now = millis();
-    si5351.set_freq((freq * 100) + (tx_buffer[i] * tone_spacing), XMIT_CLOCK0); // not needed for inverted output on CLK!
-    if (twoChanel)
-    {
-      si5351.set_freq((freq * 100) + (tx_buffer[i] * tone_spacing), XMIT_CLOCK1);
-      si5351.set_clock_invert(XMIT_CLOCK1, one);
-      si5351.pll_reset(SI5351_PLLA);
-    }
-    while (millis() < time_now + period) // Found to be more accruate than delay()
-    {
-    }
-  }
-   // Turn off the output
-  if (twoChanel)
-    si5351.output_enable(XMIT_CLOCK1, 0);
-  si5351.output_enable(XMIT_CLOCK0, 0);
-
-  digitalWrite(RFPIN, LOW);
-}
 
 void rf_on()
 {
@@ -154,6 +117,44 @@ void rf_off()
   si5351.output_enable(XMIT_CLOCK0, 0);
   digitalWrite(RFPIN, LOW);
 }
+
+/*
+   Message encoding
+*/
+
+
+void transmit() // Loop through the string, transmitting one character at a time
+{
+  uint8_t i;
+  POUTPUTLN((F(" SI5351 Start Transmission ")));
+  rf_on();
+  digitalWrite(RFPIN, HIGH);
+  si5351.output_enable(XMIT_CLOCK0, 1); // Reset the tone to the base frequency and turn on the output
+  if (twoChanel)
+    si5351.output_enable(XMIT_CLOCK1, 1);
+  const unsigned long period = tone_delay;
+  unsigned long time_now = 0;
+  uint8_t one = 1;
+
+  for (i = 0; i < symbol_count; i++) // Now transmit the channel symbols
+  {
+    time_now = millis();
+    si5351.set_freq((freq * 100) + (tx_buffer[i] * tone_spacing), XMIT_CLOCK0); // not needed for inverted output on CLK!
+    if (twoChanel)
+    {
+      si5351.set_freq((freq * 100) + (tx_buffer[i] * tone_spacing), XMIT_CLOCK1);
+      si5351.set_clock_invert(XMIT_CLOCK1, one);
+      si5351.pll_reset(SI5351_PLLA);
+    }
+    while (millis() < time_now + period) // Found to be more accruate than delay()
+    {
+    }
+  }
+   // Turn off the output
+   rf_off();
+}
+
+
 
 // void setToFrequency2()
 // {
