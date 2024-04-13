@@ -24,7 +24,7 @@ void charArrayCpy(char dest[], char src[], int cnt)
 #include "./src/CodeStandardMessage.h"
 #include "CodeTelemetryMessage.h"
 
-void SendMessages() // Timing
+void SendWSPRMessages() // Timing
 {
 // run additional scripts here to generate data prior to TX if there is a large delay involved.
   code_location();  // convert latitude and longitude to grid square
@@ -33,7 +33,6 @@ void SendMessages() // Timing
   POUTPUTLN((gpsAltitude));
   POUTPUT((F("Standard Message ")));
   setModeWSPR(); // set WSPR standard message mode
-  rf_on();  //  turn on transmitter but disabled
   setToFrequency1();  // Initialize the transmit frequency
 
   int stopSecond = 0;
@@ -42,7 +41,6 @@ void SendMessages() // Timing
 
   const unsigned long period = 50;
   unsigned long time_now = 0;
-
 
   POUTPUT((F("Waiting for the send time for time slot ")));
   POUTPUTLN((send_time_slot));
@@ -58,13 +56,11 @@ void SendMessages() // Timing
 
     if((int)minute()%10 == (send_time_slot -2 )) sendMinute = true;
     if( send_time_slot == 0 && (int)minute()%10 == 8) sendMinute = true;
-  
     time_now = millis();
     while(millis() < time_now + period){
         //wait 50 ms period
     }
       curSecond = (int)second();
-
       if (curSecond % 5 == 0 && curSecond != stopSecond)
       {
         digitalWrite(DBGPIN, HIGH);
@@ -84,6 +80,7 @@ void SendMessages() // Timing
  
 
   POUTPUTLN(F(" Sending Standard Message "));
+  
   digitalWrite(DBGPIN, HIGH);
   transmit();      // begin radio transmission
   //rf_off(); 

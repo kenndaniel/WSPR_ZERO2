@@ -7,6 +7,7 @@
 // ADC Constants
 #define MCP3221_ADDR 0x4D     // MCP3221A5T I2C address
 #define VOLTAGE_REFERENCE 3.3 // Reference voltage in volts
+//#define MS5611_Temperature  // define this if using the 5611 to read temperature
 
 // Pressure Sensor
 MS5611 MS5611(0x77);
@@ -98,6 +99,11 @@ void readSensors()
       // Convert resistance to temperature
       float thermtemp = 1.0 / (0.8237883661e-3 + 2.642550066e-4 * log(r) + 1.24004296e-7 * pow(log(r), 3)) - 273.15;
       sTemperature = thermtemp;
+
+      #ifdef MS5611_Temperature
+      sTemperature = MS5611.getTemperature();
+      #endif
+
       if (sTemperature > 25.)
       {
         sTemperature = 25.;

@@ -93,7 +93,7 @@ void si5351_calibrate_init()
   si5351.output_enable(CLK_CAL, 1);        // Enable output
 }
 
-bool twoChanel = true; // set true to use channel 0 and 1 set false to use only channel 0
+bool twoChanel = true; // set true to use two channel inverted output, set false to use only one chanel
 
 void rf_on()
 {
@@ -108,6 +108,7 @@ void rf_on()
 
   si5351.output_enable(XMIT_CLOCK0, 0); // Disable the clock initially
   si5351.output_enable(XMIT_CLOCK1, 0);
+  digitalWrite(RFPIN, HIGH);
 }
 
 void rf_off()
@@ -122,13 +123,11 @@ void rf_off()
    Message encoding
 */
 
-
 void transmit() // Loop through the string, transmitting one character at a time
 {
   uint8_t i;
-  POUTPUTLN((F(" SI5351 Start Transmission ")));
   rf_on();
-  digitalWrite(RFPIN, HIGH);
+  POUTPUTLN((F(" SI5351 Start Transmission ")));
   si5351.output_enable(XMIT_CLOCK0, 1); // Reset the tone to the base frequency and turn on the output
   if (twoChanel)
     si5351.output_enable(XMIT_CLOCK1, 1);
@@ -150,24 +149,10 @@ void transmit() // Loop through the string, transmitting one character at a time
     {
     }
   }
-   // Turn off the output
-   rf_off();
+  // Turn off the output
+  rf_off();
 }
 
-
-
-// void setToFrequency2()
-// {
-//   si5351.pll_reset(SI5351_PLLA);
-//   si5351.pll_reset(SI5351_PLLB);
-//   freq = (unsigned long) (WSPR_FREQ2*(correction));
-//   float randomChang = random(-75,75);
-//   freq = freq +(unsigned long) randomChang;
-//   POUTPUT(F(" Random Change from Band Center "));
-//   POUTPUTLN((randomChang));
-//   POUTPUT(F(" Frequency "));
-//   POUTPUTLN((WSPR_FREQ1+randomChang));
-// }
 
 bool firstFreq = true;
 void setToFrequency1()
@@ -175,18 +160,20 @@ void setToFrequency1()
 
   freq = (unsigned long)(WSPR_FREQ1 * (correction));
   // random number to create random frequency -spread spectrum
-  // float randomChange = random(-70, 70);
-  float randomChange = 0;
-
-  freq = freq + (unsigned long)randomChange; // random freq in middle 150 Hz of wspr band
+  float randomChange = random(-5, 5);
+  freq = freq + randomChange + FREQ_BIAS; // random freq in middle 150 Hz of wspr band
 #ifdef CALIBRATION
   POUTPUT(F(" Correction fraction from Band Center "));
   POUTPUTLN((String(correction, 7)));
 #endif
-  POUTPUT(F(" Random Change from Band Center "));
+  POUTPUT(F(" Random Change "));
   POUTPUTLN((randomChange));
+  POUTPUT(F(" Bias from band center "));
+  POUTPUTLN((FREQ_BIAS));
   POUTPUT(F(" Frequency "));
-  POUTPUTLN((WSPR_FREQ1 + randomChange));
+  POUTPUTLN((WSPR_FREQ1 + randomChange + FREQ_BIAS));
+  POUTPUT(F(" Frequency "));
+  POUTPUTLN((freq));
   firstFreq = false;
 }
 void RF_init()

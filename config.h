@@ -8,7 +8,7 @@
    Please see readme file for more information.
 */
 
-#define DEBUG // Debug output is generated if DEBUG is defined
+//#define DEBUG // Debug output is generated if DEBUG is defined
 //#define DEBUG_SI5351  // Send on first even minute
 //#define DEBUG_SI5351_wo_GPS // Uncomment this and previous when testing without the GPS module attached.
 //const char call[] = "KM4YHI";     // Amateur callsign
@@ -26,18 +26,17 @@ const int send_time_slot = 6;   // the time slot for the telemetry transmission 
 
 // Technician license holders should set WSPR_FREQ to WSPR_10m
 // First band to transmit on
-#define WSPR_FREQ1      WSPR_20m  
+#define WSPR_FREQ1      WSPR_15m
+#define FREQ_BIAS   -50   // added to WSPR_FREQ1
 
 // Reference txco frequency for SI5351
-//#define SI5351_XTAL 27000000UL  // Standard
-#define SI5351_XTAL 25000000UL
+#define SI5351_XTAL 27000000UL  // Standard
+//#define SI5351_XTAL 25000000UL  // use for Arduino Adafruit module or equivalent
 // gps must lock position within 15 minutes or system will sleep or use the default location if the clock was set
 #define GPS_TIMEOUT 900000 
 
 // APRS Variables included in case of combination of WSPR with APRS
-#define APRS_SID  7
-//#define VCXO_GAIN 52 // 45 should be ok - Adjustment of the difference between the low and high tone frequencies 9-9.5MHz Critical
-
+#define APRS_SID  8
 
 // Optional
 // Not implemented -- optional non-standard telemetry for additional sensors
@@ -49,6 +48,6 @@ const int send_time_slot = 6;   // the time slot for the telemetry transmission 
 //If you go to Wikipedia and look up ITU prefix you will find that there are many more prefixes available. 
 //For example "any letter other than A,B,F,G,I,K,M,N,W,R, + 1", "X + any number", E8, E9,J9, " letter O + any number" , T9, "U + any number"
 // End of user definable information
-const int telemTrkID = 9; // Single digit (0-9) to indicate the balloon being tracked (BD). 
+const int telemTrkID = 5; // Single digit (0-9) to indicate the balloon being tracked (BD). 
 const char telemID[] = "T1";   // Message identifier - first two characters of telemetery call 
 const char telemID2[] = "T9";  // Message identifier for second custom message

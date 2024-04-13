@@ -16,7 +16,7 @@ void PPSinterrupt()
   {digitalWrite(DBGPIN, LOW);} */
 
   if (CalibrationDone == true) return;
-  if (tcount == 4)  // Start counting the 2.5 MHz signal from Si5351A CLK0
+  if (tcount == 4)  // Start counting the 2.5 MHz signal from Si5351A CLK
   {
     TC4->COUNT32.CTRLBSET.reg = TC_CTRLBSET_CMD_RETRIGGER;   // Retrigger the TC4 timer
     while (TC4->COUNT32.STATUS.bit.SYNCBUSY);                // Wait for synchronization
@@ -26,7 +26,7 @@ void PPSinterrupt()
   {     
 
     XtalFreq=TC4->COUNT32.COUNT.reg -SiCnt; 
-    correction = (25000000./(float)XtalFreq) ;     
+    correction = ((float)SI5351_XTAL/(float)XtalFreq) ;     
     // I found that adjusting the transmit freq gives a cleaner signal than setting ppb
 
     CalibrationDone = true;                  
