@@ -30,8 +30,6 @@ volatile bool CalibrationDone = false;
 volatile unsigned long SiCnt = 0;
 volatile unsigned long mult = 0;
 volatile unsigned int tcount = 0;
-// volatile unsigned long XtalFreq=25000000UL;
-volatile int32_t FreqCorrection_ppb = 0;
 volatile float correction = 1;
 unsigned long freq = (unsigned long)(WSPR_FREQ1);
 
@@ -63,7 +61,8 @@ RTCZero clock;
 // float tempOutside, pressure; // set once in tempPress.h
 int volts = 0;
 double gpsAltitude = 0; // Testing value
-double gpsSpeed = 0.;   // Testing values
+float gpsSpeed = 0.;   // Testing values
+float gpsCourse =0.;
 char call_telemetry[7]; // WSPR telemetry callsign
 char loc_telemetry[5];  // WSPR telemetry locator
 uint8_t dbm_telemetry;  // WSPR telemetry dbm
@@ -87,7 +86,6 @@ int satellites = 0;
 int alt_meters = 0;
 bool telemetry_set = false;
 int Sats = 0;
-int gps_speed = 0;
 double latitude = 10.;
 double longitude = 10.;
 
@@ -116,10 +114,10 @@ void waitForEvenMinute();
 
 // COUNTER_PIN is the PA04 of SAMD21 processor and is connected to CLK_CAL of the SI 5351
 //  OF THE Si5351.  This depends on the porcessor board
-#define COUNTER_PIN 1 // Use cpu pin 1 for XIOA this corresponds to pin A1.
-// #define COUNTER_PIN 18  //  Use cpu pin 18 for MKE Zero this coresponds to pin A3
+// #define COUNTER_PIN 1 // Use cpu pin 1 for XIOA this corresponds to pin A1.
+#define COUNTER_PIN 18  //  Use cpu pin 18 for MKE Zero this coresponds to pin A3
 
-#define interruptPinPPS 2 // pin connected to the GPS pps output pin for XIAO
+// #define interruptPinPPS 2 // pin connected to the GPS pps output pin for XIAO
 #define interruptPinPPS 17 // pin connected to the GPS pps output pin for mkr zero
 
 #define RANDOM_PIN 0 // used to generate a seed for the random number gerator
@@ -144,9 +142,7 @@ static const uint32_t GPSBaud = 9600;
 #include "./src/FrequencyCorrection.h"
 #endif
 
-// gps must lock position within 15 minutes or system will sleep or use the default location if the clock was set
-const unsigned long gpsTimeout = 900000; // in milliseconds
-unsigned long gpsStartTime = 0;
+
 
 void setup()
 {
@@ -193,12 +189,10 @@ void setup()
   gpsStartTime = millis();
 }
 
-long loopi = 0;
-int loopj = 0;
 bool rfpinon = false;
-void loop()
+void loop()   //*********************  Loop *********************
 {
-  bool getInfo = gpsGetInfo();
+  bool getInfo = gpsGetData();
   if (getInfo == false)
   {
     gps_reset();
@@ -227,105 +221,5 @@ void loop()
 
   POUTPUTLN((F(" Starting Transmit Logic")));
 
-  SendMessages();
-}
-
-bool gpsGetInfo()
-{
-  bool clockSet = false, locSet = false, altitudeSet = false, speedSet = false;
-  Serial1.begin(GPSBaud);
-  delay(100);
-  gpsStartTime = millis();
-  bool hiAltitudeSet = false;
-  POUTPUTLN((F("Waiting for GPS to find satellites - 5-10 min")));
-  while (millis() < gpsStartTime + gpsTimeout)
-  {
-    // wdt_reset();
-    while (Serial1.available() > 0)
-      gps.encode(Serial1.read());
-
-    if (gps.charsProcessed() > 10 && hiAltitudeSet == false)
-    { // put the gps module into high altitude mode
-      SetHighAltitude();
-      // ss.write("$PMTK886,3*2B\r\n");
-      hiAltitudeSet = true;
-    }
-
-    if (gps.time.isUpdated() && gps.satellites.value() > 0 && clockSet == false)
-    {
-      clockSet = true;
-    }
-    if (gps.altitude.isUpdated())
-    {
-      gpsAltitude = gps.altitude.meters();
-      altitudeSet = true;
-    }
-    if (gps.speed.isUpdated())
-    {
-      gpsSpeed = gps.speed.kmph();
-      speedSet = true;
-    }
-    if (gps.location.isUpdated())
-    {
-      latitude = gps.location.lat();
-      longitude = gps.location.lng();
-      locSet = true;
-    }
-
-    if (locSet && speedSet && altitudeSet && clockSet)
-    {
-      satellites = gps.satellites.value();
-      POUTPUT((F(" Number of satellites found ")));
-      POUTPUTLN((satellites));
-      SetCPUClock(gps);
-      // start transmission loop
-      return true;
-    }
-
-    loopi++;
-
-    if (loopi % 5000 == 0)
-      beep(); // still looking for satellites
-
-    if (gps.charsProcessed() < 10 && millis() % 1500 < 5)
-    {
-
-      POUTPUTLN((F("WARNING: No GPS data.  Check wiring.")));
-      // blink moris code "w" for wiring
-      digitalWrite(DBGPIN, LOW);
-      delay(50);
-      digitalWrite(DBGPIN, HIGH);
-      delay(50);
-      digitalWrite(DBGPIN, LOW);
-      delay(50);
-      digitalWrite(DBGPIN, HIGH);
-      delay(150);
-      digitalWrite(DBGPIN, LOW);
-      delay(50);
-      digitalWrite(DBGPIN, HIGH);
-      delay(150);
-      digitalWrite(DBGPIN, LOW);
-    }
-// If DEBUG_SI5351 is defined, the system will transmit, but not on the correct minute
-// Use this for unit testing when there is no gps attached.
-#ifdef DEBUG_SI5351
-    return true;
-#endif
-  }
-  POUTPUTLN((F(" GPS Timeout - no satellites found ")));
-
-  return false;
-  /*  if(clockSet==true)
-   {
-     // Send report anyway if only the clock has been set
-     clockSet = false; // needed for testing only
-     locSet = false;
-     altitudeSet = false;
-     speedSet = false;
-     return true;
-   }
-   else
-   {
-     return false;
-   } */
+  SendWSPRMessages();
 }
