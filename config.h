@@ -8,7 +8,7 @@
    Please see readme file for more information.
 */
 
-//#define DEBUG // Debug output is generated if DEBUG is defined
+// #define DEBUG // Debug output is generated if DEBUG is defined
 //#define DEBUG_SI5351  // Send on first even minute
 //#define DEBUG_SI5351_wo_GPS // Uncomment this and previous when testing without the GPS module attached.
 //const char call[] = "KM4YHI";     // Amateur callsign

@@ -1,3 +1,0 @@
-This folder contains an attempt to make a version of the Si5351 library
-compatable with the Si5351B QFN16 version by changing the code's register
-assignments. 
