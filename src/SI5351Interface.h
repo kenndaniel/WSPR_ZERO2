@@ -118,7 +118,9 @@ void rf_on()
 
 void rf_off()
 {
-
+  si5351.output_enable(XMIT_CLOCK0, 0); 
+  if (twoChanel)
+    si5351.output_enable(XMIT_CLOCK1, 0);
   digitalWrite(RFPIN, LOW);
 }
 
@@ -150,7 +152,6 @@ void transmit() // Loop through the string, transmitting one character at a time
 }
 
 
-bool firstFreq = true;
 void setToFrequency1()
 {
 
@@ -170,10 +171,24 @@ void setToFrequency1()
   POUTPUTLN((WSPR_FREQ1 + randomChange + FREQ_BIAS));
   POUTPUT(F(" Frequency "));
   POUTPUTLN((freq));
-  firstFreq = false;
+
 }
-// void RF_init()
-// {
-//   rf_on();
-//   setToFrequency1();
-// }
+
+// Send a beep in the beginning to test the transmitter
+void rf_beep()
+{    
+  rf_on();
+  setToFrequency1();
+  POUTPUTLN((F(" Starting beep "))); 
+  unsigned long freq1 = (unsigned long)(WSPR_FREQ1 * (correction)-200); 
+  for (int j = 1; j<20;++j)
+    {
+      5351.set_freq((freq1 * 100) + (11 * tone_spacing), XMIT_CLOCK0); 
+      delay(1000);
+      5351.set_freq((freq1 * 100) + (1 * tone_spacing), XMIT_CLOCK0); 
+      delay(1000);
+        // Turn off the output
+    }
+    rf_off();
+}
+
