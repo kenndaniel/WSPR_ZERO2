@@ -7,13 +7,13 @@ void PPSinterrupt()
   // Called on every pulse per second after gps sat lock
  
   tcount++;
- 
-/*   if (tcount % 2 == 0)
-  {
-   digitalWrite(DBGPIN, HIGH);
-  }
-  else
-  {digitalWrite(DBGPIN, LOW);} */
+
+  // if (tcount % 2 == 0)
+  // {
+  //  digitalWrite(DBGPIN, HIGH);
+  // }
+  // else
+  // {digitalWrite(DBGPIN, LOW);} 
 
   if (CalibrationDone == true) return;
   if (tcount == 4)  // Start counting the 2.5 MHz signal from Si5351A CLK
@@ -25,8 +25,8 @@ void PPSinterrupt()
   else if (tcount == 15)  //The 10 second counting time has elapsed - stop counting
   {     
 
-    XtalFreq=TC4->COUNT32.COUNT.reg -SiCnt; 
-    correction = ((float)SI5351_XTAL/(float)XtalFreq) ;     
+    SiCnt=TC4->COUNT32.COUNT.reg -SiCnt; 
+    correction = 25000000./(float)SiCnt;     
     // I found that adjusting the transmit freq gives a cleaner signal than setting ppb
 
     CalibrationDone = true;                  

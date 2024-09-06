@@ -76,7 +76,7 @@ bool si5351_init()
   bool checkI2C = si5351.init(SI5351_CRYSTAL_LOAD_8PF, SI5351_XTAL, 0);
   if (checkI2C == false)
   {
-    Serial.println(" XXXXXXXXX Si5351 i2c failure - Check wiring");
+   POUTPUTLN((F("  XXXXXXXXX Si5351 i2c failure - Check wiring")));
     return false;
   }
 
@@ -92,6 +92,13 @@ void si5351_calibrate_init()
   si5351.set_freq(calfreq * 100, CLK_CAL); // set calibration frequency
   si5351.output_enable(CLK_CAL, 1);        // Enable output
 }
+
+void si5351_calibrate_off()
+{
+  si5351.output_enable(CLK_CAL, 0);
+  digitalWrite(RFPIN, LOW);
+}
+
 
 bool twoChanel = true; // set true to use two channel inverted output, set false to use only one chanel
 
@@ -183,9 +190,9 @@ void rf_beep()
   unsigned long freq1 = (unsigned long)(WSPR_FREQ1 * (correction)-200); 
   for (int j = 1; j<20;++j)
     {
-      5351.set_freq((freq1 * 100) + (11 * tone_spacing), XMIT_CLOCK0); 
+      si5351.set_freq((freq1 * 100) + (11 * tone_spacing), XMIT_CLOCK0); 
       delay(1000);
-      5351.set_freq((freq1 * 100) + (1 * tone_spacing), XMIT_CLOCK0); 
+      si5351.set_freq((freq1 * 100) + (1 * tone_spacing), XMIT_CLOCK0); 
       delay(1000);
         // Turn off the output
     }
