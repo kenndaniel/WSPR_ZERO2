@@ -34,6 +34,9 @@ void SendWSPRMessages() // Timing
   POUTPUT((F("Standard Message ")));
   setModeWSPR(); // set WSPR standard message mode
   setToFrequency1();  // Initialize the transmit frequency
+  #ifdef DEBUG_SI5351_wo_GPS
+      transmit();            // begin radio transmission
+  #endif
 
   int stopSecond = 0;
   int curSecond = 0;
@@ -48,9 +51,7 @@ void SendWSPRMessages() // Timing
   while (!((int)minute() % 2 == 0 && (int)second() < 2 && CalibrationDone == true && sendMinute == true))
   {
       #ifdef DEBUG_SI5351
-        #ifndef DEBUG_SI5351_wo_GPS 
         waitForEvenMinute();
-        #endif
         break;
       #endif
 
@@ -121,10 +122,10 @@ void SendWSPRMessages() // Timing
 }
 
 
-
 void waitForEvenMinute()
 {
-  int stopSecond = 0;
+  POUTPUTLN((F(" Waiting for Even Minute ")));
+   int stopSecond = 0;
   int curSecond = 0;
 
   const unsigned long period = 50;
