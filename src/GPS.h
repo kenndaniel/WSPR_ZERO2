@@ -178,6 +178,7 @@ bool gpsGetData()
       POUTPUT((F(" Number of satellites found ")));
       POUTPUTLN((satellites));
       SetCPUClock(gps);
+      randomSeed(millis()%1000);
       // start transmission loop
       return true;
     }
@@ -193,17 +194,17 @@ bool gpsGetData()
       POUTPUTLN((F("WARNING: No GPS data.  Check wiring.")));
       // blink moris code "w" for wiring
       digitalWrite(DBGPIN, LOW);
-      delay(50);
-      digitalWrite(DBGPIN, HIGH);
-      delay(50);
-      digitalWrite(DBGPIN, LOW);
-      delay(50);
+      delay(150);
       digitalWrite(DBGPIN, HIGH);
       delay(150);
       digitalWrite(DBGPIN, LOW);
-      delay(50);
-      digitalWrite(DBGPIN, HIGH);
       delay(150);
+      digitalWrite(DBGPIN, HIGH);
+      delay(350);
+      digitalWrite(DBGPIN, LOW);
+      delay(150);
+      digitalWrite(DBGPIN, HIGH);
+      delay(350);
       digitalWrite(DBGPIN, LOW);
     }
     // If DEBUG_SI5351 is defined, the system will transmit, but not on the correct minute

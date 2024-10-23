@@ -23,6 +23,7 @@
 #define VHF
 #define SEND_INTERVAL 1 // The minimum number of minutes between transmissions
 
+
 // Variables needed for SI5351 calibration processing
 // #define ppsPin  0
 
@@ -31,7 +32,8 @@ volatile unsigned long SiCnt = 0;
 volatile unsigned long mult = 0;
 volatile unsigned int tcount = 0;
 volatile float correction = 1;
-unsigned long freq = (unsigned long)(WSPR_FREQ1);
+unsigned long freq = (unsigned long)(WSPR_FREQ1); 
+volatile int freqCnt;
 
 #include <Wire.h> // For aprs
 // #include <TimeLib.h>
@@ -51,6 +53,7 @@ enum mode
   MODE_JT9,
   MODE_WSPR
 };
+
 
 Si5351 si5351;
 JTEncode jtencode;
@@ -110,7 +113,7 @@ void waitForEvenMinute();
 // This was necessary in the past when using commericial
 // SI5351 Arduino modules with inexpensive TXCOs
 // When CALIBRATION is defined, The calibration code is included in the compile.
-// #define CALIBRATION
+#define CALIBRATION
 
 // COUNTER_PIN is the PA04 of SAMD21 processor and is connected to CLK_CAL of the SI 5351
 //  OF THE Si5351.  This depends on the porcessor board
@@ -118,10 +121,9 @@ void waitForEvenMinute();
 #define COUNTER_PIN 18  //  Use cpu pin 18 for MKE Zero this coresponds to pin A3
 
 // #define interruptPinPPS 2 // pin connected to the GPS pps output pin for XIAO
-#define interruptPinPPS 17 // pin connected to the GPS pps output pin for mkr zero
+#define interruptPinPPS 0 // pin connected to the GPS pps output pin for mkr zero
 
-#define RANDOM_PIN 0 // used to generate a seed for the random number gerator
-#define RFPIN LED_BUILTIN     // Can be used to turn off si5351 see rf_off() and sleep()
+#define RFPIN 5    // Can be used to turn off si5351 see rf_off() and sleep()
 #define SLEEP_PIN LED_BUILTIN // Not used - can be used to turn off system between transmissions see sleep()
 #define DBGPIN LED_BUILTIN
 #define SENSOR_PIN0 0 // Generic analog sensor -- can be changed to any unused pin
@@ -149,7 +151,7 @@ void setup()
 #ifdef DEBUG
   Serial.begin(9600);
 #endif
-  delay(1000);
+  delay(2000);
   POUTPUT(F(" Starting "));
 
 #ifndef DEBUG
@@ -157,14 +159,9 @@ void setup()
   Serial.println(" Debug messages are turned off ");
 #endif
   clock.begin();
-  //HF_init();  
-  // for (int j = 1; j<5;++j)
-  //   {
-  //     beep();
-  //     delay(3000);
-  //   }
 
   // pinMode(SENSOR_PIN, INPUT);
+  pinMode(DBGPIN, OUTPUT);
   pinMode(RFPIN, OUTPUT);
   pinMode(SLEEP_PIN, OUTPUT);
   pinMode(GPS_POWER, OUTPUT);
@@ -174,6 +171,7 @@ void setup()
 #ifdef CALIBRATION
   si5351_calibrate_init();
 #endif
+   rf_beep();  // Send dashes to test Si5351  - below band by up to 200 Hz
   // Temp.init();
   // float cpuTemp = Temp.readInternalTemperature();
   float cpuTemp = 0;
@@ -206,13 +204,15 @@ void loop()   //*********************  Loop *********************
   attachInterrupt(digitalPinToInterrupt(interruptPinPPS), PPSinterrupt, RISING);
   Si5351InterruptSetup();
   POUTPUTLN((F(" Waiting for SI5351 calibration to complete ")));
+  int ical = 15;
   while (CalibrationDone == false)
   {
 #ifdef DEBUG_SI5351
     CalibrationDone = true;
 #endif
     delay(1000);
-    POUTPUTLN((tcount));
+    ical-- ;
+    POUTPUTLN((ical));
   }
   detachInterrupt(digitalPinToInterrupt(interruptPinPPS)); // Disable the gps pps interrupt
 #else
