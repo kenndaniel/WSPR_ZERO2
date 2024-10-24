@@ -1,0 +1,12 @@
+#define CLOCKCAL A3
+#define PANEL_VOLTS A4
+#define CSO A5
+#define CSI A6
+#define PROG_RESET D2
+#define VCO_CTRL D3
+#define PWR_CTRL D5
+#define GPS_PPS D0
+#define GPS_RX D13
+#define GPS_TX D14
+#define nRESET D7
+#define ON_OFF D6
