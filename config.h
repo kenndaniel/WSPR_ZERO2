@@ -9,12 +9,14 @@
 */
 
 #define DEBUG // Debug output is generated if DEBUG is defined
-// #define DEBUG_SI5351  // Send on first even minute
-// #define DEBUG_SI5351_wo_GPS // Uncomment this and previous when testing without the GPS module attached.
+//#define DEBUG_SI5351  // Send on first even minute
+//#define DEBUG_SI5351_wo_GPS // Uncomment this and previous when testing without the GPS module attached.
 //const char call[] = "KM4YHI";     // Amateur callsign
 const char call[] = "K9YO";     // Amateur callsign
 const char std_telemID[] = "Q3";  // Standard telemetry prefix e.g. Q1 is Qx1xxx
-const int send_time_slot = 0;   // the time slot for the telemetry transmission : 0,2,4,6 or 8
+// the time slot for the telemetry transmission : 0,2,4,6 or 8 corresponds to the LU7AA input parameter
+// The standard WSPR transmission will start on send_time_slot - 2 minutes
+const int send_time_slot = 8;   
 
 // WSPR Band Center Frequencies (Do not change)
 #define WSPR_30m      10140200UL  // Center of WSPR 30m band 
@@ -33,7 +35,6 @@ const int send_time_slot = 0;   // the time slot for the telemetry transmission 
 #define SI5351_XTAL 27000000UL  // Standard
 //#define SI5351_XTAL 25000000UL  // use for Arduino Adafruit module or equivalent
 // gps must lock position within 15 minutes or system will sleep or use the default location if the clock was set
-//#define SI5351_XTAL 25000000UL  // Arduino Adafruit Si5351 module
 #define GPS_TIMEOUT 900000 
 
 // APRS Variables included in case of combination of WSPR with APRS
