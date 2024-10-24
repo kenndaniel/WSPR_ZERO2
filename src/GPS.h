@@ -182,11 +182,7 @@ bool gpsGetData()
       POUTPUT((F(" Number of satellites found ")));
       POUTPUTLN((satellites));
       SetCPUClock(gps);
-<<<<<<< HEAD
-      randomSeed(millis()%1000);
-=======
       randomSeed(millis() % 1000);
->>>>>>> 1d1c00c (OLED integration)
       // start transmission loop
       return true;
     }

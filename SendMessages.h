@@ -53,45 +53,6 @@ void SendWSPRMessages() // Timing
 
   POUTPUT((F("Waiting for the send time for time slot ")));
   POUTPUTLN((send_time_slot));
-<<<<<<< HEAD
-  // Wait for the beginning of the even minute after xtal calibration is completed
-  while (!((int)minute() % 2 == 0 && (int)second() < 2 && CalibrationDone == true && sendMinute == true))
-  {
-#ifdef DEBUG_SI5351
-    waitForEvenMinute();
-    break;
-#endif
-
-    if ((int)minute() % 10 == (send_time_slot - 2))
-      sendMinute = true;
-    if (send_time_slot == 0 && (int)minute() % 10 == 8)
-      sendMinute = true;
-
-    if (CalibrationDone == true)
-    {
-      si5351_calibrate_off();
-    }
-
-    time_now = millis();
-    while (millis() < time_now + period)
-    {
-      // wait 50 ms period
-    }
-    curSecond = (int)second();
-    if (curSecond % 5 == 0 && curSecond != stopSecond)
-    {
-      digitalWrite(DBGPIN, HIGH);
-
-      stopSecond = curSecond;
-      POUTPUT((minute()));
-      POUTPUT((":"));
-      POUTPUTLN(((int)second()));
-    }
-    else
-    {
-      digitalWrite(DBGPIN, LOW);
-    }
-=======
   OLEDrotate(String("Wait for Send Time"),INFO);
   int beginTime = send_time_slot-2;
   if (send_time_slot == 0)  beginTime = 8;
@@ -129,7 +90,6 @@ void SendWSPRMessages() // Timing
       {
         digitalWrite(DBGPIN, LOW);
       }
->>>>>>> 1d1c00c (OLED integration)
   }
 
   // Send standard WSPR message Frequency 1
@@ -137,14 +97,6 @@ void SendWSPRMessages() // Timing
   POUTPUTLN(F(" Sending Standard Message "));
 
   digitalWrite(DBGPIN, HIGH);
-<<<<<<< HEAD
-  transmit(); // begin radio transmission
-  // rf_off();
-  //  Send standard telemetry message
-  code_standard_telemetry_callsign(); // Set the telemetry callsign
-  code_telemety_loc();                // Set the telemetry location
-  code_telemetry_power();             // Set the telemetry power
-=======
   OLEDrotate(String("Sending Std WSPR Msg"),INFO);
   transmit();      // begin radio transmission
   //rf_off(); 
@@ -152,19 +104,14 @@ void SendWSPRMessages() // Timing
   code_standard_telemetry_callsign();    // Set the telemetry callsign 
   code_telemety_loc();          // Set the telemetry location
   code_telemetry_power();       // Set the telemetry power
->>>>>>> 1d1c00c (OLED integration)
   POUTPUTLN((F("Waiting for Standard Telemetry Message ")));
   setModeWSPR_telem(); // set WSPR telemetry message mode
   waitForEvenMinute();
   POUTPUTLN((F("Sending  Standard Telemetry Message ")));
   digitalWrite(DBGPIN, HIGH);
-<<<<<<< HEAD
-  transmit(); // begin radio transmission
-=======
   OLEDrotate(String("Sending 1st Telem Msg"),INFO);
   transmit();            // begin radio transmission
    
->>>>>>> 1d1c00c (OLED integration)
 
   initSensors();
   readSensors();
@@ -177,42 +124,27 @@ void SendWSPRMessages() // Timing
 
   waitForEvenMinute();
   POUTPUTLN((F("Sending Pressure/Temp/Humidity Telemetry Message")));
-<<<<<<< HEAD
-  transmit(); // begin radio transmission
-=======
   OLEDrotate(String("Sending 2nd Telem Msg"),INFO);
   transmit();      // begin radio transmission
->>>>>>> 1d1c00c (OLED integration)
 
   code_speed_direction_message();
   code_telemetry_power(); // Set the telemetry power
   setModeWSPR_telem();    // set WSPR telemetry message mode
   waitForEvenMinute();
   POUTPUTLN((F("Sending Speed/Direction Telemetry Message")));
-<<<<<<< HEAD
-  transmit(); // begin radio transmission
-=======
   OLEDrotate(String("Sending 3rd Telem Msg"),INFO);
   transmit();      // begin radio transmission
->>>>>>> 1d1c00c (OLED integration)
 
   POUTPUTLN((F("****** lOOP RESET RESET RESET RESET **********")));
   resetFunc(); // Reset Arduino - program stats from the beginning
 }
 
-<<<<<<< HEAD
-void waitForEvenMinute()
-{
-  POUTPUTLN((F(" Waiting for Even Minute ")));
-  int stopSecond = 0;
-=======
 
 void waitForEvenMinute()
 {
   POUTPUTLN((F(" Waiting for Even Minute ")));
   OLEDrotate(String("Wait for Even Min"),INFO);
    int stopSecond = 0;
->>>>>>> 1d1c00c (OLED integration)
   int curSecond = 0;
 
   const unsigned long period = 50;
@@ -227,20 +159,6 @@ void waitForEvenMinute()
 
     curSecond = (int)second();
 
-<<<<<<< HEAD
-    if (curSecond % 2 == 0 && curSecond != stopSecond)
-    {
-      digitalWrite(DBGPIN, LOW);
-      stopSecond = curSecond;
-      POUTPUT((minute()));
-      POUTPUT((":"));
-      POUTPUTLN(((int)second()));
-    }
-    else
-    {
-      digitalWrite(DBGPIN, HIGH);
-    }
-=======
       if (curSecond % 2 == 0 && curSecond != stopSecond)
       {
         digitalWrite(DBGPIN, LOW);
@@ -255,7 +173,6 @@ void waitForEvenMinute()
         digitalWrite(DBGPIN, HIGH);
       }
     
->>>>>>> 1d1c00c (OLED integration)
   }
 }
 

@@ -77,10 +77,7 @@ bool si5351_init()
   if (checkI2C == false)
   {
    POUTPUTLN((F("  XXXXXXXXX Si5351 i2c failure - Check wiring")));
-<<<<<<< HEAD
-=======
    OLEDrotate(F("Si5351 i2c failed"),ERROR);
->>>>>>> 1d1c00c (OLED integration)
     return false;
   }
 
@@ -197,17 +194,10 @@ void rf_beep()
   for (int j = 10; j>=0;--j)
     {
       si5351.set_freq((freq1 * 100) + (11 * tone_spacing), XMIT_CLOCK0); 
-<<<<<<< HEAD
-      delay(1000);
-      si5351.set_freq((freq1 * 100) + (1 * tone_spacing), XMIT_CLOCK0); 
-      delay(1000);
-        // Turn off the output
-=======
       delay(500);
       si5351.set_freq((freq1 * 100) + (1 * tone_spacing), XMIT_CLOCK0); 
       delay(500);
       OLEDnoRotate(String(j),INFO);
->>>>>>> 1d1c00c (OLED integration)
     }
     // Turn off the output
     rf_off();
