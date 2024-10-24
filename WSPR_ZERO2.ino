@@ -35,15 +35,20 @@ volatile float correction = 1;
 unsigned long freq = (unsigned long)(WSPR_FREQ1); 
 volatile int freqCnt;
 
-#include <Wire.h> // For aprs
+#include <Wire.h> 
 // #include <TimeLib.h>
+#ifdef PICO
+#include <machine.h>
+RTC clock = machine.RTC();
+#else
 #include <RTCZero.h>
+RTCZero clock;
+#endif
 // #include <avr/interrupt.h>
 // #include <avr/io.h>
-// #include "src/si5351-16QFN.h"
 #include <si5351.h>
 #include <JTEncode.h>
-#include <TinyGPS++.h>
+#include <TinyGPSPlus.h>
 
 TinyGPSPlus gps;
 
@@ -57,7 +62,6 @@ enum mode
 
 Si5351 si5351;
 JTEncode jtencode;
-RTCZero clock;
 
 #define MIN_VOLTAGE 2.6
 
@@ -131,8 +135,9 @@ void waitForEvenMinute();
 #define GPS_SEARCHING LED_BUILTIN
 #define INPUT_VOLTAGE 2 // measures solar panel voltage
 #define GPS_POWER LED_BUILTIN    // Pull down to turn on GPS module (not used) see sleep()
-static const uint32_t GPSBaud = 9600;
 
+#include "NIBBBpins.h"
+#include "OLED.h"
 // #include "./src/TemperatureZero.h" // for reading the cpu internal temperature
 // TemperatureZero Temp = TemperatureZero();
 #include "./src/Sensors.h"
@@ -152,7 +157,10 @@ void setup()
   Serial.begin(9600);
 #endif
   delay(2000);
-  POUTPUT(F(" Starting "));
+
+  OLEDinit();
+  POUTPUTLN(F(" Starting "));
+
 
 #ifndef DEBUG
   Serial.begin(9600);
@@ -165,12 +173,13 @@ void setup()
   pinMode(RFPIN, OUTPUT);
   pinMode(SLEEP_PIN, OUTPUT);
   pinMode(GPS_POWER, OUTPUT);
-  pinMode(INPUT_VOLTAGE, INPUT);
+  pinMode(PANEL_VOLTS, INPUT);
   digitalWrite(RFPIN, LOW);
   digitalWrite(SLEEP_PIN, LOW);
-#ifdef CALIBRATION
-  si5351_calibrate_init();
-#endif
+
+  digitalWrite(DBGPIN, LOW);
+
+
    rf_beep();  // Send dashes to test Si5351  - below band by up to 200 Hz
   // Temp.init();
   // float cpuTemp = Temp.readInternalTemperature();
@@ -181,6 +190,7 @@ void setup()
   POUTPUT(F(" Voltage "));
   volts = readVcc();
   POUTPUTLN((volts));
+  OLEDrotate(String(" Voltage ")+String(volts), INFO);
 
   digitalWrite(DBGPIN, HIGH);
 
@@ -199,22 +209,40 @@ void loop()   //*********************  Loop *********************
 
 #ifdef CALIBRATION
   // Calibrate Si5351 Xtal
+  si5351_calibrate_init();
   pinMode(interruptPinPPS, INPUT_PULLUP);
   // Set 1PPS pin for external interrupt input
   attachInterrupt(digitalPinToInterrupt(interruptPinPPS), PPSinterrupt, RISING);
   Si5351InterruptSetup();
   POUTPUTLN((F(" Waiting for SI5351 calibration to complete ")));
+  OLEDrotate(F("Wait for Calibration "), INFO);
+  OLEDbeginNoRotate();
   int ical = 15;
+  CalibrationDone == false;
   while (CalibrationDone == false)
-  {
-#ifdef DEBUG_SI5351
-    CalibrationDone = true;
-#endif
+  { 
+    #ifdef DEBUG_SI5351
+        CalibrationDone = true;
+    #endif
     delay(1000);
     ical-- ;
     POUTPUTLN((ical));
+    OLEDnoRotate(String(ical),INFO);
+    if (ical < 0)
+    {
+      POUTPUTLN((F(" Error no pps calibration signal ")));
+      OLEDrotate(F("Error no PPS signal"),ERROR);
+      break;
+    }
+  }
+  if (correction > 1.01 || correction < .99)
+  {
+    POUTPUTLN((F(" Error calibration count too large or too small ")));
+    OLEDrotate(F("Calibration Cnt Wrong"),ERROR);
+    correction = 1;
   }
   detachInterrupt(digitalPinToInterrupt(interruptPinPPS)); // Disable the gps pps interrupt
+  si5351_calibrate_off();
 #else
   CalibrationDone = true;
 #endif
