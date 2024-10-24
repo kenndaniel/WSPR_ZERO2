@@ -25,7 +25,7 @@ float temp = 0.;
 
 int readVcc() 
 {  //Read voltage in mV 5000 = 5v
-	unsigned int sensorValue = analogRead(INPUT_VOLTAGE);
+	unsigned int sensorValue = analogRead(PANEL_VOLTS);
   int result = sensorValue * 5000/1023;
   return result;
 }
