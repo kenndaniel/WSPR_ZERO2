@@ -1,6 +1,7 @@
 /*
    GPS functions
 */
+static const uint32_t GPSBaud = 9600;
 
 void gps_reset()
 {
@@ -32,7 +33,7 @@ bool SetCPUClock(TinyGPSPlus gps)
   h = gps.time.hour();
   m = gps.time.minute();
   s = gps.time.second();
-  //Serial.println(" d" + String(d) + " m" + String(mon) + " y" + String(y) + " a" + String(age));
+  // Serial.println(" d" + String(d) + " m" + String(mon) + " y" + String(y) + " a" + String(age));
   age = gps.time.age(); // Time since sat syncronization - add to sat time
 
   if (age > 1000 && age < (195000)) // limited to size of byte 255-60
@@ -54,7 +55,7 @@ bool SetCPUClock(TinyGPSPlus gps)
   }
   // Conversion to real time clock on SAMD21 processor
   clock.setTime(h, m, s);
-  clock.setDate(d, mon, y%2000);
+  clock.setDate(d, mon, y % 2000);
 
   // setTime((int)h, (int)m, (int)s, (int)d, (int)mon, (int)y);
   // if (timeStatus() != timeSet)
@@ -80,11 +81,10 @@ int second()
   return clock.getSeconds();
 }
 
-
 bool gpsSearch = true;
 void beep()
-{   // turn led on and off while searching for satellites
-  if(gpsSearch)
+{ // turn led on and off while searching for satellites
+  if (gpsSearch)
   {
     digitalWrite(DBGPIN, HIGH);
     gpsSearch = false;
@@ -95,7 +95,6 @@ void beep()
     gpsSearch = true;
   }
 }
-
 
 // not needed for newer gps units
 void gpsOn()
@@ -132,11 +131,16 @@ long loopi = 0;
 bool gpsGetData()
 {
   bool clockSet = false, locSet = false, altitudeSet = false, speedSet = false;
+#ifdef PICO
+  UART ss(8, 9, NC, NC);
+#endif
+
   Serial1.begin(GPSBaud);
   delay(100);
   gpsStartTime = millis();
   bool hiAltitudeSet = false;
   POUTPUTLN((F("Waiting for GPS to find satellites - 5-10 min")));
+  OLEDrotate("Waiting for GPS Lock ", INFO);
   while (millis() < gpsStartTime + gpsTimeout)
   {
     // wdt_reset();
@@ -151,9 +155,9 @@ bool gpsGetData()
     }
 
     if (gps.time.isUpdated() && gps.satellites.value() > 0 && clockSet == false)
-      {
-        clockSet = true;
-      }
+    {
+      clockSet = true;
+    }
     if (gps.altitude.isUpdated())
     {
       gpsAltitude = gps.altitude.meters();
@@ -178,7 +182,11 @@ bool gpsGetData()
       POUTPUT((F(" Number of satellites found ")));
       POUTPUTLN((satellites));
       SetCPUClock(gps);
+<<<<<<< HEAD
       randomSeed(millis()%1000);
+=======
+      randomSeed(millis() % 1000);
+>>>>>>> 1d1c00c (OLED integration)
       // start transmission loop
       return true;
     }
@@ -213,20 +221,20 @@ bool gpsGetData()
     return true;
 #endif
   }
-    POUTPUTLN((F(" GPS Timeout - no satellites found ")));
-  
+  POUTPUTLN((F(" GPS Timeout - no satellites found ")));
+
   return false;
-   /*  if(clockSet==true)
-  {
-    // Send report anyway if only the clock has been set
-    clockSet = false; // needed for testing only
-    locSet = false;
-    altitudeSet = false;
-    speedSet = false;
-    return true;
-  }
-  else
-  {
-    return false;
-  } */
+  /*  if(clockSet==true)
+ {
+   // Send report anyway if only the clock has been set
+   clockSet = false; // needed for testing only
+   locSet = false;
+   altitudeSet = false;
+   speedSet = false;
+   return true;
+ }
+ else
+ {
+   return false;
+ } */
 }
