@@ -78,6 +78,7 @@ bool si5351_init()
   {
    POUTPUTLN((F("  XXXXXXXXX Si5351 i2c failure - Check wiring")));
    OLEDrotate(F("Si5351 i2c failed"),ERROR);
+   delay(60000);
     return false;
   }
 
