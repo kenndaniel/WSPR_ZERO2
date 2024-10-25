@@ -69,7 +69,7 @@ void setModeWSPR_telem()
 
 bool si5351_init()
 {
-  digitalWrite(RFPIN, HIGH);
+  digitalWrite(RF_PWR, HIGH);
   delay(10);
 
   POUTPUTLN((F(" SI5351 Start Initialization "))); 
@@ -98,7 +98,7 @@ void si5351_calibrate_init()
 void si5351_calibrate_off()
 {
   si5351.output_enable(CLK_CAL, 0);
-  digitalWrite(RFPIN, LOW);
+
 }
 
 
@@ -129,8 +129,14 @@ void rf_off()
   si5351.output_enable(XMIT_CLOCK0, 0); 
   if (twoChanel)
     si5351.output_enable(XMIT_CLOCK1, 0);
-  digitalWrite(RFPIN, LOW);
 }
+
+void rf_pwr_off()
+{  
+  digitalWrite(RF_PWR, LOW);
+}
+
+
 
 /*
    Message encoding

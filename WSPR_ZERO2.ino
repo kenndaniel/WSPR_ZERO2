@@ -62,7 +62,7 @@ enum mode
 
 Si5351 si5351;
 JTEncode jtencode;
-
+#include "NIBBBpins.h"
 #define MIN_VOLTAGE 2.6
 
 // float tempOutside, pressure; // set once in tempPress.h
@@ -122,21 +122,15 @@ void waitForEvenMinute();
 // COUNTER_PIN is the PA04 of SAMD21 processor and is connected to CLK_CAL of the SI 5351
 //  OF THE Si5351.  This depends on the porcessor board
 // #define COUNTER_PIN 1 // Use cpu pin 1 for XIOA this corresponds to pin A1.
-#define COUNTER_PIN 18  //  Use cpu pin 18 for MKE Zero this coresponds to pin A3
+//#define COUNTER_PIN 18  //  Use cpu pin 18 for MKE Zero this coresponds to pin A3
 
 // #define interruptPinPPS 2 // pin connected to the GPS pps output pin for XIAO
-#define interruptPinPPS 0 // pin connected to the GPS pps output pin for mkr zero
+//#define interruptPinPPS 0 // pin connected to the GPS pps output pin for mkr zero
 
-#define RFPIN 5    // Can be used to turn off si5351 see rf_off() and sleep()
 #define SLEEP_PIN LED_BUILTIN // Not used - can be used to turn off system between transmissions see sleep()
 #define DBGPIN LED_BUILTIN
-#define SENSOR_PIN0 0 // Generic analog sensor -- can be changed to any unused pin
-#define SENSOR_PIN1 0
 #define GPS_SEARCHING LED_BUILTIN
-#define INPUT_VOLTAGE 2 // measures solar panel voltage
-#define GPS_POWER LED_BUILTIN    // Pull down to turn on GPS module (not used) see sleep()
 
-#include "NIBBBpins.h"
 #include "OLED.h"
 // #include "./src/TemperatureZero.h" // for reading the cpu internal temperature
 // TemperatureZero Temp = TemperatureZero();
@@ -170,13 +164,18 @@ void setup()
 
   // pinMode(SENSOR_PIN, INPUT);
   pinMode(DBGPIN, OUTPUT);
-  pinMode(RFPIN, OUTPUT);
+  pinMode(PWR_CTRL, OUTPUT);
   pinMode(SLEEP_PIN, OUTPUT);
-  pinMode(GPS_POWER, OUTPUT);
-  pinMode(PANEL_VOLTS, INPUT);
-  digitalWrite(RFPIN, LOW);
-  digitalWrite(SLEEP_PIN, LOW);
 
+  pinMode(GPS_PWR, OUTPUT);
+  digitalWrite(GPS_PWR,HIGH);
+
+  pinMode(GPS_nRESET, OUTPUT);
+  digitalWrite(GPS_nRESET, HIGH);
+
+  pinMode(PANEL_VOLTS, INPUT);
+  digitalWrite(RF_PWR, LOW);
+  digitalWrite(SLEEP_PIN, LOW);
   digitalWrite(DBGPIN, LOW);
 
 

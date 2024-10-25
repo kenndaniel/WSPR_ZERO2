@@ -3,11 +3,7 @@
 */
 static const uint32_t GPSBaud = 9600;
 
-void gps_reset()
-{
-  rf_off();  // RF sometimes gets stuck on - make sure it is off
-  Serial1.write("$PCAS10,0*1D\r\n");
-}
+
 
 void atgm336h_SingleGPSworkingMode()
 {
@@ -99,28 +95,33 @@ void beep()
 // not needed for newer gps units
 void gpsOn()
 {
-  // not used
-  // digitalWrite(GPS_POWER, LOW);
+  rf_pwr_off();  // RF sometimes gets stuck on - make sure it is off
+  digitalWrite(GPS_PWR, HIGH);
+  digitalWrite(GPS_nRESET, HIGH);
 }
 
 void gpsOff()
 {
-  // not used
-  // digitalWrite(TxPin, LOW);
-  // #ifndef GPS_CHARGE
-  // digitalWrite(GPS_POWER, HIGH);
-  // #endif
+  digitalWrite(GPS_PWR, LOW);
+  rf_on();
 }
 
 void gpsBounce()
 {
-  // Not used for newer gps
-  //  Turn the power to GPS off and after .5 sec turn it on again
-  // gpsOff();
-  // delay(500);
-  // gpsOn();
+  //Turn GPS off and on
+  gpsOff();
+  delay(100);
+  gpsOn();
 }
 
+void gps_reset()
+{
+  digitalWrite(GPS_nRESET, LOW);
+  delay(1);
+  digitalWrite(GPS_nRESET, HIGH);
+  
+  Serial1.write("$PCAS10,0*1D\r\n"); // software reset
+}
 // gps must lock position within 15 minutes or system will sleep or use the default location if the clock was set
 unsigned long gpsTimeout = GPS_TIMEOUT; // in milliseconds
 unsigned long gpsStartTime = 0;
@@ -130,6 +131,7 @@ long loopi = 0;
 */
 bool gpsGetData()
 {
+  gpsOn();
   bool clockSet = false, locSet = false, altitudeSet = false, speedSet = false;
 #ifdef PICO
   UART ss(8, 9, NC, NC);
@@ -196,6 +198,7 @@ bool gpsGetData()
     {
 
       POUTPUTLN((F("WARNING: No GPS data.  Check wiring.")));
+      OLEDnoRotate(F("No Comm with GPS "),ERROR);
       // blink moris code "w" for wiring
       digitalWrite(DBGPIN, LOW);
       delay(150);
