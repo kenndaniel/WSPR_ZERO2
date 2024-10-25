@@ -92,7 +92,6 @@ void beep()
   }
 }
 
-// not needed for newer gps units
 void gpsOn()
 {
   rf_pwr_off();  // RF sometimes gets stuck on - make sure it is off
@@ -103,19 +102,20 @@ void gpsOn()
 void gpsOff()
 {
   digitalWrite(GPS_PWR, LOW);
-  rf_on();
 }
 
 void gpsBounce()
 {
   //Turn GPS off and on
   gpsOff();
-  delay(100);
+  delay(3);
   gpsOn();
 }
 
 void gps_reset()
 {
+  gpsBounce();
+  delay(3);
   digitalWrite(GPS_nRESET, LOW);
   delay(1);
   digitalWrite(GPS_nRESET, HIGH);
@@ -221,19 +221,8 @@ bool gpsGetData()
 #endif
   }
   POUTPUTLN((F(" GPS Timeout - no satellites found ")));
+  OLEDnoRotate(F("No Sats-Trying again"),ERROR);
 
   return false;
-  /*  if(clockSet==true)
- {
-   // Send report anyway if only the clock has been set
-   clockSet = false; // needed for testing only
-   locSet = false;
-   altitudeSet = false;
-   speedSet = false;
-   return true;
- }
- else
- {
-   return false;
- } */
+
 }
