@@ -99,7 +99,7 @@ void SendWSPRMessages() // Timing
   digitalWrite(DBGPIN, HIGH);
   OLEDrotate(String("Sending Std WSPR Msg"),INFO);
   transmit();      // begin radio transmission
-  //rf_off(); 
+ 
   // Send standard telemetry message
   code_standard_telemetry_callsign();    // Set the telemetry callsign 
   code_telemety_loc();          // Set the telemetry location
