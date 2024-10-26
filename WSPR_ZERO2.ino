@@ -117,7 +117,7 @@ void waitForEvenMinute();
 // This was necessary in the past when using commericial
 // SI5351 Arduino modules with inexpensive TXCOs
 // When CALIBRATION is defined, The calibration code is included in the compile.
-#define CALIBRATION
+//#define CALIBRATION
 
 // COUNTER_PIN is the PA04 of SAMD21 processor and is connected to CLK_CAL of the SI 5351
 //  OF THE Si5351.  This depends on the porcessor board
@@ -179,7 +179,7 @@ void setup()
   digitalWrite(DBGPIN, LOW);
 
 
-   rf_beep();  // Send dashes to test Si5351  - below band by up to 200 Hz
+  rf_beep();  // Send dashes to test Si5351  - below band by up to 200 Hz
   // Temp.init();
   // float cpuTemp = Temp.readInternalTemperature();
   float cpuTemp = 0;
@@ -196,7 +196,6 @@ void setup()
   gpsStartTime = millis();
 }
 
-bool rfpinon = false;
 void loop()   //*********************  Loop *********************
 {
   bool getInfo = gpsGetData();
@@ -205,19 +204,23 @@ void loop()   //*********************  Loop *********************
     gps_reset();
     return; // try again
   }
-
+  
+//calibrateFreq(); // calibrate the SI5351 frequency
 #ifdef CALIBRATION
   // Calibrate Si5351 Xtal
   si5351_calibrate_init();
   pinMode(interruptPinPPS, INPUT_PULLUP);
+  tcount = 0;
   // Set 1PPS pin for external interrupt input
   attachInterrupt(digitalPinToInterrupt(interruptPinPPS), PPSinterrupt, RISING);
   Si5351InterruptSetup();
   POUTPUTLN((F(" Waiting for SI5351 calibration to complete ")));
   OLEDrotate(F("Wait for Calibration "), INFO);
   OLEDbeginNoRotate();
-  int ical = 15;
+  int ical = 14;
   CalibrationDone == false;
+  Serial.print(" Init Correction ");
+  Serial.println(CalibrationDone);
   while (CalibrationDone == false)
   { 
     #ifdef DEBUG_SI5351
@@ -234,6 +237,9 @@ void loop()   //*********************  Loop *********************
       break;
     }
   }
+  Serial.println(tcount);
+  Serial.print(" Correction ");
+  Serial.println(CalibrationDone);
   if (correction > 1.01 || correction < .99)
   {
     POUTPUTLN((F(" Error calibration count too large or too small ")));
@@ -241,6 +247,7 @@ void loop()   //*********************  Loop *********************
     correction = 1;
   }
   detachInterrupt(digitalPinToInterrupt(interruptPinPPS)); // Disable the gps pps interrupt
+
   si5351_calibrate_off();
 #else
   CalibrationDone = true;

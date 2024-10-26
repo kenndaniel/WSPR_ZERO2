@@ -13,7 +13,7 @@
 //#define DEBUG_SI5351_wo_GPS // Uncomment this and previous when testing without the GPS module attached.
 //const char call[] = "KM4YHI";     // Amateur callsign
 const char call[] = "K9YO";     // Amateur callsign
-const char std_telemID[] = "Q3";  // Standard telemetry prefix e.g. Q1 is Qx1xxx
+const char std_telemID[] = "18";  // Standard telemetry prefix e.g. Q1 is Qx1xxx
 // the time slot for the telemetry transmission : 0,2,4,6 or 8 corresponds to the LU7AA input parameter
 // The standard WSPR transmission will start on send_time_slot - 2 minutes
 const int send_time_slot = 8;   
@@ -28,7 +28,7 @@ const int send_time_slot = 8;
 // Technician license holders should set WSPR_FREQ to WSPR_10m
 // First band to transmit on
 #define WSPR_FREQ1      WSPR_20m
-#define FREQ_BIAS   -50   // added to WSPR_FREQ1
+#define FREQ_BIAS   -40   // added to WSPR_FREQ1
 #define SPREAD_SPECTRUM 2  // random +- change to frequency
 
 // Reference txco frequency for SI5351
