@@ -181,8 +181,7 @@ void setup()
 
   rf_beep();  // Send dashes to test Si5351  - below band by up to 200 Hz
   // Temp.init();
-  // float cpuTemp = Temp.readInternalTemperature();
-  float cpuTemp = 0;
+  float cpuTemp = getTempCPU();
   POUTPUT((F(" Temperture ")));
   POUTPUTLN((cpuTemp));
 

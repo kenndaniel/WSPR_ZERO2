@@ -13,10 +13,10 @@
 //#define DEBUG_SI5351_wo_GPS // Uncomment this and previous when testing without the GPS module attached.
 //const char call[] = "KM4YHI";     // Amateur callsign
 const char call[] = "K9YO";     // Amateur callsign
-const char std_telemID[] = "18";  // Standard telemetry prefix e.g. Q1 is Qx1xxx
+const char std_telemID[] = "Q8";  // Standard telemetry prefix e.g. Q1 is Qx1xxx
 // the time slot for the telemetry transmission : 0,2,4,6 or 8 corresponds to the LU7AA input parameter
 // The standard WSPR transmission will start on send_time_slot - 2 minutes
-const int send_time_slot = 8;   
+const int send_time_slot = 6;   
 
 // WSPR Band Center Frequencies (Do not change)
 #define WSPR_30m      10140200UL  // Center of WSPR 30m band 
