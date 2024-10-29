@@ -5,7 +5,7 @@
 // #include <wdt_samd21.h>
 void resetFunc() // Reset the Arduino
 {
-  // wdt_init ( WDT_CONFIG_PER_8  );
+  return;
 }
 
 void charArrayCpy(char dest[], char src[], int cnt)
@@ -112,7 +112,7 @@ void SendWSPRMessages() // Timing
   OLEDrotate(String("Sending 1st Telem Msg"),INFO);
   transmit();            // begin radio transmission
    
-
+  return;
   initSensors();
   readSensors();
 
