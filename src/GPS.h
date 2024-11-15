@@ -168,6 +168,7 @@ bool gpsGetData()
     if (gps.speed.isUpdated())
     {
       gpsSpeed = gps.speed.kmph();
+      gpsSpeedKnots = gps.speed.knots()
       gpsCourse = gps.course.deg();
       speedSet = true;
     }

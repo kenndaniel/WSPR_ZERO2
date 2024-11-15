@@ -136,5 +136,20 @@ char codePos2(float altitude)
     return let[i];
 }
 
+char EncodeBase36(uint8_t val)
+// Returns the value of 0-9-A-Z
+    {
+        char retVal;
 
+        if (val < 10)
+        {
+            retVal = '0' + val;
+        }
+        else
+        {
+            retVal = 'A' + (val - 10);
+        }
+
+        return retVal;
+    }
 

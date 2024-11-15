@@ -68,7 +68,8 @@ JTEncode jtencode;
 // float tempOutside, pressure; // set once in tempPress.h
 int volts = 0;
 double gpsAltitude = 0; // Testing value
-float gpsSpeed = 0.;   // Testing values
+float gpsSpeed = 0.;   // kmph
+float gpsSpeedKnots =0.; // knots per hr
 float gpsCourse =0.;
 char call_telemetry[7]; // WSPR telemetry callsign
 char loc_telemetry[5];  // WSPR telemetry locator

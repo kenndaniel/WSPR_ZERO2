@@ -14,6 +14,8 @@
 //const char call[] = "KM4YHI";     // Amateur callsign
 const char call[] = "K9YO";     // Amateur callsign
 const char std_telemID[] = "Q8";  // Standard telemetry prefix e.g. Q1 is Qx1xxx
+const char TELEN1_telemID[] = "Q1";
+const char TELEN2_telemID[] = "Q3";
 // the time slot for the telemetry transmission : 0,2,4,6 or 8 corresponds to the LU7AA input parameter
 // The standard WSPR transmission will start on send_time_slot - 2 minutes
 const int send_time_slot = 6;   
@@ -28,6 +30,7 @@ const int send_time_slot = 6;
 // Technician license holders should set WSPR_FREQ to WSPR_10m
 // First band to transmit on
 #define WSPR_FREQ1      WSPR_20m
+// u4b frequency channels are +-40 and +-80 from the band center
 #define FREQ_BIAS   -40   // added to WSPR_FREQ1
 #define SPREAD_SPECTRUM 2  // random +- change to frequency
 
