@@ -1,13 +1,15 @@
 
 //#include "CustomSensor.h"
 
-code_u4b_telem_callsign()
+
+
+void code_u4b_telem_callsign()
 {
 // Definition of u4b encoding http://qrp-labs.com/flights/s4.html#protocol
 // Example code https://traquito.github.io/pro/code/
 // Encodes the callsign portion of the u4b telemetry message
-  uint8_t grid5Val = loc6[4]-"A"; // 5th character of grid square
-  uint8_t grid6Val = loc6[5] - 'A'; // 6th character of grid square
+  uint8_t grid5Val = loc6[4]; // 5th character of grid square
+  uint8_t grid6Val = loc6[5]; // 6th character of grid square
   double altM = gpsAltitude;
   if (gpsAltitude < 0)     { altM = 0;     }
   if (gpsAltitude > 21340) { altM = 21340; }
@@ -20,40 +22,44 @@ code_u4b_telem_callsign()
       val *=   24; val += grid6Val;
       val *= 1068; val += altFracM;
           // extract into altered dynamic base
-      uint8_t id6Val = val % 26; val = val / 26;
-      uint8_t id5Val = val % 26; val = val / 26;
-      uint8_t id4Val = val % 26; val = val / 26;
-      uint8_t id2Val = val % 36; val = val / 36;
+      int id6Val = val % 26; val = val / 26;
+      int id5Val = val % 26; val = val / 26;
+      int id4Val = val % 26; val = val / 26;
+      int id2Val = val % 36; val = val / 36;
       // convert to encoded CallsignU4B
-      char id2 = EncodeBase36(id2Val);
-      char id4 = 'A' + id4Val;
-      char id5 = 'A' + id5Val;
-      char id6 = 'A' + id6Val;
+      char id2 = encodeBase36(id2Val);
+      char id4 = encodeBase26(id4Val);
+      char id5 = encodeBase26(id5Val);
+      char id6 = encodeBase26(id6Val);
+    call_telemetry[0] =  std_telemID[0];   
+		call_telemetry[1] =  id2;
+		call_telemetry[2] =  std_telemID[1];
+		call_telemetry[3] =  id4;
+		call_telemetry[4] =  id5;
+		call_telemetry[5] =  id6;
+		call_telemetry[6] =  '\0';
 
-    Callsign[0] =  std_telemID[0];   
-		Callsign[1] =  id2;
-		Callsign[2] =  std_telemID[1];
-		Callsign[3] =  id4;
-		Callsign[4] =  id5;
-		Callsign[5] =  id6;
-		Callsign[6] =  '\0';
+
+      POUTPUT((F(call_telemetry)));
+      POUTPUT((F(" ")));
+
 }
 
-code_u4b_telemetry_loc()
+void code_u4b_telemetry_loc()
 {
   // Definition of u4b encoding http://qrp-labs.com/flights/s4.html#protocol
 // Encodes the locator and power value portion of the u4b telemetry message
   double tempC = getTempCPU();
   if (tempC > 39.)
     tempC = 39.;
-  else if (tempC < -50.; )
+  else if (tempC < -50.)
   {
     tempC = 50.;
   }
   double voltage  = readVcc();
     if (voltage > 4.95)
     voltage = 4.95;
-  else if (voltage < 3.; )
+  else if (voltage < 3.)
   {
     voltage = 3.;
   }
@@ -62,7 +68,7 @@ code_u4b_telemetry_loc()
     speed = 82.;
   else if (speed < 0.)
   {
-    speed = 0.
+    speed = 0.;
   }
   
        // map input presentations onto input radix (numbers within their stated range of possibilities)
@@ -85,10 +91,10 @@ code_u4b_telemetry_loc()
         uint8_t g2Val    = val % 18; val = val / 18;
         uint8_t g1Val    = val % 18; val = val / 18;
         // map output radix to presentation
-        char g1 = 'A' + g1Val;
-        char g2 = 'A' + g2Val;
-        char g3 = '0' + g3Val;
-        char g4 = '0' + g4Val;
+        char g1 = encodeBase26(g1Val);
+        char g2 = encodeBase26(g2Val);
+        char g3 = encodeBase10(g3Val);
+        char g4 = encodeBase10(g4Val);
  	
 		loc4_telemetry[0] = g1; 
 		loc4_telemetry[1] = g2;
@@ -96,17 +102,27 @@ code_u4b_telemetry_loc()
 		loc4_telemetry[3] = g4;
 		loc4_telemetry[4] = '\0';
 
-	dbm_telemetry=db[powerVal];
+      POUTPUT((F(call_telemetry)));
+      POUTPUT((F(" ")));
+
+    dbm_telemetry=codeBase19(powerVal);
+      POUTPUTLN((dbm_telemetry));
 
 }
 
-	void encode_telen2(telen_val1,telen_val2,telen_chars, &telen_power,int type) //converts two 32bit ints into 8 characters and one byte to be transmitted
-	{
-    	// TELEN packet  which has value 1 and value 2 (this same routine used for both telen#1 and telen#2). 
-	// first value  gets encoded into the callsign (1st char is alphannumeric, and last three chars are alpha). Full callsign will be ID1, telen_char[0], ID3, telen_CHar[1],  telen_CHar[2], telen_CHar[3]. 
-	// 2nd value gets encoded into GRID and power. grid = telen_CHar[4,5,6,7]. power = telen_power
-	// max val of 1st one ~= 632k (per dave) [19 bits] i had originally thought 651,013 (if first char Z, which ~=35, times 17565(26^3). base 26 used, not base 36, because other chars must be only alpha, not alphanumeric because of Ham callsign conventions)
-	// max val of 2nd one ~= 153k  (per dave) [17 bits] i had thought over 200k....
+void code_u4b_telemetry()
+{
+    code_u4b_telem_callsign();
+    code_u4b_telemetry_loc();
+}
+
+void encode_telen2(telen_val1,telen_val2,telen_chars, &telen_power,int type) //converts two 32bit ints into 8 characters and one byte to be transmitted
+{
+    // TELEN packet  which has value 1 and value 2 (this same routine used for both telen#1 and telen#2). 
+// first value  gets encoded into the callsign (1st char is alphannumeric, and last three chars are alpha). Full callsign will be ID1, telen_char[0], ID3, telen_CHar[1],  telen_CHar[2], telen_CHar[3]. 
+// 2nd value gets encoded into GRID and power. grid = telen_CHar[4,5,6,7]. power = telen_power
+// max val of 1st one ~= 632k (per dave) [19 bits] i had originally thought 651,013 (if first char Z, which ~=35, times 17565(26^3). base 26 used, not base 36, because other chars must be only alpha, not alphanumeric because of Ham callsign conventions)
+// max val of 2nd one ~= 153k  (per dave) [17 bits] i had thought over 200k....
 
         uint32_t val = telen_val1;
 
@@ -116,10 +132,10 @@ code_u4b_telemetry_loc()
         uint8_t id4Val = val % 26; val = val / 26;
         uint8_t id2Val = val % 36; val = val / 36;
         // convert to encoded CallsignU4B
-        telen_chars[0] = EncodeBase36(id2Val);
-        telen_chars[1] = 'A' + id4Val;
-        telen_chars[2] = 'A' + id5Val;
-        telen_chars[3] = 'A' + id6Val;
+        telen_chars[0] = encodeBase36(id2Val);
+        telen_chars[1] = encodeBase26(id4Val);
+        telen_chars[2] =  encodeBase26(id5Val);
+        telen_chars[3] =  encodeBase26(id6Val];
 		
         val = telen_val2*4;  //(bitshift to the left twice to make room for gps bits at end)
       // unshift big number into output radix values
@@ -129,10 +145,10 @@ code_u4b_telemetry_loc()
         uint8_t g2Val    = val % 18; val = val / 18;
         uint8_t g1Val    = val % 18; val = val / 18;
         // map output radix to presentation
-        telen_chars[4] = 'A' + g1Val;
-        telen_chars[5] = 'A' + g2Val;
-        telen_chars[6] = '0' + g3Val;
-        telen_chars[7] = '0' + g4Val;
+        telen_chars[4] = encodeBase26[g1Val];
+        telen_chars[5] = encodeBase26[g2Val];
+        telen_chars[6] = encodeBase10[g3Val];
+        telen_chars[7] = encodeBase10[g4Val];
         telen_chars[8]=0; //null terminate
  		
 
@@ -145,13 +161,16 @@ code_u4b_telemetry_loc()
           powerVal=powerVal+2;   //identifies it as the 2nd extended TELEN packet.  (this is the GPS-valid bit. note for extended TELEN we did NOT set the gps-sat bit)
         }
 
-    Callsign[0] =  telemID[0];   //callsign: id13[0], telen char0, id13[1], telen char1, telen char2, telen char3
-		Callsign[1] =  telen_chars[0];
-		Callsign[2] =  telemID[1];	
-		Callsign[3] =  telen_chars[1];
-		Callsign[4] =  telen_chars[2];
-		Callsign[5] =  telen_chars[3];
-    Callsign[6] =  '\0';
+    call_telemetry[0] =  telemID[0];   //callsign: id13[0], telen char0, id13[1], telen char1, telen char2, telen char3
+		call_telemetry[1] =  telen_chars[0];
+		call_telemetry[2] =  telemID[1];	
+		call_telemetry[3] =  telen_chars[1];
+		call_telemetry[4] =  telen_chars[2];
+		call_telemetry[5] =  telen_chars[3];
+    call_telemetry[6] =  '\0';
+
+      POUTPUT((F(call_telemetry)));
+      POUTPUT((F(" ")));
 
     loc4_telemetry[0]=telen_chars[4];
     loc4_telemetry[1]=telen_chars[5];
@@ -159,7 +178,11 @@ code_u4b_telemetry_loc()
     loc4_telemetry[3]=telen_chars[7];
     loc4_telemetry[4]= '\0'; 
 
+      POUTPUT((F(call_telemetry)));
+      POUTPUT((F(" ")));
+
     dbm_telemetry=db[powerVal];
+      POUTPUTLN((dbm_telemetry));
 
   }
 
@@ -203,33 +226,41 @@ void code_telemetry_power()
   dbm_telemetry = codeFineAltitude(gpsAltitude);
 }
 
-void code_characters(char Callsign[], float gpsSpeed)
+void code_custom_telemetry_callsign()
 {                           // compose the custom telemtry callsign and convert values to characters and number
-  Callsign[0] = telemID[0]; // first part of telem call  e.g. T
-  Callsign[1] = telemID[1]; // second part of telem call e.g. 1
+  call_telemetry[0] = telemID[0]; // first part of telem call  e.g. T
+  call_telemetry[1] = telemID[1]; // second part of telem call e.g. 1
   // The remainder of this message can be customized for different sensors
   int fineSpeed = int(gpsSpeed) % 8;
-  Callsign[2] = codeNumberField(0, 9, fineSpeed); // third position must be a number
-  Callsign[3] = codeCharacterField(0, 200, int(gpsSpeed));
+  call_telemetry[2] = codeNumberField(0, 9, fineSpeed); // third position must be a number
+  call_telemetry[3] = codeCharacterField(0, 200, int(gpsSpeed));
 
-  Callsign[4] = loc6[4]; // Example 5th character of grid square
-  Callsign[5] = loc6[5]; // Example 6th character of grid square
-  Callsign[6] = '\0';
-  POUTPUTLN((F(Callsign)));
+  call_telemetry[4] = loc6[4]; // Example 5th character of grid square
+  call_telemetry[5] = loc6[5]; // Example 6th character of grid square
+  call_telemetry[6] = '\0';
+  POUTPUTLN((F(call_telemetry)));
 }
 
-void code_custom_telemetry_callsign()
-{
+// void code_custom_telemetry_callsign()
+// {
 
-  // code telemetry callsign
-  code_characters(call_telemetry, gpsSpeed);
-}
+//   // code telemetry callsign
+//   code_characters(call_telemetry, gpsSpeed);
+// }
 
 void code_custom_telemetry_power()
 { // Altitude 0-60 is coded into the power field of the telemetry field
 
   dbm_telemetry = codeFineFineAltitude(gpsAltitude+30);
 }
+
+void code_WB8ELK_telemetry()
+{
+  code_standard_telemetry_callsign();
+  code_telemety_loc();
+  code_telemetry_power();
+}
+
 
 /**************************************************************************/
 // Special programming for high precision temperature, pressure and humitity

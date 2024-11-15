@@ -21,7 +21,48 @@ void madenhead(double flat, double flon, char MH[])
 }
 
 const char let[] = {"0123456789"};
-const char slet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const char slet[] = {"ABCDEFGHIJKLMNOPQRSTUVWXYZ"};
+
+char encodeBase36(int value)
+{ 
+    char dlet[36];
+    for(int i = 0; i < 10; ++i)
+    {
+        dlet[i] = let[i];
+    }
+
+    for(int i = 10; i < 36; ++i)
+    {
+        dlet[i] = slet[i-10];
+    }
+
+    if (value < 0)
+        value = 0;
+    if (value > 35)
+        value = 35;
+    
+    return dlet[value];
+
+}
+
+char encodeBase26(int value)
+{ 
+    if (value < 0)
+        value = 0;
+    if (value > 25)
+        value = 25;
+    return slet[value];
+}
+
+char encodeBase10(int value)
+{ 
+    if (value < 0)
+        value = 0;
+    if (value > 9)
+        value = 9;
+    return let[value];
+}
+
 
 char codeNumberField(int min, int max, int value)
 { // Convert a value to a digit
@@ -44,6 +85,8 @@ char codeCharacterField(int min, int max, int value)
     return slet[value];
 
 }
+
+
 
 char codeStdPosition2(int temp ,int satellites)
 { 
@@ -76,6 +119,16 @@ char codeStdPosition2(int temp ,int satellites)
 }
 
 uint8_t db[] = {0, 3, 7, 10, 13, 17, 20, 23, 27, 30, 33, 37, 40, 43, 47, 50, 53, 57, 60};
+
+uint8_t codeBase19( int value)
+{ // code sensor which will become the dbm for telemetry call instead of fine altitude
+    int a = value;  
+    if (a <= 0)
+        a = 0;
+    if (a > 18)
+        a = 18;
+    return db[a];
+}
 
 uint8_t code_dbField( int min, int max, int sensorValue)
 { // code sensor which will become the dbm for telemetry call instead of fine altitude
@@ -136,20 +189,5 @@ char codePos2(float altitude)
     return let[i];
 }
 
-char EncodeBase36(uint8_t val)
-// Returns the value of 0-9-A-Z
-    {
-        char retVal;
 
-        if (val < 10)
-        {
-            retVal = '0' + val;
-        }
-        else
-        {
-            retVal = 'A' + (val - 10);
-        }
-
-        return retVal;
-    }
 

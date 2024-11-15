@@ -161,6 +161,7 @@ void setup()
   analogReadResolution(12);
 #else
   clock.begin();
+#endif
 
   // pinMode(SENSOR_PIN, INPUT);
   pinMode(DBGPIN, OUTPUT);
@@ -174,7 +175,6 @@ void setup()
   digitalWrite(GPS_nRESET, HIGH);
 
   pinMode(PANEL_VOLTS, INPUT);
-#endif
 
   digitalWrite(RF_PWR, LOW);
   digitalWrite(SLEEP_PIN, LOW);

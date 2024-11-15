@@ -100,16 +100,24 @@ void SendWSPRMessages() // Timing
   OLEDrotate(String("Sending Std WSPR Msg"),INFO);
   transmit();      // begin radio transmission
  
-  // Send standard telemetry message
-  code_standard_telemetry_callsign();    // Set the telemetry callsign 
-  code_telemety_loc();          // Set the telemetry location
-  code_telemetry_power();       // Set the telemetry power
-  POUTPUTLN((F("Waiting for Standard Telemetry Message ")));
+  // Send WB8ELK telemetry message
+  // code_WB8ELK_telemetry();
+  // POUTPUTLN((F("Waiting for Bill Telemetry Message ")));
+  // OLEDrotate(String("Sending 1st Telem Msg"),INFO);
+  // setModeWSPR_telem(); // set WSPR telemetry message mode
+  // waitForEvenMinute();
+  // POUTPUTLN((F("Sending  Standard Telemetry Message ")));
+  // digitalWrite(DBGPIN, HIGH);
+  // transmit();            // begin radio transmission
+
+  // Send U4B telemetry message
+  code_u4b_telemetry()  
+  POUTPUTLN((F("Waiting for u4b Telemetry Message ")));
   setModeWSPR_telem(); // set WSPR telemetry message mode
-  waitForEvenMinute();
-  POUTPUTLN((F("Sending  Standard Telemetry Message ")));
-  digitalWrite(DBGPIN, HIGH);
   OLEDrotate(String("Sending 1st Telem Msg"),INFO);
+  waitForEvenMinute();
+  POUTPUTLN((F("Sending  U4b Telemetry Message ")));
+  digitalWrite(DBGPIN, HIGH);
   transmit();            // begin radio transmission
    
   return;
