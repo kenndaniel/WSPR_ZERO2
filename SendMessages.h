@@ -187,7 +187,7 @@ void sleep()
   gpsOff();
   digitalWrite(SLEEP_PIN, HIGH); // Not used
   digitalWrite(DBGPIN, LOW);
-  unsigned long duration = (unsigned long)(SEND_INTERVAL * 60000);
+  //unsigned long duration = (unsigned long)(SEND_INTERVAL * 60000);
   // delay(duration);  // Wait until it is time for the next transmission
   resetFunc(); // Reset Arduino - program stats from the beginning
 }

@@ -49,22 +49,28 @@ bool SetCPUClock(TinyGPSPlus gps)
       }
     }
   }
+  #ifdef PICO
+  setSyncInterval(15*60);// set the number of seconds between re-sync
+  
+  setTime((int)h, (int)m, (int)s, (int)d, (int)mon, (int)y);
+  if (timeStatus() != timeSet)
+  {
+    POUTPUTLN((F(" Time not set")));
+    return false;
+
+  }
+  #else
   // Conversion to real time clock on SAMD21 processor
   clock.setTime(h, m, s);
   clock.setDate(d, mon, y % 2000);
+  #endif
 
-  // setTime((int)h, (int)m, (int)s, (int)d, (int)mon, (int)y);
-  // if (timeStatus() != timeSet)
-  // {
-  //   POUTPUTLN((F(" Time not set")));
-  //   return false;
-
-  // }
   POUTPUTLN((s));
   POUTPUTLN((F("cpu time set - waiting for position")));
   return true;
 }
 
+#ifndef PICO
 int minute()
 {
   // Serial.println(clock.getMinutes());
@@ -76,9 +82,10 @@ int second()
   // Serial.println(clock.getSeconds());
   return clock.getSeconds();
 }
+#endif
 
 bool gpsSearch = true;
-void beep()
+void gpsBeep()
 { // turn led on and off while searching for satellites
   if (gpsSearch)
   {
@@ -134,11 +141,11 @@ bool gpsGetData()
   gpsOn();
   bool clockSet = false, locSet = false, altitudeSet = false, speedSet = false;
 #ifdef PICO
-  UART ss(8, 9, NC, NC);
+  UART Serial1(8, 9, NC, NC);
 #endif
 
   Serial1.begin(GPSBaud);
-  delay(100);
+  delay(200);
   gpsStartTime = millis();
   bool hiAltitudeSet = false;
   POUTPUTLN((F("Waiting for GPS to find satellites - 5-10 min")));
@@ -193,7 +200,7 @@ bool gpsGetData()
     loopi++;
 
     if (loopi % 5000 == 0)
-      beep(); // still looking for satellites
+      gpsBeep(); // still looking for satellites
 
     if (gps.charsProcessed() < 10 && millis() % 1500 < 5)
     {

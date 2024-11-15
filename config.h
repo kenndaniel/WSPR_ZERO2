@@ -7,6 +7,9 @@
    and it is for non-commercial use only.
    Please see readme file for more information.
 */
+// Define the tracker
+#define PICO
+//#define NIBBB
 
 #define DEBUG // Debug output is generated if DEBUG is defined
 //#define DEBUG_SI5351  // Send on first even minute

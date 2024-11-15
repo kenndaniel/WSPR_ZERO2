@@ -23,7 +23,6 @@
 #define VHF
 #define SEND_INTERVAL 1 // The minimum number of minutes between transmissions
 
-
 // Variables needed for SI5351 calibration processing
 // #define ppsPin  0
 
@@ -32,14 +31,14 @@ volatile unsigned long SiCnt = 0;
 volatile unsigned long mult = 0;
 volatile unsigned int tcount = 0;
 volatile float correction = 1;
-unsigned long freq = (unsigned long)(WSPR_FREQ1); 
+unsigned long freq = (unsigned long)(WSPR_FREQ1);
 volatile int freqCnt;
 
-#include <Wire.h> 
-// #include <TimeLib.h>
+#include <Wire.h>
+
 #ifdef PICO
-#include <machine.h>
-RTC clock = machine.RTC();
+#include <TimeLib.h>
+#define F(x) (x)
 #else
 #include <RTCZero.h>
 RTCZero clock;
@@ -59,10 +58,9 @@ enum mode
   MODE_WSPR
 };
 
-
 Si5351 si5351;
 JTEncode jtencode;
-#include "NIBBBpins.h"
+
 #define MIN_VOLTAGE 2.6
 
 // float tempOutside, pressure; // set once in tempPress.h
@@ -118,20 +116,21 @@ void waitForEvenMinute();
 // This was necessary in the past when using commericial
 // SI5351 Arduino modules with inexpensive TXCOs
 // When CALIBRATION is defined, The calibration code is included in the compile.
-//#define CALIBRATION
+// #define CALIBRATION
 
 // COUNTER_PIN is the PA04 of SAMD21 processor and is connected to CLK_CAL of the SI 5351
 //  OF THE Si5351.  This depends on the porcessor board
 // #define COUNTER_PIN 1 // Use cpu pin 1 for XIOA this corresponds to pin A1.
-//#define COUNTER_PIN 18  //  Use cpu pin 18 for MKE Zero this coresponds to pin A3
+// #define COUNTER_PIN 18  //  Use cpu pin 18 for MKE Zero this coresponds to pin A3
 
 // #define interruptPinPPS 2 // pin connected to the GPS pps output pin for XIAO
-//#define interruptPinPPS 0 // pin connected to the GPS pps output pin for mkr zero
+// #define interruptPinPPS 0 // pin connected to the GPS pps output pin for mkr zero
 
 #define SLEEP_PIN LED_BUILTIN // Not used - can be used to turn off system between transmissions see sleep()
 #define DBGPIN LED_BUILTIN
 #define GPS_SEARCHING LED_BUILTIN
 
+#include "pins.h"
 #include "OLED.h"
 // #include "./src/TemperatureZero.h" // for reading the cpu internal temperature
 // TemperatureZero Temp = TemperatureZero();
@@ -144,23 +143,23 @@ void waitForEvenMinute();
 #include "./src/FrequencyCorrection.h"
 #endif
 
-
-
 void setup()
 {
 #ifdef DEBUG
   Serial.begin(9600);
 #endif
-  delay(2000);
 
   OLEDinit();
   POUTPUTLN(F(" Starting "));
-
 
 #ifndef DEBUG
   Serial.begin(9600);
   Serial.println(" Debug messages are turned off ");
 #endif
+  delay(2000);
+#ifdef PICO
+  analogReadResolution(12);
+#else
   clock.begin();
 
   // pinMode(SENSOR_PIN, INPUT);
@@ -169,18 +168,19 @@ void setup()
   pinMode(SLEEP_PIN, OUTPUT);
 
   pinMode(GPS_PWR, OUTPUT);
-  digitalWrite(GPS_PWR,HIGH);
+  digitalWrite(GPS_PWR, HIGH);
 
   pinMode(GPS_nRESET, OUTPUT);
   digitalWrite(GPS_nRESET, HIGH);
 
   pinMode(PANEL_VOLTS, INPUT);
+#endif
+
   digitalWrite(RF_PWR, LOW);
   digitalWrite(SLEEP_PIN, LOW);
   digitalWrite(DBGPIN, LOW);
 
-
-  rf_beep();  // Send dashes to test Si5351  - below band by up to 200 Hz
+  rf_beep(); // Send dashes to test Si5351  - below band by up to 200 Hz
   // Temp.init();
   float cpuTemp = getTempCPU();
   POUTPUT((F(" Temperture ")));
@@ -189,14 +189,14 @@ void setup()
   POUTPUT(F(" Voltage "));
   volts = readVcc();
   POUTPUTLN((volts));
-  OLEDrotate(String(" Voltage ")+String(volts), INFO);
+  OLEDrotate(String(" Voltage ") + String(volts), INFO);
 
   digitalWrite(DBGPIN, HIGH);
 
   gpsStartTime = millis();
 }
 
-void loop()   //*********************  Loop *********************
+void loop() //*********************  Loop *********************
 {
   bool getInfo = gpsGetData();
   if (getInfo == false)
@@ -204,8 +204,8 @@ void loop()   //*********************  Loop *********************
     gps_reset();
     return; // try again
   }
-  
-//calibrateFreq(); // calibrate the SI5351 frequency
+
+// calibrateFreq(); // calibrate the SI5351 frequency
 #ifdef CALIBRATION
   // Calibrate Si5351 Xtal
   si5351_calibrate_init();
@@ -219,31 +219,28 @@ void loop()   //*********************  Loop *********************
   OLEDbeginNoRotate();
   int ical = 14;
   CalibrationDone == false;
-  Serial.print(" Init Correction ");
-  Serial.println(CalibrationDone);
   while (CalibrationDone == false)
-  { 
-    #ifdef DEBUG_SI5351
-        CalibrationDone = true;
-    #endif
+  {
+#ifdef DEBUG_SI5351
+    CalibrationDone = true;
+#endif
     delay(1000);
-    ical-- ;
+    ical--;
     POUTPUTLN((ical));
-    OLEDnoRotate(String(ical),INFO);
+    OLEDnoRotate(String(ical), INFO);
     if (ical < 0)
     {
       POUTPUTLN((F(" Error no pps calibration signal ")));
-      OLEDrotate(F("Error no PPS signal"),ERROR);
+      OLEDrotate(F("Error no PPS signal"), ERROR);
       break;
     }
   }
-  Serial.println(tcount);
-  Serial.print(" Correction ");
-  Serial.println(CalibrationDone);
+  POUTPUT(F("  Init Correction "));
+  POUTPUTLN(CalibrationDone);
   if (correction > 1.01 || correction < .99)
   {
     POUTPUTLN((F(" Error calibration count too large or too small ")));
-    OLEDrotate(F("Calibration Cnt Wrong"),ERROR);
+    OLEDrotate(F("Calibration Cnt Wrong"), ERROR);
     correction = 1;
   }
   detachInterrupt(digitalPinToInterrupt(interruptPinPPS)); // Disable the gps pps interrupt

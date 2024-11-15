@@ -149,7 +149,6 @@ void transmit() // Loop through the string, transmitting one character at a time
   POUTPUTLN((F(" SI5351 Start Transmission ")));
   const unsigned long period = tone_delay;
   unsigned long time_now = 0;
-  uint8_t one = 1;
 
   for (i = 0; i < symbol_count; i++) // Now transmit the channel symbols
   {

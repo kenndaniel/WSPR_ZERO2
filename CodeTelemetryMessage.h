@@ -220,7 +220,6 @@ void code_characters(char Callsign[], float gpsSpeed)
 
 void code_custom_telemetry_callsign()
 {
-  float tempCPU = getTempCPU();
 
   // code telemetry callsign
   code_characters(call_telemetry, gpsSpeed);
@@ -310,10 +309,11 @@ void code_high_precision_temp_pres_humid()
 int encodeSD(unsigned int a, unsigned int b) {
   // create a number using 2 bits from each number
   // numbers must be between 0 and 3
+  unsigned int zero = 0;
   if (a > 3) a = 3;
-  if ( a < 0 ) a = 0;
+  if ( a < zero ) a = 0;
   if (b > 3) b = 3;
-  if ( b < 0 ) b = 0;
+  if ( b < zero ) b = 0;
   
     // Mask the first two bits of a and b
     a = a & 0b00000011;
@@ -328,7 +328,6 @@ int encodeSD(unsigned int a, unsigned int b) {
 void code_speed_direction_message()
 {
 
-char telemID[] = "T9";
 //int telemTrkID = 9;  // balloon designator
 //float speed = 143.9;  // Speed maximum value is 150.0 m/s
 float speed = gps.speed.mps();

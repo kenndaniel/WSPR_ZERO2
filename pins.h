@@ -1,3 +1,18 @@
+#ifdef PICO
+//#define CLOCKCAL 18  // 2.5 MHz signal from Si5351
+//#define COUNTER_PIN CLOCKCAL
+#define PANEL_VOLTS 29  // Solar Cell voltage
+//#define CSO A5
+//#define CSI A6
+#define PROG_RESET LED_BUILTIN // Resets the SAMD21 
+#define RF_PWR LED_BUILTIN
+//#define GPS_RX D13
+//#define GPS_TX D14
+#define GPS_nRESET LED_BUILTIN   // Low for gps operation
+#define ON_OFF LED_BUILTIN 
+#define GPS_PWR  LED_BUILTIN // High for gps operation
+
+#else
 // NIBBB424V1 pin definitions
 // Tracability to cpu schematic definitions dated 9/8/24
 
@@ -17,3 +32,4 @@
 #define GPS_nRESET 7   // Low for gps operation
 #define ON_OFF 6 
 #define GPS_PWR  ON_OFF // High for gps operation
+#endif
