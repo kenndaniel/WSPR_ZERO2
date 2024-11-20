@@ -181,6 +181,8 @@ void setup()
   digitalWrite(DBGPIN, LOW);
 
   rf_beep(); // Send dashes to test Si5351  - below band by up to 200 Hz
+  //delay(2000);
+  //code_u4b_telemetry_loc();
   // Temp.init();
   float cpuTemp = getTempCPU();
   POUTPUT((F(" Temperture ")));
