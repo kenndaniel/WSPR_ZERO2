@@ -36,6 +36,8 @@ void SendWSPRMessages() // Timing
   code_standard_power(); // Update WSPR power level (standard message -> coded altitude)
   POUTPUT((F("Altitude = ")));
   POUTPUTLN((gpsAltitude));
+    POUTPUT((F("Speed (knots)= ")));
+  POUTPUTLN((gpsSpeedKnots));
   POUTPUT((F("Standard Message ")));
   setModeWSPR();     // set WSPR standard message mode
   setToFrequency1(); // Initialize the transmit frequency
@@ -111,37 +113,42 @@ void SendWSPRMessages() // Timing
   // transmit();            // begin radio transmission
 
   // Send U4B telemetry message
-  code_u4b_telemetry()  
+  code_u4b_telemetry();
   POUTPUTLN((F("Waiting for u4b Telemetry Message ")));
   setModeWSPR_telem(); // set WSPR telemetry message mode
-  OLEDrotate(String("Sending 1st Telem Msg"),INFO);
+  OLEDrotate(String("Waiting for 1st Telem Msg"),INFO);
   waitForEvenMinute();
-  POUTPUTLN((F("Sending  U4b Telemetry Message ")));
   digitalWrite(DBGPIN, HIGH);
   transmit();            // begin radio transmission
    
-  return;
+  
   initSensors();
   readSensors();
 
   // Send additional telemetry message
   POUTPUTLN((F("Waiting for Additional Telemetry Message ")));
 
-  code_high_precision_temp_pres_humid();
+  encode_telen(567890, 123456,1);
   setModeWSPR_telem(); // set WSPR telemetry message mode
-
+  OLEDrotate(String("Waiting for TELEM message"),INFO);
   waitForEvenMinute();
-  POUTPUTLN((F("Sending Pressure/Temp/Humidity Telemetry Message")));
-  OLEDrotate(String("Sending 2nd Telem Msg"),INFO);
   transmit();      // begin radio transmission
+  return;
+  // code_high_precision_temp_pres_humid();
+  // setModeWSPR_telem(); // set WSPR telemetry message mode
 
-  code_speed_direction_message();
-  code_telemetry_power(); // Set the telemetry power
-  setModeWSPR_telem();    // set WSPR telemetry message mode
-  waitForEvenMinute();
-  POUTPUTLN((F("Sending Speed/Direction Telemetry Message")));
-  OLEDrotate(String("Sending 3rd Telem Msg"),INFO);
-  transmit();      // begin radio transmission
+  // waitForEvenMinute();
+  // POUTPUTLN((F("Sending Pressure/Temp/Humidity Telemetry Message")));
+  // OLEDrotate(String("Sending 2nd Telem Msg"),INFO);
+  // transmit();      // begin radio transmission
+
+  // code_speed_direction_message();
+  // code_telemetry_power(); // Set the telemetry power
+  // setModeWSPR_telem();    // set WSPR telemetry message mode
+  // waitForEvenMinute();
+  // POUTPUTLN((F("Sending Speed/Direction Telemetry Message")));
+  // OLEDrotate(String("Sending 3rd Telem Msg"),INFO);
+  // transmit();      // begin radio transmission
 
   POUTPUTLN((F("****** lOOP RESET RESET RESET RESET **********")));
   resetFunc(); // Reset Arduino - program stats from the beginning

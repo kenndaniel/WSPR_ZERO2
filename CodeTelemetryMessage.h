@@ -8,13 +8,14 @@ void code_u4b_telem_callsign()
 // Definition of u4b encoding http://qrp-labs.com/flights/s4.html#protocol
 // Example code https://traquito.github.io/pro/code/
 // Encodes the callsign portion of the u4b telemetry message
-  uint8_t grid5Val = loc6[4]; // 5th character of grid square
-  uint8_t grid6Val = loc6[5]; // 6th character of grid square
+int intA = (int)'A';
+  uint8_t grid5Val = (int)loc6[4] - intA; // 5th character of grid square
+  uint8_t grid6Val = (int)loc6[5] - intA; // 6th character of grid square
   double altM = gpsAltitude;
-  if (gpsAltitude < 0)     { altM = 0;     }
-  if (gpsAltitude > 21340) { altM = 21340; }
-
-  uint16_t altFracM =  round(altM/ 20.);
+  if (altM < 0)     { altM = 0;     }
+  if (altM > 21340) { altM = 21340; }
+altM = 3000;
+  uint16_t altFracM =  round((double)altM/ 20);
 
     // convert inputs into a big number
       uint32_t val = 0;
@@ -47,21 +48,25 @@ void code_u4b_telem_callsign()
 
 void code_u4b_telemetry_loc()
 {
+  // This corresponds to the Traquito version of u4b encoding.  The voltage encoding
+  // shifted down by one volt e.g. qrplabs 4.6 volts corresponds to a Traqquito 3.6 volts and limted to 3-4 V
+  // The user of this function does not need to care about this difference.
   // Definition of u4b encoding http://qrp-labs.com/flights/s4.html#protocol
+  // The Traquito definition of u4b is locaated here https://traquito.github.io/pro/code/WSPRMessageU4B.h
 // Encodes the locator and power value portion of the u4b telemetry message
   double tempC = getTempCPU();
   if (tempC > 39.)
     tempC = 39.;
   else if (tempC < -50.)
   {
-    tempC = 50.;
+    tempC = -50.;
   }
   double voltage  = readVcc();
-    if (voltage > 4.95)
-    voltage = 4.95;
-  else if (voltage < 3.)
+    if (voltage > 4950)
+    voltage = 4950;
+  else if (voltage < 3000)
   {
-    voltage = 3.;
+    voltage = 3000;
   }
   double speed = gpsSpeedKnots;
   if (speed > 82 ) 
@@ -70,39 +75,55 @@ void code_u4b_telemetry_loc()
   {
     speed = 0.;
   }
+
+  tempC = -15;
+  voltage = 4600;
+    speed = 20;
   
        // map input presentations onto input radix (numbers within their stated range of possibilities)
-        uint8_t tempCNum      = (uint8_t)(tempC + 50) ;
-        uint8_t voltageNum    = ((uint8_t)round(((voltage * 100) - 300) / 5) + 20) / 40;
-		    uint8_t speedNum = speed/2.;   //encoding # of sattelites into knots
+        int tempCNum      = tempC +50 ;
+        int voltageNum    = (int)((((float)(voltage/10)-300)/5 )+20) % 40;
+		    int speedNum = speed/2.;  
+      POUTPUTLN((F(" temp    voltage   speed >>>  ")));
+        POUTPUTLN((tempCNum));
+        POUTPUTLN((voltageNum));
+        POUTPUTLN((speedNum));
 
-        gpsValidNum=1; //changed sept 27 2024. because the traquito site won't show the 6 char grid if this bit is even momentarily off. Anyway, redundant cause sat count is sent as knots
+        int gpsValidNum=1; //changed sept 27 2024. because the traquito site won't show the 6 char grid if this bit is even momentarily off. Anyway, redundant cause sat count is sent as knots
 		// shift inputs into a big number
-        val = 0;
+        int val = 0;
         val *= 90; val += tempCNum;
         val *= 40; val += voltageNum;
+        POUTPUTLN((val));
         val *= 42; val += speedNum;
+        POUTPUTLN((val));
         val *=  2; val += gpsValidNum;
+        POUTPUTLN((val));
         val *=  2; val += 1;          // standard telemetry (1 for the 2nd U4B packet, 0 for "Extended TELEN") - Thanks Kevin!
+         POUTPUTLN((val));
         // unshift big number into output radix values
-        uint8_t powerVal = val % 19; val = val / 19;
-        uint8_t g4Val    = val % 10; val = val / 10;
-        uint8_t g3Val    = val % 10; val = val / 10;
-        uint8_t g2Val    = val % 18; val = val / 18;
-        uint8_t g1Val    = val % 18; val = val / 18;
+        int powerVal = val % 19; val = val / 19;
+        int g4Val    = val % 10; val = val / 10;
+        int g3Val    = val % 10; val = val / 10;
+        int g2Val    = val % 18; val = val / 18;
+        int g1Val    = val % 18; val = val / 18;
+
+
         // map output radix to presentation
-        char g1 = encodeBase26(g1Val);
-        char g2 = encodeBase26(g2Val);
-        char g3 = encodeBase10(g3Val);
-        char g4 = encodeBase10(g4Val);
+        int intA = (int)'A';
+        int int0 = (int)'0';
+        char g1 = intA + g1Val;
+        char g2 = intA + g2Val;
+        char g3 = int0 + g3Val;
+        char g4 = int0 + g4Val;
  	
 		loc4_telemetry[0] = g1; 
 		loc4_telemetry[1] = g2;
 		loc4_telemetry[2] = g3;
 		loc4_telemetry[3] = g4;
 		loc4_telemetry[4] = '\0';
-
-      POUTPUT((F(call_telemetry)));
+      POUTPUT((F(" DEBUG U4B >>>  ")));
+      POUTPUT((F(loc4_telemetry)));
       POUTPUT((F(" ")));
 
     dbm_telemetry=codeBase19(powerVal);
@@ -116,54 +137,57 @@ void code_u4b_telemetry()
     code_u4b_telemetry_loc();
 }
 
-void encode_telen2(telen_val1,telen_val2,telen_chars, &telen_power,int type) //converts two 32bit ints into 8 characters and one byte to be transmitted
+void encode_telen(int telen_val1, int telen_val2,int type) 
 {
-    // TELEN packet  which has value 1 and value 2 (this same routine used for both telen#1 and telen#2). 
+// Formats a TELEN message  which sends two values. 
 // first value  gets encoded into the callsign (1st char is alphannumeric, and last three chars are alpha). Full callsign will be ID1, telen_char[0], ID3, telen_CHar[1],  telen_CHar[2], telen_CHar[3]. 
 // 2nd value gets encoded into GRID and power. grid = telen_CHar[4,5,6,7]. power = telen_power
-// max val of 1st one ~= 632k (per dave) [19 bits] i had originally thought 651,013 (if first char Z, which ~=35, times 17565(26^3). base 26 used, not base 36, because other chars must be only alpha, not alphanumeric because of Ham callsign conventions)
-// max val of 2nd one ~= 153k  (per dave) [17 bits] i had thought over 200k....
+// max val of 1st one ~= 632k (per dave) [19 bits] 
+// max val of 2nd one ~= 153k  (per dave) [17 bits]
+// For the same callsign prefix there can be two different talen messages. Set type to 1 or 2 to incicate which
+//  
 
-        uint32_t val = telen_val1;
+    int val = telen_val1;
+    char telen_chars[9];
 
-		        // extract into altered dynamic base
-        uint8_t id6Val = val % 26; val = val / 26;
-        uint8_t id5Val = val % 26; val = val / 26;
-        uint8_t id4Val = val % 26; val = val / 26;
-        uint8_t id2Val = val % 36; val = val / 36;
-        // convert to encoded CallsignU4B
-        telen_chars[0] = encodeBase36(id2Val);
-        telen_chars[1] = encodeBase26(id4Val);
-        telen_chars[2] =  encodeBase26(id5Val);
-        telen_chars[3] =  encodeBase26(id6Val];
-		
-        val = telen_val2*4;  //(bitshift to the left twice to make room for gps bits at end)
-      // unshift big number into output radix values
-        uint8_t powerVal = val % 19; val = val / 19;
-        uint8_t g4Val    = val % 10; val = val / 10;
-        uint8_t g3Val    = val % 10; val = val / 10;
-        uint8_t g2Val    = val % 18; val = val / 18;
-        uint8_t g1Val    = val % 18; val = val / 18;
-        // map output radix to presentation
-        telen_chars[4] = encodeBase26[g1Val];
-        telen_chars[5] = encodeBase26[g2Val];
-        telen_chars[6] = encodeBase10[g3Val];
-        telen_chars[7] = encodeBase10[g4Val];
-        telen_chars[8]=0; //null terminate
- 		
+        // extract into altered dynamic base
+    int id6Val = val % 26; val = val / 26;
+    int id5Val = val % 26; val = val / 26;
+    int id4Val = val % 26; val = val / 26;
+    int id2Val = val % 36; val = val / 36;
+    // convert to encoded CallsignU4B
+    int intA = (int)'A';
+    int int0 = (int)'0';
+    telen_chars[0] = encodeBase36(id2Val);
+    telen_chars[1] = intA +  id4Val;
+    telen_chars[2] =  intA + id5Val;
+    telen_chars[3] =  intA + id6Val;
 
-        char telemID[];
-        if( type == 1 )
-          telemID = TELEN1_telemID;
-        else
-        {  
-          telemID = TELEN2_telemID;
-          powerVal=powerVal+2;   //identifies it as the 2nd extended TELEN packet.  (this is the GPS-valid bit. note for extended TELEN we did NOT set the gps-sat bit)
-        }
+    val = telen_val2*4;  //(bitshift to the left twice to make room for gps bits at end)
+  // unshift big number into output radix values
+    int powerVal = val % 19; val = val / 19;
+    int g4Val    = val % 10; val = val / 10;
+    int g3Val    = val % 10; val = val / 10;
+    int g2Val    = val % 18; val = val / 18;
+    int g1Val    = val % 18; val = val / 18;
+    // map output radix to presentation
+    telen_chars[4] = intA + g1Val;
+    telen_chars[5] = intA + g2Val;
+    telen_chars[6] = int0 + g3Val;
+    telen_chars[7] = int0 + g4Val;
+    telen_chars[8]='\0' ;//null terminate
 
-    call_telemetry[0] =  telemID[0];   //callsign: id13[0], telen char0, id13[1], telen char1, telen char2, telen char3
+
+
+    if( type == 2 )
+    {  
+      powerVal=powerVal+2;   //identifies it as the 2nd extended TELEN packet.  (this is the GPS-valid bit. note for extended TELEN we did NOT set the gps-sat bit)
+    }
+
+    call_telemetry[0] =  std_telemID[0];   //callsign: id13[0], telen char0, id13[1], telen char1, telen char2, telen char3
+    call_telemetry[2] =  std_telemID[1];	
+  
 		call_telemetry[1] =  telen_chars[0];
-		call_telemetry[2] =  telemID[1];	
 		call_telemetry[3] =  telen_chars[1];
 		call_telemetry[4] =  telen_chars[2];
 		call_telemetry[5] =  telen_chars[3];
@@ -203,14 +227,14 @@ void code_standard_telemetry_callsign()
   float tempCPU = getTempCPU();
   float volts = readVcc();
   // code telemetry callsign
-  Callsign[0] = std_telemID[0]; // first part of telem call e.g. Q
-  Callsign[1] = codeStdPosition2(int(temp), sats);
-  Callsign[2] = std_telemID[1]; // second part of telem call e.g. 1
+  call_telemetry[0] = std_telemID[0]; // first part of telem call e.g. Q
+  call_telemetry[1] = codeStdPosition2(int(tempCPU), satellites);
+  call_telemetry[2] = std_telemID[1]; // second part of telem call e.g. 1
   // Standard WB8ELK uses 3.3v to 5.8v for coding.
-  Callsign[3] = codeCharacterField(33, 58, int((volts / 100.)));
-  Callsign[4] = loc6[4]; // 5th character of grid square
-  Callsign[5] = loc6[5]; // 6th character of grid square
-  Callsign[6] = '\0';
+  call_telemetry[3] = codeCharacterField(33, 58, int((volts / 100.)));
+  call_telemetry[4] = loc6[4]; // 5th character of grid square
+  call_telemetry[5] = loc6[5]; // 6th character of grid square
+  call_telemetry[6] = '\0';
 }
 
 void code_telemety_loc()
