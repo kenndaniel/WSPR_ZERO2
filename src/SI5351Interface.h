@@ -69,8 +69,6 @@ void setModeWSPR_telem()
 
 bool si5351_init()
 {
-  digitalWrite(RF_PWR, HIGH);
-  delay(10);
 
   POUTPUTLN((F(" SI5351 Start Initialization "))); 
   bool checkI2C = si5351.init(SI5351_CRYSTAL_LOAD_8PF, SI5351_XTAL, 0);
@@ -81,7 +79,7 @@ bool si5351_init()
    delay(60000);
     return false;
   }
-
+  POUTPUTLN((F(" SI5351 Successful Initialization "))); 
   return true;
 }
 
@@ -105,7 +103,14 @@ void si5351_calibrate_off()
 bool twoChanel = true; // set true to use two channel inverted output, set false to use only one chanel
 
 void rf_on()
-{
+{ 
+#ifdef PICO
+  digitalWrite(RF_PWR, LOW);
+#endif
+#ifdef NIBBB
+  digitalWrite(RF_PWR, HIGH);
+#endif
+  delay(10);
 
   si5351_init();
   si5351.set_ms_source(XMIT_CLOCK0, SI5351_PLLA);
@@ -126,14 +131,21 @@ void rf_on()
 
 void rf_off()
 {
+  //Disable output
   si5351.output_enable(XMIT_CLOCK0, 0); 
   if (twoChanel)
     si5351.output_enable(XMIT_CLOCK1, 0);
+  POUTPUTLN((F(" SI5351 End Transmission ")));
 }
 
 void rf_pwr_off()
 {  
+#ifdef PICO
+  digitalWrite(RF_PWR, HIGH);
+#endif
+#ifdef NIBBB
   digitalWrite(RF_PWR, LOW);
+#endif
 }
 
 

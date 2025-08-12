@@ -121,7 +121,7 @@ char codeStdPosition2(int temp ,int satellites)
 uint8_t db[] = {0, 3, 7, 10, 13, 17, 20, 23, 27, 30, 33, 37, 40, 43, 47, 50, 53, 57, 60};
 
 uint8_t codeBase19( int value)
-{ // code sensor which will become the dbm for telemetry call instead of fine altitude
+{ // code sensor which will become the dbm for telemetry call 
     int a = value;  
     if (a <= 0)
         a = 0;
@@ -131,7 +131,7 @@ uint8_t codeBase19( int value)
 }
 
 uint8_t code_dbField( int min, int max, int sensorValue)
-{ // code sensor which will become the dbm for telemetry call instead of fine altitude
+{ // code a sensor which can be used for the dbm field
     int a;   
     a = 18.*(sensorValue-min)/(max-min);  
     if (a <= 0)
@@ -178,16 +178,16 @@ uint8_t codeFineFineAltitude(double altitude)
     return db[a];
 }
 
-char codePos2(float altitude)
-{ // The last three digits 0-1000 of altitude - Round the 0-999 to 0-9
-    float a;
-    a = (int)altitude % 1000;
-    int i ;
-    i = (int)(a)/100 ; 
-    if(i > 9) i = 9;
-    if(i< 0) i = 0;
-    return let[i];
-}
+// char codePos2(float altitude)
+// { // The last three digits 0-1000 of altitude - Round the 0-999 to 0-9
+//     float a;
+//     a = (int)altitude % 1000;
+//     int i ;
+//     i = (int)(a)/100 ; 
+//     if(i > 9) i = 9;
+//     if(i< 0) i = 0;
+//     return let[i];
+// }
 
 
 

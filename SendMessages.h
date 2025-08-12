@@ -127,7 +127,7 @@ void SendWSPRMessages() // Timing
 
   // Send additional telemetry message
   POUTPUTLN((F("Waiting for Additional Telemetry Message ")));
-
+  // QW8IBY OH90 47
   encode_telen(567890, 123456,1);
   setModeWSPR_telem(); // set WSPR telemetry message mode
   OLEDrotate(String("Waiting for TELEM message"),INFO);
@@ -200,7 +200,6 @@ void sleep()
   POUTPUTLN((F(" min ")));
   rf_off();
   gpsOff();
-  digitalWrite(SLEEP_PIN, HIGH); // Not used
   digitalWrite(DBGPIN, LOW);
   //unsigned long duration = (unsigned long)(SEND_INTERVAL * 60000);
   // delay(duration);  // Wait until it is time for the next transmission

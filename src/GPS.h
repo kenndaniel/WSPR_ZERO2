@@ -85,6 +85,7 @@ int second()
 #endif
 
 bool gpsSearch = true;
+
 void gpsBeep()
 { // turn led on and off while searching for satellites
   if (gpsSearch)
@@ -102,13 +103,26 @@ void gpsBeep()
 void gpsOn()
 {
   rf_pwr_off();  // RF sometimes gets stuck on - make sure it is off
+  #ifdef PICO
+  digitalWrite(GPS_PWR, LOW);
+  digitalWrite(GPS_nRESET,HIGH);
+  #endif
+
+  #ifdef NIBBB
   digitalWrite(GPS_PWR, HIGH);
   digitalWrite(GPS_nRESET, HIGH);
+  #endif
 }
 
 void gpsOff()
 {
+  #ifdef PICO
+  digitalWrite(GPS_PWR, HIGH);
+  #endif
+
+  #ifdef NIBBB
   digitalWrite(GPS_PWR, LOW);
+  #endif
 }
 
 void gpsBounce()
@@ -141,20 +155,30 @@ bool gpsGetData()
   gpsOn();
   bool clockSet = false, locSet = false, altitudeSet = false, speedSet = false;
 #ifdef PICO
-  UART Serial1(8, 9, NC, NC);
+  Serial2.setRX(GPS_RX);
+  Serial2.setTX(GPS_TX);
+  Serial2.setFIFOSize(128);
+  Serial2.begin(GPSBaud);
+#endif
+#ifdef NIBBB
+  Serial1.begin(GPSBaud);
 #endif
 
-  Serial1.begin(GPSBaud);
-  delay(200);
+  delay(400); // wait for serial port to start
   gpsStartTime = millis();
   bool hiAltitudeSet = false;
   POUTPUTLN((F("Waiting for GPS to find satellites - 5-10 min")));
   OLEDrotate("Waiting for GPS Lock ", INFO);
   while (millis() < gpsStartTime + gpsTimeout)
   {
-    // wdt_reset();
+  #ifdef PICO
+    while (Serial2.available() > 0)
+          gps.encode(Serial2.read());
+  #endif
+  #ifdef NIBBB
     while (Serial1.available() > 0)
-      gps.encode(Serial1.read());
+          gps.encode(Serial1.read());
+  #endif
 
     if (gps.charsProcessed() > 10 && hiAltitudeSet == false)
     { // put the gps module into high altitude mode
@@ -199,10 +223,10 @@ bool gpsGetData()
 
     loopi++;
 
-    if (loopi % 5000 == 0)
+    if (loopi % 20000 == 0)
       gpsBeep(); // still looking for satellites
 
-    if (gps.charsProcessed() < 10 && millis() % 1500 < 5)
+    if (gps.charsProcessed() < 15 && millis() % 1500 < 5)
     {
 
       POUTPUTLN((F("WARNING: No GPS data.  Check wiring.")));

@@ -1,3 +1,7 @@
+// This file contains code for encoding different types of telemetry messages.  
+// 1. u4b (qrplabs/traquinof) method of encoding temperature altitude voltage. This type of message is decoded by lu7aaa and traquino web sites
+// 2. telen messages that encode two large integers into the telementry message - used for experimental sensor data. 
+// 3. WB8ELK standard messages which provides the same function as 1 but in  a different format (This format is decoded by the lu7aa web site )
 
 //#include "CustomSensor.h"
 
@@ -139,6 +143,7 @@ void code_u4b_telemetry()
 
 void encode_telen(int telen_val1, int telen_val2,int type) 
 {
+// This code was taken from 
 // Formats a TELEN message  which sends two values. 
 // first value  gets encoded into the callsign (1st char is alphannumeric, and last three chars are alpha). Full callsign will be ID1, telen_char[0], ID3, telen_CHar[1],  telen_CHar[2], telen_CHar[3]. 
 // 2nd value gets encoded into GRID and power. grid = telen_CHar[4,5,6,7]. power = telen_power
@@ -202,7 +207,7 @@ void encode_telen(int telen_val1, int telen_val2,int type)
     loc4_telemetry[3]=telen_chars[7];
     loc4_telemetry[4]= '\0'; 
 
-      POUTPUT((F(call_telemetry)));
+      POUTPUT((F(loc4_telemetry)));
       POUTPUT((F(" ")));
 
     dbm_telemetry=db[powerVal];
@@ -224,6 +229,7 @@ void encode_telen(int telen_val1, int telen_val2,int type)
 
 void code_standard_telemetry_callsign()
 {
+  // This uses WB8ELK (Bill Brown) encoding method
   float tempCPU = getTempCPU();
   float volts = readVcc();
   // code telemetry callsign
@@ -238,20 +244,23 @@ void code_standard_telemetry_callsign()
 }
 
 void code_telemety_loc()
-{ // loc4_telemetry is coded into the 4 characters of the location field e.g. EN62
+{   
+  // This uses WB8ELK (Bill Brown) encoding method - The grid square field the real grid square for all messages.
+  // loc4_telemetry is coded into the 4 characters of the location field e.g. EN62
   // This can be changed to code sensor data.
   // The letters can take the value A-R the numbers 0-9
   charArrayCpy(loc4_telemetry, loc4, 4);
 }
 
 void code_telemetry_power()
-{ // Altitude coded into the power field of the telemetry field
+{ // Altitude coded into the power field of the WB8ELK telemetry field
 
   dbm_telemetry = codeFineAltitude(gpsAltitude);
 }
 
 void code_custom_telemetry_callsign()
-{                           // compose the custom telemtry callsign and convert values to characters and number
+{ 
+  // compose the custom telemtry callsign and convert values to characters and number
   call_telemetry[0] = telemID[0]; // first part of telem call  e.g. T
   call_telemetry[1] = telemID[1]; // second part of telem call e.g. 1
   // The remainder of this message can be customized for different sensors
@@ -265,12 +274,6 @@ void code_custom_telemetry_callsign()
   POUTPUTLN((F(call_telemetry)));
 }
 
-// void code_custom_telemetry_callsign()
-// {
-
-//   // code telemetry callsign
-//   code_characters(call_telemetry, gpsSpeed);
-// }
 
 void code_custom_telemetry_power()
 { // Altitude 0-60 is coded into the power field of the telemetry field

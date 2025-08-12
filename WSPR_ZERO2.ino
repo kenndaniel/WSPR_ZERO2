@@ -38,11 +38,13 @@ volatile int freqCnt;
 
 #ifdef PICO
 #include <TimeLib.h>
-#define F(x) (x)
+bool setSDA(4);
+bool setSCL(5);
 #else
 #include <RTCZero.h>
 RTCZero clock;
 #endif
+//Wire.begin();
 // #include <avr/interrupt.h>
 // #include <avr/io.h>
 #include <si5351.h>
@@ -126,14 +128,10 @@ void waitForEvenMinute();
 // #define interruptPinPPS 2 // pin connected to the GPS pps output pin for XIAO
 // #define interruptPinPPS 0 // pin connected to the GPS pps output pin for mkr zero
 
-#define SLEEP_PIN LED_BUILTIN // Not used - can be used to turn off system between transmissions see sleep()
 #define DBGPIN LED_BUILTIN
-#define GPS_SEARCHING LED_BUILTIN
 
 #include "pins.h"
 #include "OLED.h"
-// #include "./src/TemperatureZero.h" // for reading the cpu internal temperature
-// TemperatureZero Temp = TemperatureZero();
 #include "./src/Sensors.h"
 #include "./src/SI5351Interface.h" // Sends messages using SI5351
 #include "./src/GPS.h"             // code to interface with the gps
@@ -148,46 +146,56 @@ void setup()
 #ifdef DEBUG
   Serial.begin(9600);
 #endif
+delay(6000);
+ 
+   POUTPUT(F(" Version 4 "));
 
+#ifdef NIBBB
   OLEDinit();
-  POUTPUTLN(F(" Starting "));
+#endif
 
+
+ POUTPUTLN(F(" Starting "));
 #ifndef DEBUG
   Serial.begin(9600);
   Serial.println(" Debug messages are turned off ");
 #endif
   delay(2000);
 #ifdef PICO
-  analogReadResolution(12);
+  
 #else
   clock.begin();
 #endif
 
-  // pinMode(SENSOR_PIN, INPUT);
+  sensorSetup();
   pinMode(DBGPIN, OUTPUT);
-  pinMode(PWR_CTRL, OUTPUT);
-  pinMode(SLEEP_PIN, OUTPUT);
+  pinMode(RF_PWR, OUTPUT);
 
   pinMode(GPS_PWR, OUTPUT);
   digitalWrite(GPS_PWR, HIGH);
 
+#ifdef PICO
+  pinMode(GPS_VBAT, OUTPUT);
+  digitalWrite(GPS_PWR, HIGH);
+#endif
+
   pinMode(GPS_nRESET, OUTPUT);
   digitalWrite(GPS_nRESET, HIGH);
 
-  pinMode(PANEL_VOLTS, INPUT);
+  //pinMode(PANEL_VOLTS, INPUT);
 
-  digitalWrite(RF_PWR, LOW);
-  digitalWrite(SLEEP_PIN, LOW);
+  rf_pwr_off();
   digitalWrite(DBGPIN, LOW);
 
   rf_beep(); // Send dashes to test Si5351  - below band by up to 200 Hz
   //delay(2000);
   //code_u4b_telemetry_loc();
   // Temp.init();
-  float cpuTemp = getTempCPU();
   POUTPUT((F(" Temperture ")));
-  POUTPUTLN((cpuTemp));
+  float cpuTemp = getTempCPU();
 
+  POUTPUTLN((cpuTemp));
+                                                                                     
   POUTPUT(F(" Voltage "));
   volts = readVcc();
   POUTPUTLN((volts));
@@ -203,6 +211,7 @@ void loop() //*********************  Loop *********************
   bool getInfo = gpsGetData();
   if (getInfo == false)
   {
+    POUTPUT(F(" GPS Reset "));
     gps_reset();
     return; // try again
   }
