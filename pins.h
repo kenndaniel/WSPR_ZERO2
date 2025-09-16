@@ -18,6 +18,9 @@
 #define GPS_PWR  2 // High for gps operation
 #define GPS_VBAT 3
 #define GPS_nRESET 6   // Low for gps operation
+#define SI5351_XTAL 26000000UL  // use for Arduino Adafruit module or equivalent
+#define XMIT_CLOCK0 SI5351_CLK0  // Must be CLKO for fanout to work
+#define XMIT_CLOCK1 SI5351_CLK1
 
 #endif
 #ifdef NIBBB
@@ -30,14 +33,20 @@
 #define CSO A5
 #define CSI A6
 #define PROG_RESET 4 // Resets the SAMD21
-#define VCO_CTRL D3  
-#define PWR_CTRL D5 // Can be used to turn off si5351 
+#define VCO_CTRL 3  
+#define PWR_CTRL 5 // Can be used to turn off si5351 
 #define RF_PWR PWR_CTRL
-#define GPS_PPS D0 // GPS pulse per second
+#define GPS_PPS 0 // GPS pulse per second
 #define interruptPinPPS GPS_PPS
 //#define GPS_RX D13
 //#define GPS_TX D14
-#define GPS_nRESET D7   // Low for gps operation
-#define ON_OFF D6 
+#define GPS_nRESET 7   // Low for gps operation
+#define ON_OFF 6 
 #define GPS_PWR  ON_OFF // High for gps operation
+// Reference txco frequency for SI5351
+#define SI5351_XTAL 27000000UL  // Standard
+// HF Clock
+#define XMIT_CLOCK0 SI5351_CLK2  // Must be CLKO for fanout to work
+#define XMIT_CLOCK1 SI5351_CLK3
+
 #endif

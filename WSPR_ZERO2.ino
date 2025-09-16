@@ -112,7 +112,7 @@ void waitForEvenMinute();
 #else
 #define POUTPUTLN(x)
 #endif
-// ** Calibration is not functional in the
+// ** Calibration is not functional 
 //  There is code in this project that can calibrate the SI5351 frequency against the
 // highly accurate gps pulse per second (pps).  This requires a pin for the clock and a pin for the pps.
 // This was necessary in the past when using commericial
@@ -206,15 +206,22 @@ delay(6000);
   gpsStartTime = millis();
 }
 
+
+bool firstTimeSet = true;
 void loop() //*********************  Loop *********************
 {
-  bool getInfo = gpsGetData();
+  bool getInfo = gpsGetData(); // try to sync before every transmission
   if (getInfo == false)
-  {
+  { // time out on getting a gps sync
+    if (firstTimeSet == true) // only reset if there has never been a time set
+    {    
     POUTPUT(F(" GPS Reset "));
     gps_reset();
     return; // try again
+    }
   }
+
+  firstTimeSet = false; 
 
 // calibrateFreq(); // calibrate the SI5351 frequency
 #ifdef CALIBRATION

@@ -2,6 +2,7 @@
    HABalloon by KD2NDR, Miami Florida October 25 2018
    Improvements by YO3ICT, Bucharest Romania, April-May 2019 
    Modified to be simpler and work on standard Arduino by K9YO Chicago IL 2019 - March 2022
+   Modified to work on the traquino architecture by K9YO Chicago IL 2024 - March 2025
    You may use and modify the following code to suit
    your needs so long as it remains open source
    and it is for non-commercial use only.
@@ -16,11 +17,6 @@
 //#define DEBUG_SI5351_wo_GPS // Uncomment this and previous when testing without the GPS module attached.
 //const char call[] = "KM4YHI";     // Amateur callsign
 const char call[] = "K9YO";     // Amateur callsign
-const char std_telemID[] = "Q8";  // Standard telemetry prefix e.g. Q1 is Qx1xxx
-// the time slot for the telemetry transmission : 0,2,4,6 or 8 corresponds to the LU7AA input parameter
-// The standard WSPR transmission will start two minutes before the lu7aa send_time_slot
-// lu7aa time
-const int send_time_slot = 6;   
 
 // WSPR Band Center Frequencies (Do not change)
 #define WSPR_30m      10140200UL  // Center of WSPR 30m band 
@@ -30,15 +26,30 @@ const int send_time_slot = 6;
 #define WSPR_12m      24926100UL  // Center of WSPR 12m band 
 #define WSPR_10m      28126100UL  // Center of WSPR 10m band 
 // Technician license holders should set WSPR_FREQ to WSPR_10m
-// First band to transmit on
-#define WSPR_FREQ1      WSPR_15m 
-// u4b frequency channels are +-40 and +-80 from the band center
-#define FREQ_BIAS   -40   // added to WSPR_FREQ1
-#define SPREAD_SPECTRUM 2  // random +- change to frequency
 
-// Reference txco frequency for SI5351
-#define SI5351_XTAL 27000000UL  // Standard
-//#define SI5351_XTAL 25000000UL  // use for Arduino Adafruit module or equivalent
+// Band to transmit on
+#define WSPR_FREQ1      WSPR_15m 
+
+const char std_telemID[] = "Q1";  // Standard telemetry prefix e.g. Q1 is Qx1xxx
+// the time slot for the telemetry transmission : 0,2,4,6 or 8 corresponds to the minute value on LU7AA or Traquito website
+// The standard WSPR transmission will start two minutes before the lu7aa send_time_slot
+// lu7aa time
+const int send_time_slot = 8;  
+
+// Standard Telemetry Type
+#define WB8ELK
+//#define U4B
+
+// FREQ_BIAS is added to the center frequency
+// For U4B telemetry messages this will be 80, -80, 40 or -40 -- Note do not use a plus sign for positive numbers 
+// For U4B channel conversion information see https://traquito.github.io/channelmap/
+// For WB8ELK FREQ_BIAS should be 0
+#define FREQ_BIAS   0   // added to WSPR_FREQ1 e.g. -40 or 40 (no + sign) This can also be used to correct txco error e.g. 71 instead of 80
+// SPREAD_SPECTRUM will randomly change the transmit frequenc per set of transmission bu a random amount
+// For U4B protocol this should be 0
+// For WB8ELK protocol this should be 20
+#define SPREAD_SPECTRUM 20  // random +- change to frequency
+
 // gps must lock position within 15 minutes or system will sleep or use the default location if the clock was set
 #define GPS_TIMEOUT 900000 
 

@@ -102,16 +102,19 @@ void SendWSPRMessages() // Timing
   OLEDrotate(String("Sending Std WSPR Msg"),INFO);
   transmit();      // begin radio transmission
  
+  #ifdef WB8ELK
   // Send WB8ELK telemetry message
-  // code_WB8ELK_telemetry();
-  // POUTPUTLN((F("Waiting for Bill Telemetry Message ")));
-  // OLEDrotate(String("Sending 1st Telem Msg"),INFO);
-  // setModeWSPR_telem(); // set WSPR telemetry message mode
-  // waitForEvenMinute();
-  // POUTPUTLN((F("Sending  Standard Telemetry Message ")));
-  // digitalWrite(DBGPIN, HIGH);
-  // transmit();            // begin radio transmission
+  code_WB8ELK_telemetry();
+  POUTPUTLN((F("Waiting for WB8ELK Telemetry Message ")));
+  OLEDrotate(String("Sending 1st Telem Msg"),INFO);
+  setModeWSPR_telem(); // set WSPR telemetry message mode
+  waitForEvenMinute();
+  POUTPUTLN((F("Sending  Standard Telemetry Message ")));
+  digitalWrite(DBGPIN, HIGH);
+  transmit();            // begin radio transmission
+  #endif
 
+  #ifdef U4B
   // Send U4B telemetry message
   code_u4b_telemetry();
   POUTPUTLN((F("Waiting for u4b Telemetry Message ")));
@@ -120,19 +123,20 @@ void SendWSPRMessages() // Timing
   waitForEvenMinute();
   digitalWrite(DBGPIN, HIGH);
   transmit();            // begin radio transmission
-   
+  #endif
   
   initSensors();
   readSensors();
 
+
   // Send additional telemetry message
   POUTPUTLN((F("Waiting for Additional Telemetry Message ")));
   // QW8IBY OH90 47
-  encode_telen(567890, 123456,1);
-  setModeWSPR_telem(); // set WSPR telemetry message mode
-  OLEDrotate(String("Waiting for TELEM message"),INFO);
-  waitForEvenMinute();
-  transmit();      // begin radio transmission
+//  encode_telen(123890, 123456,1);
+//  setModeWSPR_telem(); // set WSPR telemetry message mode
+//  OLEDrotate(String("Waiting for TELEM message"),INFO);
+//  waitForEvenMinute();
+  //transmit();      // begin radio transmission
   return;
   // code_high_precision_temp_pres_humid();
   // setModeWSPR_telem(); // set WSPR telemetry message mode

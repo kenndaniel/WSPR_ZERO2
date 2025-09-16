@@ -18,7 +18,6 @@ int intA = (int)'A';
   double altM = gpsAltitude;
   if (altM < 0)     { altM = 0;     }
   if (altM > 21340) { altM = 21340; }
-altM = 3000;
   uint16_t altFracM =  round((double)altM/ 20);
 
     // convert inputs into a big number
@@ -79,10 +78,10 @@ void code_u4b_telemetry_loc()
   {
     speed = 0.;
   }
-
-  tempC = -15;
-  voltage = 4600;
-    speed = 20;
+    // test data for u4b
+    //tempC = -15;
+    //voltage = 4600;
+    //speed = 20;
   
        // map input presentations onto input radix (numbers within their stated range of possibilities)
         int tempCNum      = tempC +50 ;
@@ -126,9 +125,6 @@ void code_u4b_telemetry_loc()
 		loc4_telemetry[2] = g3;
 		loc4_telemetry[3] = g4;
 		loc4_telemetry[4] = '\0';
-      POUTPUT((F(" DEBUG U4B >>>  ")));
-      POUTPUT((F(loc4_telemetry)));
-      POUTPUT((F(" ")));
 
     dbm_telemetry=codeBase19(powerVal);
       POUTPUTLN((dbm_telemetry));

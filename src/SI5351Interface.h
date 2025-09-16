@@ -14,8 +14,7 @@
 #define JT9_FREQ 14000000UL
 
 #define CLK_CAL SI5351_CLK4 // the clock used for crystal calibration
-#define XMIT_CLOCK0 SI5351_CLK0  // Must be CLKO for fanout to work
-#define XMIT_CLOCK1 SI5351_CLK1
+
 
 void setModeJT9_1()
 {

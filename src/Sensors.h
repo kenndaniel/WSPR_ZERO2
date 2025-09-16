@@ -39,7 +39,7 @@ float tempC = 0.;
 
 int readVcc() 
 {  
-// Return the solar panel volts in mV
+// Return the solar panel volts in mV e.g. 3700
   int result = 0.;
   #ifdef PICO
   //analogReadResolution(12);
@@ -51,5 +51,6 @@ int readVcc()
 	unsigned int sensorValue = analogRead(PANEL_VOLTS);
   result = sensorValue * 11.68;
   #endif
+
   return result;
 }
