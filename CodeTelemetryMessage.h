@@ -233,7 +233,7 @@ void code_standard_telemetry_callsign()
   call_telemetry[1] = codeStdPosition2(int(tempCPU), satellites);
   call_telemetry[2] = std_telemID[1]; // second part of telem call e.g. 1
   // Standard WB8ELK uses 3.3v to 5.8v for coding.
-  call_telemetry[3] = codeCharacterField(33, 58, int((volts / 100.)));
+  call_telemetry[3] = codeCharacterField(32, 58, int((volts / 100.)+.05));
   call_telemetry[4] = loc6[4]; // 5th character of grid square
   call_telemetry[5] = loc6[5]; // 6th character of grid square
   call_telemetry[6] = '\0';

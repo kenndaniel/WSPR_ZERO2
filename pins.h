@@ -4,12 +4,12 @@
 #ifdef PICO
 //#define CLOCKCAL 18  // 2.5 MHz signal from Si5351
 //#define COUNTER_PIN CLOCKCAL
-#define PANEL_VOLTS A3  // Solar Cell voltage
 //#define CSO A5
 //#define CSI A6
 #define SReset // System  reset
 #define PWR_CTRL SReset
 #define PROG_RESET LED_BUILTIN // Resets the SAMD21 
+#define PANEL_VOLTS 29  // Solar Cell voltage
 #define RF_PWR 28 // pin used to turn off SI5351
 #define RF_ON  LOW
 #define RF_OFF  HIGH

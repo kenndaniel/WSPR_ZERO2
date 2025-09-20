@@ -42,15 +42,18 @@ int readVcc()
 // Return the solar panel volts in mV e.g. 3700
   int result = 0.;
   #ifdef PICO
-  //analogReadResolution(12);
+  analogReadResolution(12);
   unsigned int sensorValue = analogRead(PANEL_VOLTS);
-  result = 100*1000*sensorValue*3.3 / 65535;
+  result = (100*29.42*sensorValue*3.3f) / 4095.;
+  Serial.print(" Voltage ===== ");
+  Serial.println(result);
 
   #else // SAMD21
 
 	unsigned int sensorValue = analogRead(PANEL_VOLTS);
-  result = sensorValue * 11.68;
-  #endif
+  result = (sensorValue * 2940*3.3)/1032.;
+
+     #endif
 
   return result;
 }
