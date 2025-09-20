@@ -10,8 +10,9 @@
 #define SReset // System  reset
 #define PWR_CTRL SReset
 #define PROG_RESET LED_BUILTIN // Resets the SAMD21 
-#define SI5351_PWR_CTRL 28 // Used to turn off SI5351
-#define RF_PWR SI5351_PWR_CTRL
+#define RF_PWR 28 // pin used to turn off SI5351
+#define RF_ON  LOW
+#define RF_OFF  HIGH
 #define GPS_RX 9
 #define GPS_TX 8
 #define ON_OFF LED_BUILTIN 
@@ -35,18 +36,20 @@
 #define PROG_RESET 4 // Resets the SAMD21
 #define VCO_CTRL 3  
 #define PWR_CTRL 5 // Can be used to turn off si5351 
+#define RF_ON  HIGH
+#define RF_OFF  LOW
 #define RF_PWR PWR_CTRL
 #define GPS_PPS 0 // GPS pulse per second
 #define interruptPinPPS GPS_PPS
 //#define GPS_RX D13
 //#define GPS_TX D14
 #define GPS_nRESET 7   // Low for gps operation
-#define ON_OFF 6 
+#define ON_OFF 6 // GPS on off
 #define GPS_PWR  ON_OFF // High for gps operation
 // Reference txco frequency for SI5351
 #define SI5351_XTAL 27000000UL  // Standard
 // HF Clock
-#define XMIT_CLOCK0 SI5351_CLK2  // Must be CLKO for fanout to work
+#define XMIT_CLOCK0 SI5351_CLK2  // VHF must be CLKO for fanout to work
 #define XMIT_CLOCK1 SI5351_CLK3
 
 #endif

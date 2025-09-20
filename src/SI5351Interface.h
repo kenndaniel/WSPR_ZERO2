@@ -74,7 +74,6 @@ bool si5351_init()
   if (checkI2C == false)
   {
    POUTPUTLN((F("  XXXXXXXXX Si5351 i2c failure - Check wiring")));
-   OLEDrotate(F("Si5351 i2c failed"),ERROR);
    delay(60000);
     return false;
   }
@@ -95,7 +94,6 @@ void si5351_calibrate_init()
 void si5351_calibrate_off()
 {
   si5351.output_enable(CLK_CAL, 0);
-
 }
 
 
@@ -103,12 +101,9 @@ bool twoChanel = true; // set true to use two channel inverted output, set false
 
 void rf_on()
 { 
-#ifdef PICO
-  digitalWrite(RF_PWR, LOW);
-#endif
-#ifdef NIBBB
-  digitalWrite(RF_PWR, HIGH);
-#endif
+
+  digitalWrite(RF_PWR, RF_ON);
+
   delay(10);
 
   si5351_init();
@@ -139,12 +134,9 @@ void rf_off()
 
 void rf_pwr_off()
 {  
-#ifdef PICO
-  digitalWrite(RF_PWR, HIGH);
-#endif
-#ifdef NIBBB
-  digitalWrite(RF_PWR, LOW);
-#endif
+
+  digitalWrite(RF_PWR, RF_OFF);
+
 }
 
 
@@ -203,12 +195,17 @@ void setToFrequency1()
 void rf_beep()
 {    
   rf_on();
-  setToFrequency1();
-  POUTPUTLN((F(" Starting beep "))); 
-  OLEDrotate(" Starting RF Beep ", INFO);
-  OLEDbeginNoRotate();
+  //setToFrequency1();
+  POUTPUTLN((F(" Starting beep on band - 200HZ "))); ;
   unsigned long freq1 = (unsigned long)((WSPR_FREQ1 * correction)-200); 
-  for (int j = 10; j>=0;--j)
+
+  int beepCount = 10;
+
+  #ifdef DEBUG_SI5351
+  beepCount = 30;
+  #endif
+
+  for (int j = beepCount; j>=0;--j)
     {
       si5351.set_freq((freq1 * 100) + (11 * tone_spacing), XMIT_CLOCK0); 
       delay(500);

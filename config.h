@@ -9,14 +9,19 @@
    Please see readme file for more information.
 */
 // Define the tracker
-#define PICO
-//#define NIBBB
+//#define PICO
+#define NIBBB
 
-#define DEBUG // Debug output is generated if DEBUG is defined
-//#define DEBUG_SI5351  // Send on first even minute
-//#define DEBUG_SI5351_wo_GPS // Uncomment this and previous when testing without the GPS module attached.
-//const char call[] = "KM4YHI";     // Amateur callsign
-const char call[] = "K9YO";     // Amateur callsign
+#include "pins.h" // PIN and Clock deffinitions
+
+// Debug flags
+#define DEBUG // Serial.println debug output is generated if DEBUG is defined
+// Normally when the program boots, a 10 sec signal will be generated (beep) 200 Hz below band center
+//#define DEBUG_SI5351  // Send on first even minute regardless of send_time_slot & Beep is 30 sec long
+//#define DEBUG_SI5351_wo_GPS // sends first message immediately after beep ends 
+
+//const char call[] = "K9YO";     // Amateur callsign
+const char call[] = "KF8IA";     // Amateur callsign
 
 // WSPR Band Center Frequencies (Do not change)
 #define WSPR_30m      10140200UL  // Center of WSPR 30m band 
@@ -33,7 +38,7 @@ const char call[] = "K9YO";     // Amateur callsign
 const char std_telemID[] = "Q1";  // Standard telemetry prefix e.g. Q1 is Qx1xxx
 // the time slot for the telemetry transmission : 0,2,4,6 or 8 corresponds to the minute value on LU7AA or Traquito website
 // The standard WSPR transmission will start two minutes before the lu7aa send_time_slot
-// lu7aa time
+// lu7aa Time-Slot below    
 const int send_time_slot = 8;  
 
 // Standard Telemetry Type

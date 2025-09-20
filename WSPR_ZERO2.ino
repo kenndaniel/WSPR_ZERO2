@@ -130,7 +130,7 @@ void waitForEvenMinute();
 
 #define DBGPIN LED_BUILTIN
 
-#include "pins.h"
+
 #include "OLED.h"
 #include "./src/Sensors.h"
 #include "./src/SI5351Interface.h" // Sends messages using SI5351
@@ -182,7 +182,7 @@ delay(6000);
   pinMode(GPS_nRESET, OUTPUT);
   digitalWrite(GPS_nRESET, HIGH);
 
-  //pinMode(PANEL_VOLTS, INPUT);
+  pinMode(PANEL_VOLTS, INPUT);
 
   rf_pwr_off();
   digitalWrite(DBGPIN, LOW);
