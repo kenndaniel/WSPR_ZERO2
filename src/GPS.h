@@ -168,7 +168,6 @@ bool gpsGetData()
   gpsStartTime = millis();
   bool hiAltitudeSet = false;
   POUTPUTLN((F("Waiting for GPS to find satellites - 5-10 min")));
-  OLEDrotate("Waiting for GPS Lock ", INFO);
   while (millis() < gpsStartTime + gpsTimeout)
   {
   #ifdef PICO
@@ -230,7 +229,6 @@ bool gpsGetData()
     {
 
       POUTPUTLN((F("WARNING: No GPS data.  Check wiring.")));
-      OLEDnoRotate(F("No Comm with GPS "),ERROR);
       // blink moris code "w" for wiring
       digitalWrite(DBGPIN, LOW);
       delay(150);
@@ -253,7 +251,6 @@ bool gpsGetData()
 #endif
   }
   POUTPUTLN((F(" GPS Timeout - no satellites found ")));
-  OLEDnoRotate(F("No Sats-Trying again"),ERROR);
 
   return false;
 

@@ -19,10 +19,6 @@ void charArrayCpy(char dest[], char src[], int cnt)
   dest[cnt] = '\0';
 }
 
-void oledDisplayMinSec()
-{
-    OLEDnoRotate(String(minute())+String(":")+String(second()), INFO);
-}
 
 #include "CustomSensor.h"
 #include "ConvertData.h"
@@ -55,17 +51,13 @@ void SendWSPRMessages() // Timing
 
   POUTPUT((F("Waiting for the send time for time slot ")));
   POUTPUTLN((send_time_slot));
-  OLEDrotate(String("Wait for Send Time"),INFO);
   int beginTime = send_time_slot-2;
   if (send_time_slot == 0)  beginTime = 8;
-  OLEDrotate(String("Begin Minute ")+String(beginTime),INFO);
-  OLEDbeginNoRotate();
 // Wait for the beginning of the even minute after xtal calibration is completed
   while (!((int)minute() % 2 == 0 && (int)second() < 2 && CalibrationDone == true && sendMinute == true))
   {
       #ifdef DEBUG_SI5351
         POUTPUTLN((F("DEBUG_SI5351 is Defined - Starting Transmit")));
-        OLEDrotate(String("DBG_SI53 on Trnsmtng"),ERROR);
         //waitForEvenMinute();
         break;
       #endif
@@ -86,7 +78,6 @@ void SendWSPRMessages() // Timing
         POUTPUT((minute()));
         POUTPUT((":"));
         POUTPUTLN(((int)second()));
-        oledDisplayMinSec();
       }
       else
       {
@@ -99,14 +90,12 @@ void SendWSPRMessages() // Timing
   POUTPUTLN(F(" Sending Standard Message "));
 
   digitalWrite(DBGPIN, HIGH);
-  OLEDrotate(String("Sending Std WSPR Msg"),INFO);
   transmit();      // begin radio transmission
  
   #ifdef WB8ELK
   // Send WB8ELK telemetry message
   code_WB8ELK_telemetry();
   POUTPUTLN((F("Waiting for WB8ELK Telemetry Message ")));
-  OLEDrotate(String("Sending 1st Telem Msg"),INFO);
   setModeWSPR_telem(); // set WSPR telemetry message mode
   waitForEvenMinute();
   POUTPUTLN((F("Sending  Standard Telemetry Message ")));
@@ -119,7 +108,6 @@ void SendWSPRMessages() // Timing
   code_u4b_telemetry();
   POUTPUTLN((F("Waiting for u4b Telemetry Message ")));
   setModeWSPR_telem(); // set WSPR telemetry message mode
-  OLEDrotate(String("Waiting for 1st Telem Msg"),INFO);
   waitForEvenMinute();
   digitalWrite(DBGPIN, HIGH);
   transmit();            // begin radio transmission
@@ -132,18 +120,16 @@ void SendWSPRMessages() // Timing
   // Send additional telemetry message
   POUTPUTLN((F("Waiting for Additional Telemetry Message ")));
   // QW8IBY OH90 47
-//  encode_telen(123890, 123456,1);
-//  setModeWSPR_telem(); // set WSPR telemetry message mode
-//  OLEDrotate(String("Waiting for TELEM message"),INFO);
-//  waitForEvenMinute();
-  //transmit();      // begin radio transmission
+  encode_telen(123890, 123456,1);
+  setModeWSPR_telem(); // set WSPR telemetry message mode
+  waitForEvenMinute();
+    transmit();      // begin radio transmission
   return;
   // code_high_precision_temp_pres_humid();
   // setModeWSPR_telem(); // set WSPR telemetry message mode
 
   // waitForEvenMinute();
   // POUTPUTLN((F("Sending Pressure/Temp/Humidity Telemetry Message")));
-  // OLEDrotate(String("Sending 2nd Telem Msg"),INFO);
   // transmit();      // begin radio transmission
 
   // code_speed_direction_message();
@@ -151,7 +137,6 @@ void SendWSPRMessages() // Timing
   // setModeWSPR_telem();    // set WSPR telemetry message mode
   // waitForEvenMinute();
   // POUTPUTLN((F("Sending Speed/Direction Telemetry Message")));
-  // OLEDrotate(String("Sending 3rd Telem Msg"),INFO);
   // transmit();      // begin radio transmission
 
   POUTPUTLN((F("****** lOOP RESET RESET RESET RESET **********")));
@@ -162,7 +147,6 @@ void SendWSPRMessages() // Timing
 void waitForEvenMinute()
 {
   POUTPUTLN((F(" Waiting for Even Minute ")));
-  OLEDrotate(String("Wait for Even Min"),INFO);
    int stopSecond = 0;
   int curSecond = 0;
 
@@ -185,7 +169,6 @@ void waitForEvenMinute()
         POUTPUT((minute()));
         POUTPUT((":"));
         POUTPUTLN(((int)second()));
-        oledDisplayMinSec();
       }
       else
       {

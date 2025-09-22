@@ -20,6 +20,8 @@
 
 // Modify the callsign and telemetry channel info in this file
 #include "config.h"
+#include "pins.h" // PIN and Clock deffinitions
+
 #define VHF
 #define SEND_INTERVAL 1 // The minimum number of minutes between transmissions
 
@@ -131,7 +133,6 @@ void waitForEvenMinute();
 #define DBGPIN LED_BUILTIN
 
 
-#include "OLED.h"
 #include "./src/Sensors.h"
 #include "./src/SI5351Interface.h" // Sends messages using SI5351
 #include "./src/GPS.h"             // code to interface with the gps
@@ -151,7 +152,6 @@ delay(6000);
    POUTPUT(F(" Version 4 "));
 
 #ifdef NIBBB
-  OLEDinit();
 #endif
 
 
@@ -199,7 +199,6 @@ delay(6000);
   POUTPUT(F(" Voltage "));
   volts = readVcc();
   POUTPUTLN((volts));
-  OLEDrotate(String(" Voltage ") + String(volts), INFO);
 
   digitalWrite(DBGPIN, HIGH);
 
@@ -233,8 +232,6 @@ void loop() //*********************  Loop *********************
   attachInterrupt(digitalPinToInterrupt(interruptPinPPS), PPSinterrupt, RISING);
   Si5351InterruptSetup();
   POUTPUTLN((F(" Waiting for SI5351 calibration to complete ")));
-  OLEDrotate(F("Wait for Calibration "), INFO);
-  OLEDbeginNoRotate();
   int ical = 14;
   CalibrationDone == false;
   while (CalibrationDone == false)
@@ -245,11 +242,9 @@ void loop() //*********************  Loop *********************
     delay(1000);
     ical--;
     POUTPUTLN((ical));
-    OLEDnoRotate(String(ical), INFO);
     if (ical < 0)
     {
       POUTPUTLN((F(" Error no pps calibration signal ")));
-      OLEDrotate(F("Error no PPS signal"), ERROR);
       break;
     }
   }
@@ -258,7 +253,6 @@ void loop() //*********************  Loop *********************
   if (correction > 1.01 || correction < .99)
   {
     POUTPUTLN((F(" Error calibration count too large or too small ")));
-    OLEDrotate(F("Calibration Cnt Wrong"), ERROR);
     correction = 1;
   }
   detachInterrupt(digitalPinToInterrupt(interruptPinPPS)); // Disable the gps pps interrupt

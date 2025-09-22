@@ -12,16 +12,14 @@
 //#define PICO
 #define NIBBB
 
-#include "pins.h" // PIN and Clock deffinitions
-
 // Debug flags
 #define DEBUG // Serial.println debug output is generated if DEBUG is defined
 // Normally when the program boots, a 10 sec signal will be generated (beep) 200 Hz below band center
 //#define DEBUG_SI5351  // Send on first even minute regardless of send_time_slot & Beep is 30 sec long
 //#define DEBUG_SI5351_wo_GPS // sends first message immediately after beep ends 
 
-//const char call[] = "K9YO";     // Amateur callsign
-const char call[] = "KF8IA";     // Amateur callsign
+const char call[] = "K9YO";     // Amateur callsign
+//const char call[] = "KF8IA";     // Amateur callsign
 
 // WSPR Band Center Frequencies (Do not change)
 #define WSPR_30m      10140200UL  // Center of WSPR 30m band 
@@ -35,27 +33,27 @@ const char call[] = "KF8IA";     // Amateur callsign
 // Band to transmit on
 #define WSPR_FREQ1      WSPR_15m 
 
-const char std_telemID[] = "Q1";  // Standard telemetry prefix e.g. Q1 is Qx1xxx
+const char std_telemID[] = "Q8";  // Standard telemetry prefix e.g. Q1 is Qx1xxx
 // the time slot for the telemetry transmission : 0,2,4,6 or 8 corresponds to the minute value on LU7AA or Traquito website
 // The standard WSPR transmission will start two minutes before the lu7aa send_time_slot
 // lu7aa Time-Slot below    
 const int send_time_slot = 8;  
 
 // Standard Telemetry Type
-#define WB8ELK
-//#define U4B
+//#define WB8ELK
+#define U4B
 
 // FREQ_BIAS is added to the center frequency
 // For U4B telemetry messages this will be 80, -80, 40 or -40 -- Note do not use a plus sign for positive numbers 
 // For U4B channel conversion information see https://traquito.github.io/channelmap/
 // For WB8ELK FREQ_BIAS should be 0
-#define FREQ_BIAS   0   // added to WSPR_FREQ1 e.g. -40 or 40 (no + sign) This can also be used to correct txco error e.g. 71 instead of 80
+#define FREQ_BIAS   80   // added to WSPR_FREQ1 e.g. -40 or 40 (no + sign) This can also be used to correct txco error e.g. 71 instead of 80
 // SPREAD_SPECTRUM will randomly change the transmit frequenc per set of transmission bu a random amount
 // For U4B protocol this should be 0
 // For WB8ELK protocol this should be 20
-#define SPREAD_SPECTRUM 20  // random +- change to frequency
+#define SPREAD_SPECTRUM 0  // random +- change to frequency
 
-// gps must lock position within 15 minutes or system will sleep or use the default location if the clock was set
+// gps must lock position within 15 minutes or system will use the previous location if the clock was set
 #define GPS_TIMEOUT 900000 
 
 // APRS Variables included in case of combination of WSPR with APRS

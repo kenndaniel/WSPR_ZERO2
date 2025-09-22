@@ -211,7 +211,6 @@ void rf_beep()
       delay(500);
       si5351.set_freq((freq1 * 100) + (1 * tone_spacing), XMIT_CLOCK0); 
       delay(500);
-      OLEDnoRotate(String(j),INFO);
     }
     // Turn off the output
     rf_off();
