@@ -47,7 +47,7 @@ const int send_time_slot = 8;
 // For U4B telemetry messages this will be 80, -80, 40 or -40 -- Note do not use a plus sign for positive numbers 
 // For U4B channel conversion information see https://traquito.github.io/channelmap/
 // For WB8ELK FREQ_BIAS should be 0
-#define FREQ_BIAS   80   // added to WSPR_FREQ1 e.g. -40 or 40 (no + sign) This can also be used to correct txco error e.g. 71 instead of 80
+#define FREQ_BIAS   90   // added to WSPR_FREQ1 e.g. -40 or 40 (no + sign) This can also be used to correct txco error e.g. 71 instead of 80
 // SPREAD_SPECTRUM will randomly change the transmit frequenc per set of transmission bu a random amount
 // For U4B protocol this should be 0
 // For WB8ELK protocol this should be 20

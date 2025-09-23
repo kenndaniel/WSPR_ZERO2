@@ -62,8 +62,8 @@ void SendWSPRMessages() // Timing
         break;
       #endif
 
-    if((int)minute()%10 == (send_time_slot -2 )) sendMinute = true;
-    if( send_time_slot == 0 && (int)minute()%10 == 8) sendMinute = true;
+    if((int)minute()%10 == beginTime) sendMinute = true;
+    if((int)minute()%10 != beginTime) sendMinute = false;  // rare case if gps starts during begin minute
     time_now = millis();
 
     while(millis() < time_now + period){
@@ -119,12 +119,11 @@ void SendWSPRMessages() // Timing
 
   // Send additional telemetry message
   POUTPUTLN((F("Waiting for Additional Telemetry Message ")));
-  // QW8IBY OH90 47
-  encode_telen(123890, 123456,1);
-  setModeWSPR_telem(); // set WSPR telemetry message mode
-  waitForEvenMinute();
-    transmit();      // begin radio transmission
-  return;
+  // // QW8IBY OH90 47
+  // encode_telen(123890, 123456,1);
+  // setModeWSPR_telem(); // set WSPR telemetry message mode
+  // waitForEvenMinute();
+  //   transmit();      // begin radio transmission
   // code_high_precision_temp_pres_humid();
   // setModeWSPR_telem(); // set WSPR telemetry message mode
 
