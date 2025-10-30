@@ -1,6 +1,108 @@
 /*
    GPS functions
+
+   https://github.com/cmaglie/FlashStorage SAMD21 EPROM storage
+
+Pico Storage
+#include <EEPROM.h>
+
+void setup() {
+  Serial.begin(115200);
+  EEPROM.begin(512); // Allocate 512 bytes
+  EEPROM.write(0, 123); // Write value 123 to address 0
+  EEPROM.commit(); // Save changes to flash
+}
+
+void loop() {
+  int val = EEPROM.read(0); // Read value from address 0
+  Serial.println(val); // Should print 123
+  delay(1000);
+}
+struct MyData {
+  int number;
+  float value;
+};
+
+MyData data = {42, 3.14};
+
+void setup() {
+  EEPROM.begin(512);
+  EEPROM.put(10, data); // Store struct at address 10
+  EEPROM.commit();
+
+  MyData readData;
+  EEPROM.get(10, readData); // Retrieve struct
+  Serial.begin(115200);
+  Serial.println(readData.number); // 42
+  Serial.println(readData.value);  // 3.14
+}
+
+
+
+struct Location {
+double lat,
+double long
+}
+
+#ifdef NIBBB
+#include <FlashStorage_SAMD.h>
+FlashStorage(location, Location);
+#endif
+
+#ifdef PICO
+#include <EEPROM.h>
+#endif
+
+bool firstStore = true;
+
+void store(double lat, double long)
+{
+// Stores the last location in memory
+Location loc;
+loc.lat = lat;
+loc.long = long;
+
+#ifdef NIBBB
+  location.write(loc);
+#endif
+
+#ifdef PICO
+  if (firstStore == true) EEPROM.begin(256);
+
+  EEPROM.put(0, loc); // Store struct at address 10
+  EEPROM.commit();
+#endif
+firstStore = false;
+}
+
+
+
+bool setLastLocation()
+{
+// sets the location to the last valid value 
+
+Location loc;
+if (firstStore == true) return false;  // no location haa yet been saved
+
+#ifdef NIBBB
+  loc = location.read();
+#endif
+
+#ifdef PICO
+  EEPROM.get(0, loc); // Retrieve struct
+#endif
+
+latitude = loc.latitude;
+longitude = loc.logitude;
+
+return true;
+}
+
 */
+
+
+
+
 static const uint32_t GPSBaud = 9600;
 
 
@@ -59,7 +161,9 @@ bool SetCPUClock(TinyGPSPlus gps)
     return false;
 
   }
-  #else
+  #endif
+  
+  #ifdef NIBBB
   // Conversion to real time clock on SAMD21 processor
   clock.setTime(h, m, s);
   clock.setDate(d, mon, y % 2000);
@@ -70,7 +174,7 @@ bool SetCPUClock(TinyGPSPlus gps)
   return true;
 }
 
-#ifndef PICO
+#ifdef NIBBB
 int minute()
 {
   // Serial.println(clock.getMinutes());
@@ -206,6 +310,7 @@ bool gpsGetData()
     {
       latitude = gps.location.lat();
       longitude = gps.location.lng();
+      store(latitude,longitude);
       locSet = true;
     }
 
@@ -251,7 +356,7 @@ bool gpsGetData()
 #endif
   }
   POUTPUTLN((F(" GPS Timeout - no satellites found ")));
-
+  if (setLastLocatrion() == true ) retrun true;
   return false;
 
 }
