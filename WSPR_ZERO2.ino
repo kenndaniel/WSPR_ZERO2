@@ -96,8 +96,8 @@ int satellites = 0;
 int alt_meters = 0;
 bool telemetry_set = false;
 int Sats = 0;
-double latitude = 10.;
-double longitude = 10.;
+double latitude = 42.2833;
+double longitude = -87.5639;
 
 // Function prototypes below
 void sleep();
