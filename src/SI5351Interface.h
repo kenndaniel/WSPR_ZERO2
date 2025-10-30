@@ -97,7 +97,6 @@ void si5351_calibrate_off()
 }
 
 
-bool twoChanel = true; // set true to use two channel inverted output, set false to use only one chanel
 
 void rf_on()
 { 
@@ -107,19 +106,26 @@ void rf_on()
   delay(10);
 
   si5351_init();
-  si5351.set_ms_source(XMIT_CLOCK0, SI5351_PLLA);
+  si5351.set_ms_source(SI5351_CLK0, SI5351_PLLA);
   si5351.drive_strength(XMIT_CLOCK0, SI5351_DRIVE_8MA); // Set for max power if desired. Check datasheet.
   si5351.drive_strength(XMIT_CLOCK1, SI5351_DRIVE_8MA); // Set for max power if desired. Check datasheet.
 
   si5351.set_clock_fanout(SI5351_FANOUT_MS, 1);
+  #ifdef PICO
   si5351.set_clock_source(XMIT_CLOCK1, SI5351_CLK_SRC_MS0); // clock 1 gets freq from clock 0
   si5351.set_clock_invert(XMIT_CLOCK1, 1);
+  #endif
+  #ifdef NIBBB
+  si5351.set_clock_source(XMIT_CLOCK1, SI5351_CLK_SRC_MS0); // clock 1 gets freq from clock 0
+  si5351.set_clock_invert(XMIT_CLOCK1, 1);
+  si5351.set_clock_source(XMIT_CLOCK0, SI5351_CLK_SRC_MS0); // clock 1 gets freq from clock 0
+  #endif
 
 
 
   si5351.output_enable(XMIT_CLOCK0, 1); 
-  if (twoChanel)
-    si5351.output_enable(XMIT_CLOCK1, 1);
+ 
+  si5351.output_enable(XMIT_CLOCK1, 1);
   
 }
 
@@ -127,8 +133,7 @@ void rf_off()
 {
   //Disable output
   si5351.output_enable(XMIT_CLOCK0, 0); 
-  if (twoChanel)
-    si5351.output_enable(XMIT_CLOCK1, 0);
+  si5351.output_enable(XMIT_CLOCK1, 0);
   POUTPUTLN((F(" SI5351 End Transmission ")));
 }
 
@@ -156,7 +161,7 @@ void transmit() // Loop through the string, transmitting one character at a time
   for (i = 0; i < symbol_count; i++) // Now transmit the channel symbols
   {
     time_now = millis();
-    si5351.set_freq((freq * 100) + (tx_buffer[i] * tone_spacing), XMIT_CLOCK0); // clock 1 will follow this
+    si5351.set_freq((freq * 100) + (tx_buffer[i] * tone_spacing), SI5351_CLK0); // clock 1 will follow this
     
     while (millis() < time_now + period) // Found to be more accruate than delay()
     {
