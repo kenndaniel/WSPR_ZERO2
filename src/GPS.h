@@ -1,110 +1,8 @@
 /*
-   GPS functions
-
-   https://github.com/cmaglie/FlashStorage SAMD21 EPROM storage
-
-Pico Storage
-#include <EEPROM.h>
-
-void setup() {
-  Serial.begin(115200);
-  EEPROM.begin(512); // Allocate 512 bytes
-  EEPROM.write(0, 123); // Write value 123 to address 0
-  EEPROM.commit(); // Save changes to flash
-}
-
-void loop() {
-  int val = EEPROM.read(0); // Read value from address 0
-  Serial.println(val); // Should print 123
-  delay(1000);
-}
-struct MyData {
-  int number;
-  float value;
-};
-
-MyData data = {42, 3.14};
-
-void setup() {
-  EEPROM.begin(512);
-  EEPROM.put(10, data); // Store struct at address 10
-  EEPROM.commit();
-
-  MyData readData;
-  EEPROM.get(10, readData); // Retrieve struct
-  Serial.begin(115200);
-  Serial.println(readData.number); // 42
-  Serial.println(readData.value);  // 3.14
-}
-
-
-
-struct Location {
-double lat,
-double long
-}
-
-#ifdef NIBBB
-#include <FlashStorage_SAMD.h>
-FlashStorage(location, Location);
-#endif
-
-#ifdef PICO
-#include <EEPROM.h>
-#endif
-
-bool firstStore = true;
-
-void store(double lat, double long)
-{
-// Stores the last location in memory
-Location loc;
-loc.lat = lat;
-loc.long = long;
-
-#ifdef NIBBB
-  location.write(loc);
-#endif
-
-#ifdef PICO
-  if (firstStore == true) EEPROM.begin(256);
-
-  EEPROM.put(0, loc); // Store struct at address 10
-  EEPROM.commit();
-#endif
-firstStore = false;
-}
-
-
-
-bool setLastLocation()
-{
-// sets the location to the last valid value 
-
-Location loc;
-if (firstStore == true) return false;  // no location haa yet been saved
-
-#ifdef NIBBB
-  loc = location.read();
-#endif
-
-#ifdef PICO
-  EEPROM.get(0, loc); // Retrieve struct
-#endif
-
-latitude = loc.latitude;
-longitude = loc.logitude;
-
-return true;
-}
-
+GPS functions
 */
 
-
-
-
 static const uint32_t GPSBaud = 9600;
-
 
 
 void atgm336h_SingleGPSworkingMode()
@@ -152,7 +50,7 @@ bool SetCPUClock(TinyGPSPlus gps)
     }
   }
   #ifdef PICO
-  setSyncInterval(15*60);// set the number of seconds between re-sync
+ // setSyncInterval(15*60);// set the number of seconds between re-sync
   
   setTime((int)h, (int)m, (int)s, (int)d, (int)mon, (int)y);
   if (timeStatus() != timeSet)
@@ -251,6 +149,8 @@ void gps_reset()
 unsigned long gpsTimeout = GPS_TIMEOUT; // in milliseconds
 unsigned long gpsStartTime = 0;
 long loopi = 0;
+bool clockSet = false;  // true if time has been set since boot
+bool initialLocSet = false;  // true if location has been set since boot
 /*
   This function get gps data and makes it ready for transmission
 */
@@ -310,7 +210,6 @@ bool gpsGetData()
     {
       latitude = gps.location.lat();
       longitude = gps.location.lng();
-      store(latitude,longitude);
       locSet = true;
     }
 
@@ -320,6 +219,7 @@ bool gpsGetData()
       POUTPUT((F(" Number of satellites found ")));
       POUTPUTLN((satellites));
       SetCPUClock(gps);
+      clockSet = true;
       randomSeed(millis() % 1000);
       // start transmission loop
       return true;
@@ -352,11 +252,11 @@ bool gpsGetData()
     // If DEBUG_SI5351 is defined, the system will transmit, but not on the correct minute
     // Use this for unit testing when there is no gps attached.
 #ifdef DEBUG_SI5351
-    return true;
+    return true;  // don't wait for time set start transmission sequence
 #endif
   }
   POUTPUTLN((F(" GPS Timeout - no satellites found ")));
-  if (setLastLocatrion() == true ) retrun true;
+
   return false;
 
 }
