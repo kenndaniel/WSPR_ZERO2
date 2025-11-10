@@ -1,7 +1,7 @@
 /*
    HABalloon by KD2NDR, Miami Florida October 25 2018
    Improvements by YO3ICT, Bucharest Romania, April-May 2019
-   Modified to be simpler and work on standard Arduino by K9YO Chicago IL 2019 - 2024
+   Modified and enhanced by K9YO Chicago IL 2019 - 2025
 
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -132,11 +132,11 @@ void waitForEvenMinute();
 
 #define DBGPIN LED_BUILTIN
 
-
-#include "./src/Sensors.h"
+#include "eeprom.h"  // manage EEPROM storage
+#include "./src/TrackerSensors.h"  // read cpu temperature and pannel volts
 #include "./src/SI5351Interface.h" // Sends messages using SI5351
 #include "./src/GPS.h"             // code to interface with the gps
-// #include "./src/SI5351Interface-16QFN.h"
+#include "bmp280.h" // read data from bmp280
 #include "SendMessages.h" // schedules the sending of messages
 #ifdef CALIBRATION
 #include "./src/FrequencyCorrection.h"
@@ -149,7 +149,7 @@ void setup()
 #endif
 delay(6000);
  
-   POUTPUT(F(" Version 4 "));
+POUTPUT(F(" Version 4 "));
 
 #ifdef NIBBB
 #endif
@@ -181,8 +181,13 @@ delay(6000);
 
   pinMode(GPS_nRESET, OUTPUT);
   digitalWrite(GPS_nRESET, HIGH);
-
   pinMode(PANEL_VOLTS, INPUT);
+
+  #ifdef DEBUG
+  TestBME();
+  TestEEPROM();
+  #endif
+
 
   rf_pwr_off();
   digitalWrite(DBGPIN, LOW);
@@ -191,12 +196,12 @@ delay(6000);
   //delay(2000);
   //code_u4b_telemetry_loc();
   // Temp.init();
-  POUTPUT((F(" Temperture ")));
+  POUTPUT((F(" cpu Temperture ")));
   float cpuTemp = getTempCPU();
 
   POUTPUTLN((cpuTemp));
                                                                                      
-  POUTPUT(F(" Voltage "));
+  POUTPUT(F(" Panel Voltage "));
   volts = readVcc();
   POUTPUTLN((volts));
 
@@ -206,21 +211,19 @@ delay(6000);
 }
 
 
-bool firstTimeSet = true;
 void loop() //*********************  Loop *********************
 {
   bool getInfo = gpsGetData(); // try to sync before every transmission
-  if (getInfo == false)
-  { // time out on getting a gps sync
-    if (firstTimeSet == true) // only reset if there has never been a time set
-    {    
-    POUTPUT(F(" GPS Reset "));
-    gps_reset();
-    return; // try again
+  if (getInfo == false)  // time out on getting a gps sync
+  {                           
+    if (clockSet == true) // since boot the clock has been set, so use the previous information in message
+    {
+      BME280TakeData();
+      gpsAltitude = BMEGetAltitudeMeters(); // get altitude based on pressure
     }
+    else return; // try getting a sync again
   }
 
-  firstTimeSet = false; 
 
 // calibrateFreq(); // calibrate the SI5351 frequency
 #ifdef CALIBRATION
