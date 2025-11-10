@@ -68,7 +68,7 @@ void setModeWSPR_telem()
 
 bool si5351_init()
 {
-
+  POUTPUTLN(F(""));
   POUTPUTLN((F(" SI5351 Start Initialization "))); 
   bool checkI2C = si5351.init(SI5351_CRYSTAL_LOAD_8PF, SI5351_XTAL, 0);
   if (checkI2C == false)
