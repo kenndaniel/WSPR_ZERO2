@@ -149,7 +149,7 @@ void gps_reset()
 unsigned long gpsTimeout = GPS_TIMEOUT; // in milliseconds
 unsigned long gpsStartTime = 0;
 long loopi = 0;
-bool clockSet = false;  // true if time has been set since boot
+bool clockSetOverride = false;  // true if time has been set since boot
 bool initialLocSet = false;  // true if location has been set since boot
 /*
   This function get gps data and makes it ready for transmission
@@ -192,11 +192,15 @@ bool gpsGetData()
 
     if (gps.time.isUpdated() && gps.satellites.value() > 0 && clockSet == false)
     {
+      SetCPUClock(gps);
+      randomSeed(millis() % 1000);
       clockSet = true;
+      clockSetOverride = true;  // Indicates that the clock has been set regardless of subsequent gps synch failures
     }
     if (gps.altitude.isUpdated())
     {
       gpsAltitude = gps.altitude.meters();
+      Serial.println(gpsAltitude);
       altitudeSet = true;
     }
     if (gps.speed.isUpdated())
@@ -218,9 +222,6 @@ bool gpsGetData()
       satellites = gps.satellites.value();
       POUTPUT((F(" Number of satellites found ")));
       POUTPUTLN((satellites));
-      SetCPUClock(gps);
-      clockSet = true;
-      randomSeed(millis() % 1000);
       // start transmission loop
       return true;
     }
@@ -229,6 +230,9 @@ bool gpsGetData()
 
     if (loopi % 20000 == 0)
       gpsBeep(); // still looking for satellites
+
+    if(loopi % 400000 == 0) 
+      POUTPUTLN((F("Still waiting")));
 
     if (gps.charsProcessed() < 15 && millis() % 1500 < 5)
     {
