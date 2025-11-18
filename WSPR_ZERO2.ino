@@ -38,6 +38,7 @@ volatile int freqCnt;
 
 #include <Wire.h>
 
+
 #ifdef PICO
 #include <TimeLib.h>
 bool setSDA(4);
@@ -52,6 +53,8 @@ RTCZero clock;
 #include <si5351.h>
 #include <JTEncode.h>
 #include <TinyGPSPlus.h>
+
+
 
 TinyGPSPlus gps;
 
@@ -69,7 +72,7 @@ JTEncode jtencode;
 
 // float tempOutside, pressure; // set once in tempPress.h
 int volts = 0;
-double gpsAltitude = 0; // Testing value
+double gpsAltitude = 0; 
 float gpsSpeed = 0.;   // kmph
 float gpsSpeedKnots =0.; // knots per hr
 float gpsCourse =0.;
@@ -132,15 +135,20 @@ void waitForEvenMinute();
 
 #define DBGPIN LED_BUILTIN
 
+
+
 #include "eeprom.h"  // manage EEPROM storage
 #include "./src/TrackerSensors.h"  // read cpu temperature and pannel volts
 #include "./src/SI5351Interface.h" // Sends messages using SI5351
 #include "./src/GPS.h"             // code to interface with the gps
-#include "bmp280.h" // read data from bmp280
+#include "BMP280.h" // read data from bmp280
+#include "MS56zz.h" // read temperature, pressure and altitude from MS5611 sensor
 #include "SendMessages.h" // schedules the sending of messages
 #ifdef CALIBRATION
 #include "./src/FrequencyCorrection.h"
 #endif
+
+
 
 void setup()
 {
@@ -182,12 +190,14 @@ POUTPUT(F(" Version 4 "));
   pinMode(GPS_nRESET, OUTPUT);
   digitalWrite(GPS_nRESET, HIGH);
   pinMode(PANEL_VOLTS, INPUT);
+  MS5611Init();
+  
 
   #ifdef DEBUG
-  TestBME();
-  TestEEPROM();
+  //BME280Test();
+  //TestEEPROM();
+  //MS5611Test();
   #endif
-
 
   rf_pwr_off();
   digitalWrite(DBGPIN, LOW);
@@ -213,13 +223,16 @@ POUTPUT(F(" Version 4 "));
 
 void loop() //*********************  Loop *********************
 {
+ 
   bool getInfo = gpsGetData(); // try to sync before every transmission
   if (getInfo == false)  // time out on getting a gps sync
   {                           
-    if (clockSet == true) // since boot the clock has been set, so use the previous information in message
-    {
-      BME280TakeData();
-      gpsAltitude = BMEGetAltitudeMeters(); // get altitude based on pressure
+    if (clockSetOverride == true) // since boot the clock has been set, so use the previous information in message
+    { 
+      Serial.print(" Clock Override worked ========== 4!!!  using MS5611 Altitude ");
+      MS5611TakeData();
+      gpsAltitude = MS5611GetAltitude(); // get altitude based on pressure
+      Serial.println(gpsAltitude);
     }
     else return; // try getting a sync again
   }

@@ -20,7 +20,6 @@
 
 const char call[] = "K9YO";     // Amateur callsign
 //const char call[] = "KF8IA";     // Amateur callsign
-
 // WSPR Band Center Frequencies (Do not change)
 #define WSPR_30m      10140200UL  // Center of WSPR 30m band 
 #define WSPR_20m      14097100UL  // Center of WSPR 20m band 
@@ -40,8 +39,8 @@ const char std_telemID[] = "Q8";  // Standard telemetry prefix e.g. Q1 is Qx1xxx
 const int send_time_slot = 8;  
 
 // Standard Telemetry Type
-//#define WB8ELK
-#define U4B
+#define WB8ELK
+//#define U4B
 
 // FREQ_BIAS is added to the center frequency
 // For U4B telemetry messages this will be 80, -80, 40 or -40 -- Note do not use a plus sign for positive numbers 
@@ -54,7 +53,7 @@ const int send_time_slot = 8;
 #define SPREAD_SPECTRUM 0  // random +- change to frequency
 
 // gps must lock position within 15 minutes or system will use the previous location if the clock was set
-#define GPS_TIMEOUT 900000 
+#define GPS_TIMEOUT 580000 
 
 // APRS Variables included in case of combination of WSPR with APRS
 #define APRS_SID  8
@@ -72,3 +71,4 @@ const int send_time_slot = 8;
 const int telemTrkID = 5; // Single digit (0-9) to indicate the balloon being tracked (BD). 
 const char telemID[] = "T1";   // Message identifier - first two characters of telemetery call 
 const char telemID2[] = "T9";  // Message identifier for second custom message
+

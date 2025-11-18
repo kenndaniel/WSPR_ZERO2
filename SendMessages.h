@@ -19,7 +19,6 @@ void charArrayCpy(char dest[], char src[], int cnt)
   dest[cnt] = '\0';
 }
 
-
 #include "CustomSensor.h"
 #include "ConvertData.h"
 #include "./src/CodeStandardMessage.h"
@@ -91,7 +90,6 @@ void SendWSPRMessages() // Timing
 
   digitalWrite(DBGPIN, HIGH);
   transmit();      // begin radio transmission
- 
   #ifdef WB8ELK
   // Send WB8ELK telemetry message
   code_WB8ELK_telemetry();
@@ -113,8 +111,6 @@ void SendWSPRMessages() // Timing
   transmit();            // begin radio transmission
   #endif
   
-  initSensors();
-  readSensors();
 
 
   // Send additional telemetry message

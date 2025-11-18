@@ -250,7 +250,6 @@ void code_telemety_loc()
 
 void code_telemetry_power()
 { // Altitude coded into the power field of the WB8ELK telemetry field
-
   dbm_telemetry = codeFineAltitude(gpsAltitude);
 }
 
@@ -290,7 +289,7 @@ void code_WB8ELK_telemetry()
 
 void code_high_precision_temp_pres_humid()
 {
-  float temp, pres, humidity;
+  float temp=0, pres=0, humidity=0;
   // temp = get_temperature();
   // pres = get_pressure();
   // humidity = get_humidity();
@@ -298,9 +297,9 @@ void code_high_precision_temp_pres_humid()
   // pres = 233.1;
   // humidity = 2.1;
 
-  temp = getTemperature();
-  pres = getPressure();
-  humidity = getHumidity();
+  //temp = getTemperature();
+  //pres = getPressure();
+  //humidity = getHumidity();
 
   long int valueT = (temp + 75.) * 10.;
   long int valueP = (pres * 10.);
