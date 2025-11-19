@@ -19,7 +19,7 @@ void charArrayCpy(char dest[], char src[], int cnt)
   dest[cnt] = '\0';
 }
 
-#include "CustomSensor.h"
+
 #include "ConvertData.h"
 #include "./src/CodeStandardMessage.h"
 #include "CodeTelemetryMessage.h"
@@ -90,6 +90,8 @@ void SendWSPRMessages() // Timing
 
   digitalWrite(DBGPIN, HIGH);
   transmit();      // begin radio transmission
+
+  // Second message -----------
   #ifdef WB8ELK
   // Send WB8ELK telemetry message
   code_WB8ELK_telemetry();
@@ -111,10 +113,17 @@ void SendWSPRMessages() // Timing
   transmit();            // begin radio transmission
   #endif
   
+  // Third Message -----------------
+  ExTelemEncode2();  // Traquito extended telemetery 
+  POUTPUTLN((F("Sending Extended Telemetry Message - Slot 2 ")));
+  setModeWSPR_telem(); // set WSPR telemetry message mode
+  waitForEvenMinute();
+  digitalWrite(DBGPIN, HIGH);
+  transmit();            // begin radio transmission
 
 
-  // Send additional telemetry message
-  POUTPUTLN((F("Waiting for Additional Telemetry Message ")));
+  // Send additional telen message
+  //POUTPUTLN((F("Waiting for Additional Telemetry Message ")));
   // // QW8IBY OH90 47
   // encode_telen(123890, 123456,1);
   // setModeWSPR_telem(); // set WSPR telemetry message mode

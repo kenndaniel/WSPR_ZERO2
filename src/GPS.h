@@ -231,7 +231,7 @@ bool gpsGetData()
     if (loopi % 20000 == 0)
       gpsBeep(); // still looking for satellites
 
-    if(loopi % 400000 == 0) 
+    if(loopi % 1000000 == 0) 
       POUTPUTLN((F("Still waiting")));
 
     if (gps.charsProcessed() < 15 && millis() % 1500 < 5)

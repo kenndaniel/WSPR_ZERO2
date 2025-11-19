@@ -143,6 +143,7 @@ void waitForEvenMinute();
 #include "./src/GPS.h"             // code to interface with the gps
 #include "BMP280.h" // read data from bmp280
 #include "MS56zz.h" // read temperature, pressure and altitude from MS5611 sensor
+#include "ExTelemetry.h"
 #include "SendMessages.h" // schedules the sending of messages
 #ifdef CALIBRATION
 #include "./src/FrequencyCorrection.h"
@@ -191,7 +192,7 @@ POUTPUT(F(" Version 4 "));
   digitalWrite(GPS_nRESET, HIGH);
   pinMode(PANEL_VOLTS, INPUT);
   MS5611Init();
-  
+  ExTelemEncode2();
 
   #ifdef DEBUG
   //BME280Test();
