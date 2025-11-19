@@ -155,16 +155,17 @@ void transmit() // Loop through the string, transmitting one character at a time
   uint8_t i;
   rf_on();
   POUTPUTLN((F(" SI5351 Start Transmission ")));
-  const unsigned long period = tone_delay;
+  const unsigned long period = tone_delay*1000;
   unsigned long time_now = 0;
 
   for (i = 0; i < symbol_count; i++) // Now transmit the channel symbols
   {
-    time_now = millis();
+    time_now = micros();
     si5351.set_freq((freq * 100) + (tx_buffer[i] * tone_spacing), SI5351_CLK0); // clock 1 will follow this
     
-    while (millis() < time_now + period) // Found to be more accruate than delay()
-    {
+    while ((micros() - time_now) <= period) // Found to be more accruate than delay()
+    { 
+      yield();
     }
   }
   // Turn off the output
