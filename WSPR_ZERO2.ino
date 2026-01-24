@@ -50,23 +50,10 @@ RTCZero clock;
 //Wire.begin();
 // #include <avr/interrupt.h>
 // #include <avr/io.h>
-#include <si5351.h>
-#include <JTEncode.h>
+
 #include <TinyGPSPlus.h>
 
-
-
 TinyGPSPlus gps;
-
-// Enumerations
-enum mode
-{
-  MODE_JT9,
-  MODE_WSPR
-};
-
-Si5351 si5351;
-JTEncode jtencode;
 
 #define MIN_VOLTAGE 2.6
 
@@ -79,10 +66,7 @@ float gpsCourse =0.;
 char call_telemetry[7]; // WSPR telemetry callsign
 char loc_telemetry[5];  // WSPR telemetry locator
 uint8_t dbm_telemetry;  // WSPR telemetry dbm
-uint8_t dbm_standard;   // WSPR telemetry dbm
-
-char message1[14] = ""; // Message1 (13 char limit) for JT9
-char message2[14] = ""; // Message2 (13 char limit) for JT9
+uint8_t dbm_standard;   // WSPR telemetry dbmnt
 
 char loc4[5];           // 4 digit grid square locator
 char loc4_telemetry[5]; // 4 digit grid square used for the telemetry message
@@ -91,10 +75,7 @@ char loc8[9];           // 8 digit grid square locator
 
 // byte Hour, Minute, Second; // used for timing
 // long lat, lon;             // used for location
-// uint8_t tx_buffer[255];            // WSPR Tx buffer
-uint8_t tx_buffer[165];
-uint8_t symbol_count = WSPR_SYMBOL_COUNT;
-uint16_t tone_delay, tone_spacing; // for digital encoding
+
 int satellites = 0;
 int alt_meters = 0;
 bool telemetry_set = false;
@@ -192,7 +173,8 @@ POUTPUT(F(" Version 4 "));
   digitalWrite(GPS_nRESET, HIGH);
   pinMode(PANEL_VOLTS, INPUT);
   MS5611Init();
-  ExTelemEncode2();
+
+  //ExTelemEncode2();
 
   #ifdef DEBUG
   //BME280Test();
@@ -230,14 +212,12 @@ void loop() //*********************  Loop *********************
   {                           
     if (clockSetOverride == true) // since boot the clock has been set, so use the previous information in message
     { 
-      Serial.print(" Clock Override worked ========== 4!!!  using MS5611 Altitude ");
       MS5611TakeData();
       gpsAltitude = MS5611GetAltitude(); // get altitude based on pressure
-      Serial.println(gpsAltitude);
     }
     else return; // try getting a sync again
   }
-
+ 
 
 // calibrateFreq(); // calibrate the SI5351 frequency
 #ifdef CALIBRATION
