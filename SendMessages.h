@@ -27,6 +27,7 @@ void charArrayCpy(char dest[], char src[], int cnt)
 void SendWSPRMessages() // Timing
 {
   // run additional scripts here to generate data prior to TX if there is a large delay involved.
+  MS5611TakeData();  
   code_location();       // convert latitude and longitude to grid square
   code_standard_power(); // Update WSPR power level (standard message -> coded altitude)
   POUTPUT((F("Altitude = ")));
@@ -113,7 +114,7 @@ void SendWSPRMessages() // Timing
   transmit();            // begin radio transmission
   #endif
   
-  // Third Message -----------------
+  //Third Message -----------------
   ExTelemEncode2();  // Traquito extended telemetery 
   POUTPUTLN((F("Sending Extended Telemetry Message - Slot 2 ")));
   setModeWSPR_telem(); // set WSPR telemetry message mode

@@ -88,8 +88,8 @@ void code_u4b_telemetry_loc()
         int voltageNum    = (int)((((float)(voltage/10)-300)/5 )+20) % 40;
 		    int speedNum = speed/2.;  
       POUTPUTLN((F(" temp    voltage   speed >>>  ")));
-        POUTPUTLN((tempCNum));
-        POUTPUTLN((voltageNum));
+        POUTPUT((tempCNum)); POUTPUT((F(" ")));
+        POUTPUT((voltageNum)); POUTPUT((F(" ")));
         POUTPUTLN((speedNum));
 
         int gpsValidNum=1; //changed sept 27 2024. because the traquito site won't show the 6 char grid if this bit is even momentarily off. Anyway, redundant cause sat count is sent as knots
@@ -97,13 +97,9 @@ void code_u4b_telemetry_loc()
         int val = 0;
         val *= 90; val += tempCNum;
         val *= 40; val += voltageNum;
-        POUTPUTLN((val));
         val *= 42; val += speedNum;
-        POUTPUTLN((val));
         val *=  2; val += gpsValidNum;
-        POUTPUTLN((val));
         val *=  2; val += 1;          // standard telemetry (1 for the 2nd U4B packet, 0 for "Extended TELEN") - Thanks Kevin!
-         POUTPUTLN((val));
         // unshift big number into output radix values
         int powerVal = val % 19; val = val / 19;
         int g4Val    = val % 10; val = val / 10;
@@ -211,21 +207,11 @@ void encode_telen(int telen_val1, int telen_val2,int type)
 
   }
 
-// void code_std_telem_characters(char Callsign[], float volts, float temp, int sats)
-// {                               // compose the standard WB8ELK telemtry callsign -- convert values to characters and numbers
-//   Callsign[0] = std_telemID[0]; // first part of telem call e.g. Q
-//   Callsign[1] = codeStdPosition2(int(temp), sats);
-//   Callsign[2] = std_telemID[1]; // second part of telem call e.g. 1
-//   // Standard WB8ELK uses 3.3v to 5.8v for coding.
-//   Callsign[3] = codeCharacterField(33, 58, int((volts / 100.)));
-//   Callsign[4] = loc6[4]; // 5th character of grid square
-//   Callsign[5] = loc6[5]; // 6th character of grid square
-//   Callsign[6] = '\0';
-// }
+
 
 void code_standard_telemetry_callsign()
 {
-  // This uses WB8ELK (Bill Brown) encoding method
+  // Compose the standard WB8ELK (Bill Brown) encoding method
   float tempCPU = getTempCPU();
   float volts = readVcc();
   // code telemetry callsign

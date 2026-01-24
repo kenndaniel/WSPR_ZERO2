@@ -67,7 +67,6 @@ bool SetCPUClock(TinyGPSPlus gps)
   clock.setDate(d, mon, y % 2000);
   #endif
 
-  POUTPUTLN((s));
   POUTPUTLN((F("cpu time set - waiting for position")));
   return true;
 }
@@ -75,13 +74,13 @@ bool SetCPUClock(TinyGPSPlus gps)
 #ifdef NIBBB
 int minute()
 {
-  // Serial.println(clock.getMinutes());
+  // Serial.print(clock.getMinutes()); 
   return clock.getMinutes();
 }
 
 int second()
 {
-  // Serial.println(clock.getSeconds());
+  // Serial.println(clock.getSeconds()); 
   return clock.getSeconds();
 }
 #endif
@@ -190,38 +189,38 @@ bool gpsGetData()
       hiAltitudeSet = true;
     }
 
-    if (gps.time.isUpdated() && gps.satellites.value() > 0 && clockSet == false)
+    if (gps.time.isUpdated() && (gps.satellites.value() > 0) && clockSet == false)
     {
-      SetCPUClock(gps);
       randomSeed(millis() % 1000);
       clockSet = true;
-      clockSetOverride = true;  // Indicates that the clock has been set regardless of subsequent gps synch failures
     }
     if (gps.altitude.isUpdated())
     {
-      gpsAltitude = gps.altitude.meters();
-      Serial.println(gpsAltitude);
       altitudeSet = true;
     }
     if (gps.speed.isUpdated())
     {
-      gpsSpeed = gps.speed.kmph();
-      gpsSpeedKnots = gps.speed.knots();
-      gpsCourse = gps.course.deg();
       speedSet = true;
     }
     if (gps.location.isUpdated())
     {
-      latitude = gps.location.lat();
-      longitude = gps.location.lng();
       locSet = true;
     }
 
-    if (locSet && speedSet && altitudeSet && clockSet)
+    if (locSet && speedSet && altitudeSet && clockSet)  // All gps data is ready
     {
       satellites = gps.satellites.value();
       POUTPUT((F(" Number of satellites found ")));
       POUTPUTLN((satellites));
+      SetCPUClock(gps);
+      latitude = gps.location.lat();
+      longitude = gps.location.lng();
+      gpsAltitude = gps.altitude.meters();
+      gpsSpeed = gps.speed.kmph();
+      gpsSpeedKnots = gps.speed.knots();
+      gpsCourse = gps.course.deg();
+      clockSetOverride = true;  // Indicates that the clock has been set regardless of subsequent gps synch failures
+
       // start transmission loop
       return true;
     }
@@ -231,7 +230,7 @@ bool gpsGetData()
     if (loopi % 20000 == 0)
       gpsBeep(); // still looking for satellites
 
-    if(loopi % 1000000 == 0) 
+    if(loopi % 2000000 == 0) 
       POUTPUTLN((F("Still waiting")));
 
     if (gps.charsProcessed() < 15 && millis() % 1500 < 5)

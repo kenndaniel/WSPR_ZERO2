@@ -5,6 +5,18 @@
    Mode defines
 */
 
+#include <si5351.h>
+#include <JTEncode.h>
+//#include <i2cdetect.h>
+enum mode
+{
+  MODE_JT9,
+  MODE_WSPR
+};
+
+Si5351 si5351;
+JTEncode jtencode;
+
 #define JT9_TONE_SPACING 174  // ~1.74 Hz
 #define WSPR_TONE_SPACING 146 // ~1.46 Hz
 
@@ -15,7 +27,12 @@
 
 #define CLK_CAL SI5351_CLK4 // the clock used for crystal calibration
 
-
+char message1[14] = ""; // Message1 (13 char limit) for JT9
+char message2[14] = ""; // Message2 (13 char limit) for JT9
+// uint8_t tx_buffer[255];            // WSPR Tx buffer
+uint8_t tx_buffer[165];
+uint8_t symbol_count = WSPR_SYMBOL_COUNT;
+uint16_t tone_delay, tone_spacing; // for digital encoding
 void setModeJT9_1()
 {
 
@@ -70,6 +87,7 @@ bool si5351_init()
 {
   POUTPUTLN(F(""));
   POUTPUTLN((F(" SI5351 Start Initialization "))); 
+  //i2cdetect();
   bool checkI2C = si5351.init(SI5351_CRYSTAL_LOAD_8PF, SI5351_XTAL, 0);
   if (checkI2C == false)
   {
@@ -144,10 +162,8 @@ void rf_pwr_off()
 
 }
 
-
-
 /*
-   Message encoding
+   Message encoding0ß
 */
 
 void transmit() // Loop through the string, transmitting one character at a time
@@ -197,7 +213,7 @@ void setToFrequency1()
 
 }
 
-// Send a beep in the beginning to test the transmitter
+// Send a beep to test the transmitter
 void rf_beep()
 {    
   rf_on();
@@ -208,7 +224,7 @@ void rf_beep()
   int beepCount = 10;
 
   #ifdef DEBUG_SI5351
-  beepCount = 30;
+  beepCount = 5;
   #endif
 
   for (int j = beepCount; j>=0;--j)
