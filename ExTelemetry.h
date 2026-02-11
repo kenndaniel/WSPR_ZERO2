@@ -20,9 +20,9 @@ void ExTelemEncode2()
 
     // name, low value, high value, resoluton
     codecGpsMsg.DefineField("MSAltitude",    240, 15000, 30);
-    codecGpsMsg.DefineField("GPSAltitude",  240, 15000, 30);
+    codecGpsMsg.DefineField("LM75Temp",  -50, 10, 1);
     codecGpsMsg.DefineField("Pressure", 200, 1000, 20);
-    codecGpsMsg.DefineField("Temperature",    -40, 20, 1);
+    codecGpsMsg.DefineField("MS5611Temp",    -50, 10, 1);
 
 
 
@@ -37,9 +37,9 @@ void ExTelemEncode2()
     // codecGpsMsg.Set("Temperature",    -32.4); 
     
     codecGpsMsg.Set("MSAltitude",  MS5611GetAltitude());
-    codecGpsMsg.Set("GPSAltitude",  gpsAltitude);      
+    codecGpsMsg.Set("LM75Temp",  LM75GetTemperature());      
     codecGpsMsg.Set("Pressure",  MS5611GetPressure());
-    codecGpsMsg.Set("Temperature",  MS5611GetTemperature()); 
+    codecGpsMsg.Set("MS5611Temp",  MS5611GetTemperature()); 
 
     /////////////////////////////////////////////////////////////////
     // Look up channel details for use in encoding
@@ -69,7 +69,7 @@ void ExTelemEncode2()
     /////////////////////////////////////////////////////////////////
 
     //codecGpsMsg.SetId13(cd.id13);   // "Q6"
-    codecGpsMsg.SetId13(std_telemID);   // "06"
+    codecGpsMsg.SetId13(std_telemID);   
     codecGpsMsg.SetHdrSlot(slot);
     codecGpsMsg.Encode();
 
@@ -85,23 +85,23 @@ void ExTelemEncode2()
     strcpy(loc4_telemetry,codecGpsMsg.GetGrid4());
     dbm_telemetry = codecGpsMsg.GetPowerDbm(); 
 
-    Serial.println( "Encoded data"  );
-    Serial.println("------------");
-    Serial.print("Callsign: ");
-    Serial.println(callsign);
-    Serial.print("Grid4   : ");
-    Serial.println(grid4);
-    Serial.print("PowerDbm: ");
-    Serial.println(powerDbm);
-    Serial.print("Slot: ");
-    Serial.println(slot);
+    // Serial.println( "Encoded data"  );
+    // Serial.println("------------");
+    // Serial.print("Callsign: ");
+    // Serial.println(callsign);
+    // Serial.print("Grid4   : ");
+    // Serial.println(grid4);
+    // Serial.print("PowerDbm: ");
+    // Serial.println(powerDbm);
+    // Serial.print("Slot: ");
+    // Serial.println(slot);
 
-    Serial.print("Callsign: ");
-    Serial.println(call_telemetry);
-    Serial.print("Grid4   : ");
-    Serial.println(loc4_telemetry);
-    Serial.print("PowerDbm: ");
-    Serial.println(dbm_telemetry);
+    // Serial.print("Callsign: ");
+    // Serial.println(call_telemetry);
+    // Serial.print("Grid4   : ");
+    // Serial.println(loc4_telemetry);
+    // Serial.print("PowerDbm: ");
+    // Serial.println(dbm_telemetry);
 
 
 }

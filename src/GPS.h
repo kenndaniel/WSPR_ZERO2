@@ -83,6 +83,11 @@ int second()
   // Serial.println(clock.getSeconds()); 
   return clock.getSeconds();
 }
+
+int hour()
+{
+  return clock.getHours();
+}
 #endif
 
 bool gpsSearch = true;

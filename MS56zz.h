@@ -1,3 +1,8 @@
+/* 
+MS5611 (GY63) measures temperature (down to -40) pressure (down to 10 mbar)
+https://github.com/RobTillaart/MS5611
+https://www.farnell.com/datasheets/1756128.pdf 
+*/
 
 #include <MS5611.h>
 

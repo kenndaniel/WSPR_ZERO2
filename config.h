@@ -9,8 +9,8 @@
    Please see readme file for more information.
 */
 // Define the tracker
-//#define PICO
-#define NIBBB
+#define PICO
+//#define NIBBB
 
 // Debug flags
 #define DEBUG // Serial.println debug output is generated if DEBUG is defined
@@ -32,7 +32,7 @@ const char call[] = "K9YO";     // Amateur callsign
 // Band to transmit on
 #define WSPR_FREQ1      WSPR_15m 
 
-const char std_telemID[] = "09";  // Standard telemetry prefix e.g. Q1 is Qx1xxx
+const char std_telemID[] = "Q5";  // Standard telemetry prefix e.g. Q1 is Qx1xxx
 // the time slot for the telemetry transmission : 0,2,4,6 or 8 corresponds to the minute value on LU7AA or Traquito website
 // The standard WSPR transmission will start two minutes before the lu7aa send_time_slot
 // lu7aa Time-Slot below    
@@ -43,17 +43,19 @@ const int send_time_slot = 8;
 #define U4B
 
 // FREQ_BIAS is added to the center frequency
-// For U4B telemetry messages this will be 80, -80, 40 or -40 -- Note do not use a plus sign for positive numbers 
+// For U4B telemetry messages this will be 80, -80, 40 or -40 from the band center
+// *** -- Note do not use a plus sign for positive numbers 
 // For U4B channel conversion information see https://traquito.github.io/channelmap/
 // For WB8ELK FREQ_BIAS should be 0
-#define FREQ_BIAS   75   // added to WSPR_FREQ1 e.g. -40 or 40 (no + sign) This can also be used to correct txco error e.g. 71 instead of 80
+#define FREQ_BIAS   -80   // added to WSPR_FREQ1 e.g. -40 or 40 (no + sign) This can also be used to correct txco error e.g. 71 instead of 80
+
 // SPREAD_SPECTRUM will randomly change the transmit frequenc per set of transmission bu a random amount
 // For U4B protocol this should be 0
 // For WB8ELK protocol this should be 20
 #define SPREAD_SPECTRUM 0  // random +- change to frequency
 
-// gps must lock position within 15 minutes or system will use the previous location if the clock was set
-#define GPS_TIMEOUT 580000 
+// gps must lock position within 11 minutes or system will use the previous location and system clock
+#define GPS_TIMEOUT 660000 
 
 // APRS Variables included in case of combination of WSPR with APRS
 #define APRS_SID  8

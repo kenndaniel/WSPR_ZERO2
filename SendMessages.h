@@ -3,6 +3,12 @@
 */
 
 // #include <wdt_samd21.h>
+#include "Morse.h"
+#include "Rtty.h"
+Rtty rtty(WSPR_FREQ1 + 500 );
+Morse cw(CW,WSPR_FREQ1 + 500 );
+//Morse qrss(QRSS,WSPR_FREQ1 + 500 );  
+
 void resetFunc() // Reset the Arduino
 {
   return;
@@ -23,6 +29,7 @@ void charArrayCpy(char dest[], char src[], int cnt)
 #include "ConvertData.h"
 #include "./src/CodeStandardMessage.h"
 #include "CodeTelemetryMessage.h"
+#include "FQSMessages.h"
 
 void SendWSPRMessages() // Timing
 {
@@ -122,6 +129,44 @@ void SendWSPRMessages() // Timing
   digitalWrite(DBGPIN, HIGH);
   transmit();            // begin radio transmission
 
+  //delay(15*1000); // delay 15 sec
+  POUTPUTLN((F("Begin CW transmission")));
+  cw.setCWSpeeed(10);
+  cw.setFrequency(WSPR_FREQ1 + 500 );
+  //cw.sendText(".. K9YO HAMSCI Balloon Beacon following signals RTTY 45 then FQS 2 AR ");
+  cw.sendText(".. K9YO HAMSCI");
+  POUTPUTLN((F("End CW transmission")));
+
+  delay(10*1000); // delay 15 sec
+
+  POUTPUTLN((F("Begin RTTY transmission")));
+  rf_on();
+  char msgRTTY[] = "\r\n\r\n";
+  rtty.sendText(msgRTTY);
+  rtty.sendText("  ....K9YO HAMSCI Becon Balloon RTTY  \r\n");
+  rtty.sendText(" If you receive this message, please send a note to K9YO(at)aarl.net \r\n\r\n");
+  rtty.sendText(" https://sites.google.com/view/picoballoonsbyk9yo/home 73 K9YO \r\n\r\n");
+  rf_off();
+  POUTPUTLN((F("End RTTY transmission")));
+
+  delay(15*1000); // delay 15 sec
+
+ POUTPUTLN((F("Begin FSQ transmission")));
+  Serial.println(FQSMessage());
+  rf_on();
+  setModeFSQ(MODE_FSQ_2, FQSMessage());
+    //setModeFSQ(MODE_FSQ_2, "TEST TEST TEST");
+  setFrequencyFQS(WSPR_FREQ1 + 500);
+  transmit();
+  rf_off();
+  POUTPUTLN((F("End FSQ transmission")));
+
+  delay(10*1000); // delay 15 sec
+  POUTPUTLN((F("Begin CW transmission")));
+  cw.setFrequency(WSPR_FREQ1 + 500 );
+  cw.sendText(" ..  sk  de K9YO ");
+  POUTPUTLN((F("End CW transmission")));
+    rf_off();
 
   // Send additional telen message
   //POUTPUTLN((F("Waiting for Additional Telemetry Message ")));

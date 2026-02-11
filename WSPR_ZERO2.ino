@@ -124,6 +124,7 @@ void waitForEvenMinute();
 #include "./src/GPS.h"             // code to interface with the gps
 #include "BMP280.h" // read data from bmp280
 #include "MS56zz.h" // read temperature, pressure and altitude from MS5611 sensor
+#include "LM75.h" // read temperature from a LM75
 #include "ExTelemetry.h"
 #include "SendMessages.h" // schedules the sending of messages
 #ifdef CALIBRATION
@@ -180,12 +181,13 @@ POUTPUT(F(" Version 4 "));
   //BME280Test();
   //TestEEPROM();
   //MS5611Test();
+  //LM75Test();
   #endif
 
   rf_pwr_off();
   digitalWrite(DBGPIN, LOW);
 
-  rf_beep(); // Send dashes to test Si5351  - below band by up to 200 Hz
+  //rf_beep(); // Send dashes to test Si5351  - below band by up to 200 Hz
   //delay(2000);
   //code_u4b_telemetry_loc();
   // Temp.init();
