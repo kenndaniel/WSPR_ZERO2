@@ -131,10 +131,9 @@ void SendWSPRMessages() // Timing
 
   //delay(15*1000); // delay 15 sec
   POUTPUTLN((F("Begin CW transmission")));
-  cw.setCWSpeeed(10);
+  cw.setCWSpeeed(11);
   cw.setFrequency(WSPR_FREQ1 + 500 );
-  //cw.sendText(".. K9YO HAMSCI Balloon Beacon following signals RTTY 45 then FQS 2 AR ");
-  cw.sendText(".. K9YO HAMSCI");
+  cw.sendText(".. KD9TVR HAMSCI Balloon Beacon RTTY 45 then FQS 2 AR ");
   POUTPUTLN((F("End CW transmission")));
 
   delay(10*1000); // delay 15 sec
@@ -143,16 +142,16 @@ void SendWSPRMessages() // Timing
   rf_on();
   char msgRTTY[] = "\r\n\r\n";
   rtty.sendText(msgRTTY);
-  rtty.sendText("  ....K9YO HAMSCI Becon Balloon RTTY  \r\n");
-  rtty.sendText(" If you receive this message, please send a note to K9YO(at)aarl.net \r\n\r\n");
-  rtty.sendText(" https://sites.google.com/view/picoballoonsbyk9yo/home 73 K9YO \r\n\r\n");
+  rtty.sendText("  .... KD9TVR HAMSCI Becon Balloon RTTY  \r\n");
+  rtty.sendText(" If you receive notify K9YO(at)aarl.net \r\n\r\n");
+  rtty.sendText(" https://sites.google.com/view/picoballoonsbyk9yo/home  K9YO AR \r\n\r\n");
   rf_off();
   POUTPUTLN((F("End RTTY transmission")));
 
-  delay(15*1000); // delay 15 sec
+  delay(10*1000); // delay 15 sec
 
  POUTPUTLN((F("Begin FSQ transmission")));
-  Serial.println(FQSMessage());
+  //Serial.println(FQSMessage());
   rf_on();
   setModeFSQ(MODE_FSQ_2, FQSMessage());
     //setModeFSQ(MODE_FSQ_2, "TEST TEST TEST");
@@ -161,10 +160,10 @@ void SendWSPRMessages() // Timing
   rf_off();
   POUTPUTLN((F("End FSQ transmission")));
 
-  delay(10*1000); // delay 15 sec
+  delay(10*1000); 
   POUTPUTLN((F("Begin CW transmission")));
   cw.setFrequency(WSPR_FREQ1 + 500 );
-  cw.sendText(" ..  sk  de K9YO ");
+  cw.sendText(" 73  de KD9TVR SK");
   POUTPUTLN((F("End CW transmission")));
     rf_off();
 

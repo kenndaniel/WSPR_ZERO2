@@ -13,15 +13,15 @@ void ExTelemEncode2()
     WsprMessageTelemetryExtendedUserDefined<5> codecGpsMsg;
     Serial.begin(9600);
     delay(5000);
-    Serial.println("Starting");
+    //Serial.println("Starting");
     /////////////////////////////////////////////////////////////////
     // Define telemetry fields
-    /////////////////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////////////////. 
 
-    // name, low value, high value, resoluton
+    // name, low value, high value, resolution
     codecGpsMsg.DefineField("MSAltitude",    240, 15000, 30);
     codecGpsMsg.DefineField("LM75Temp",  -50, 10, 1);
-    codecGpsMsg.DefineField("Pressure", 200, 1000, 20);
+    codecGpsMsg.DefineField("Pressure", 100, 300, 5);
     codecGpsMsg.DefineField("MS5611Temp",    -50, 10, 1);
 
 

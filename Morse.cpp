@@ -76,7 +76,7 @@ void Morse::sendText( char msg[])
 const char *Morse::lookupCharacter(char c)
 {
   c = toupper(c);
-  Serial.print(c);
+  //Serial.print(c);
   for (int i = 0; i < MORSE_TABLE_SIZE; i++)
   {
     if (morseTable[i].letter == c)
@@ -112,7 +112,7 @@ void Morse::sendSymbol(char symbol)
       sendDitDah(cwFrequency, ditLength); // call the Si5351 interface
 
     digitalWrite(DBGPIN, LOW);
-    Serial.print(".");
+    //Serial.print(".");
   }
   else if (symbol == '-')
   {
@@ -125,7 +125,7 @@ void Morse::sendSymbol(char symbol)
       sendDitDah(cwFrequency, ditLength * 3);
 
     digitalWrite(DBGPIN, LOW);
-    Serial.print("-");
+    //Serial.print("-");
   }
   wait(ditLength); // Intra-character gap
 }

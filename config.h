@@ -13,12 +13,12 @@
 //#define NIBBB
 
 // Debug flags
-#define DEBUG // Serial.println debug output is generated if DEBUG is defined
+//#define DEBUG // Serial.println debug output is generated if DEBUG is defined
 // Normally when the program boots, a 10 sec signal will be generated (beep) 200 Hz below band center
 //#define DEBUG_SI5351  // Send on first even minute regardless of send_time_slot & Beep is 30 sec long
 //#define DEBUG_SI5351_wo_GPS // sends first message immediately after beep ends 
 
-const char call[] = "K9YO";     // Amateur callsign
+const char call[] = "KD9TVR";     // Amateur callsign
 //const char call[] = "KF8IA";     // Amateur callsign
 // WSPR Band Center Frequencies (Do not change)
 #define WSPR_30m      10140200UL  // Center of WSPR 30m band 
@@ -32,11 +32,11 @@ const char call[] = "K9YO";     // Amateur callsign
 // Band to transmit on
 #define WSPR_FREQ1      WSPR_15m 
 
-const char std_telemID[] = "Q5";  // Standard telemetry prefix e.g. Q1 is Qx1xxx
+const char std_telemID[] = "Q3";  // Standard telemetry prefix e.g. Q1 is Qx1xxx
 // the time slot for the telemetry transmission : 0,2,4,6 or 8 corresponds to the minute value on LU7AA or Traquito website
 // The standard WSPR transmission will start two minutes before the lu7aa send_time_slot
 // lu7aa Time-Slot below    
-const int send_time_slot = 8;  
+const int send_time_slot = 0;  
 
 // Standard Telemetry Type
 //#define WB8ELK

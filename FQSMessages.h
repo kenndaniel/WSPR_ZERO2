@@ -51,9 +51,9 @@ char * FQSMessage()
    HFDataAppendFloat(MS5611GetPressure()); // pressure MS5611
    HFDataAppendFloat(MS5611GetAltitude());  // Altitude MS5611
    HFDataAppendFloat(gpsAltitude);  // Altitude GPS
-   Serial.println("FQS gps altitude"+ String(gpsAltitude));
+   HFDataAppendFloat(gpsCourse);  // GPS Course
    HFDataAppendFloat(gpsSpeed);  // GPS speed kph
-   HFDataAppendChars("AR"); 
+   HFDataAppendChars(" K9YO AR"); 
    
   //Serial.println(APRSdata);
   return APRSdata;
