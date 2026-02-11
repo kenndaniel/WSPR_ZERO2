@@ -128,8 +128,8 @@ void setModeFSQ(FSQmode Mode,  char *message)
     uint8_t j = 0;
     while(tx_buffer[j++] != 0xff)
     {
-      Serial.print(tx_buffer[j]);
-      Serial.print(" ");
+      // Serial.print(tx_buffer[j]);
+      // Serial.print(" ");
     }; 
     symbol_count = j - 1;
     delay(1000);
@@ -264,10 +264,8 @@ void sendDitDah(unsigned long frequency, float duration)
   unsigned long time_now = 0;
     //Serial.println("sendBit");
     time_now = millis();
-    if (lastFrequency != frequency){
+
     si5351.set_freq(frequency * 100 , SI5351_CLK0); // clock 1 will follow this
-    lastFrequency = frequency;
-    }
     
     while ((millis() - time_now) <= millisec) // Found to be more accruate than delay()
     { yield();}
