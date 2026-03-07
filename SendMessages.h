@@ -133,7 +133,7 @@ void SendWSPRMessages() // Timing
   POUTPUTLN((F("Begin CW transmission")));
   cw.setCWSpeeed(14);
   cw.setFrequency(WSPR_FREQ1 + 500 );
-  cw.sendText(".. KE9LSI HAMSCI Balloon RTTY 45 then FQS 2, 4.5, 6 AR ");
+  cw.sendText(".. KD9TVR HAMSCI Balloon RTTY 45 then FQS 2, 4.5, 6 AR ");
   POUTPUTLN((F("End CW transmission")));
 
   delay(5*1000); 
@@ -142,9 +142,9 @@ void SendWSPRMessages() // Timing
   rf_on();
   char msgRTTY[] = "\r\n\r\n";
   rtty.sendText(msgRTTY);
-  rtty.sendText("  .... KE9LSI HAMSCI Balloon RTTY  \r\n");
+  rtty.sendText("  .... KD9TVR HAMSCI Balloon RTTY  \r\n");
   rtty.sendText(" If you rx notify K9YO(at)aarl.net \r\n\r\n");
-  rtty.sendText(" http://bit.ly/4bt5K0s  KE9LSI AR \r\n\r\n");
+  rtty.sendText(" http://bit.ly/4bt5K0s  KD9TVR AR \r\n\r\n");
   rf_off();
   //POUTPUTLN((F("End RTTY transmission")));
 

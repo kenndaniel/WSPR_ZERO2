@@ -33,10 +33,11 @@ const char call[] = "KD9TVR";     // Amateur callsign
 #define WSPR_FREQ1      WSPR_15m 
 
 const char std_telemID[] = "Q3";  // Standard telemetry prefix e.g. Q1 is Qx1xxx
-// the time slot for the telemetry transmission : 0,2,4,6 or 8 corresponds to the minute value on LU7AA or Traquito website
+// the time slot for the telemetry transmission : 0,2,4,6 or 8 corresponds to the minute value on LU7AA website 
+//(WSPRTV or Traquito is the time of the standard wspr message which is 2 less than the time slot)
 // The standard WSPR transmission will start two minutes before the lu7aa send_time_slot
 // lu7aa Time-Slot below    
-const int send_time_slot = 0;  
+const int send_time_slot = 4;    
 
 // Standard Telemetry Type
 //#define WB8ELK

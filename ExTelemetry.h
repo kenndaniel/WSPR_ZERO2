@@ -52,7 +52,7 @@ void ExTelemEncode2()
 
     // Configure band and channel
     const char *band    = "15m";
-    uint16_t    channel = 462;
+    uint16_t    channel = 463;
 
     // Get channel details
     WsprChannelMap::ChannelDetails cd = WsprChannelMap::GetChannelDetails(band, channel);

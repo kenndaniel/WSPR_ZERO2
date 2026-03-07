@@ -40,7 +40,7 @@ bool HFDataAppendChars(char *value)
 char * FQSMessage()
 { 
   // a comma will be appended betweek each data item
-  HFDataInit('A');
+  HFDataInit('B');
    HFDataAppendInt((int)month()); // month
    HFDataAppendInt((int)day()); // day
    HFDataAppendInt((int)hour()); // hr
@@ -53,7 +53,7 @@ char * FQSMessage()
    HFDataAppendFloat(gpsAltitude);  // Altitude GPS
    //HFDataAppendFloat(gpsCourse);  // GPS Course
    HFDataAppendFloat(gpsSpeed);  // GPS speed kph
-   HFDataAppendChars(" KE9LSI AR"); 
+   HFDataAppendChars(" KD9TVR AR"); 
    
   //Serial.println(APRSdata);
   return APRSdata;
