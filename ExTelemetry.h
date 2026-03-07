@@ -11,21 +11,26 @@ void ExTelemEncode2()
     // Create User-Defined Telemetry object for the number of
     // fields you want, maximum of 29 1-bit fields possible.
     WsprMessageTelemetryExtendedUserDefined<5> codecGpsMsg;
-    Serial.begin(9600);
-    delay(5000);
+    //Serial.begin(9600);
+    //delay(5000);
     //Serial.println("Starting");
     /////////////////////////////////////////////////////////////////
     // Define telemetry fields
     /////////////////////////////////////////////////////////////////. 
 
     // name, low value, high value, resolution
-    codecGpsMsg.DefineField("MSAltitude",    240, 15000, 30);
-    codecGpsMsg.DefineField("LM75Temp",  -50, 10, 1);
-    codecGpsMsg.DefineField("Pressure", 100, 300, 5);
-    codecGpsMsg.DefineField("MS5611Temp",    -50, 10, 1);
+    // The total number of values must be below 165
+   // codecGpsMsg.DefineField("MSAltitude",    240, 15000, 30);
+    codecGpsMsg.DefineField("LM75Temp", -60, 25, 1);
+    codecGpsMsg.DefineField("Pressure", 150, 400, 2);
+    codecGpsMsg.DefineField("MS5611Temp", -60, 25, 1);
 
-
-
+// Example Message Definition -- modify then save!
+/* 
+{ "name": "LM75Temp",     "unit": "C",   "lowValue":   -57,    "highValue": 5,    "stepSize": 1   },
+{ "name": "Pressure",      "unit": "hPa",    "lowValue":   150,    "highValue":    350,    "stepSize":  5   },
+{ "name": "MS5611Temp",     "unit": "C",  "lowValue":   -57,    "highValue":   -57,    "stepSize":  1   },
+ */
     /////////////////////////////////////////////////////////////////
     // Set fields (based on GPS data sourced elsewhere)
     /////////////////////////////////////////////////////////////////
@@ -36,7 +41,7 @@ void ExTelemEncode2()
     // codecGpsMsg.Set("Pressure",  225.);
     // codecGpsMsg.Set("Temperature",    -32.4); 
     
-    codecGpsMsg.Set("MSAltitude",  MS5611GetAltitude());
+   // codecGpsMsg.Set("MSAltitude",  MS5611GetAltitude());
     codecGpsMsg.Set("LM75Temp",  LM75GetTemperature());      
     codecGpsMsg.Set("Pressure",  MS5611GetPressure());
     codecGpsMsg.Set("MS5611Temp",  MS5611GetTemperature()); 
@@ -46,8 +51,8 @@ void ExTelemEncode2()
     /////////////////////////////////////////////////////////////////
 
     // Configure band and channel
-    const char *band    = "20m";
-    uint16_t    channel = 123;
+    const char *band    = "15m";
+    uint16_t    channel = 462;
 
     // Get channel details
     WsprChannelMap::ChannelDetails cd = WsprChannelMap::GetChannelDetails(band, channel);

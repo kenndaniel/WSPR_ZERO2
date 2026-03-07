@@ -5,8 +5,8 @@
 // #include <wdt_samd21.h>
 #include "Morse.h"
 #include "Rtty.h"
-Rtty rtty(WSPR_FREQ1 + 500 );
-Morse cw(CW,WSPR_FREQ1 + 500 );
+Rtty rtty(WSPR_FREQ1 - 500 );
+Morse cw(CW,WSPR_FREQ1 - 500 );
 //Morse qrss(QRSS,WSPR_FREQ1 + 500 );  
 
 void resetFunc() // Reset the Arduino
@@ -129,43 +129,58 @@ void SendWSPRMessages() // Timing
   digitalWrite(DBGPIN, HIGH);
   transmit();            // begin radio transmission
 
-  //delay(15*1000); // delay 15 sec
+  delay(5*1000); 
   POUTPUTLN((F("Begin CW transmission")));
-  cw.setCWSpeeed(11);
+  cw.setCWSpeeed(14);
   cw.setFrequency(WSPR_FREQ1 + 500 );
-  cw.sendText(".. KD9TVR HAMSCI Balloon Beacon RTTY 45 then FQS 2 AR ");
+  cw.sendText(".. KE9LSI HAMSCI Balloon RTTY 45 then FQS 2, 4.5, 6 AR ");
   POUTPUTLN((F("End CW transmission")));
 
-  delay(10*1000); // delay 15 sec
+  delay(5*1000); 
 
-  POUTPUTLN((F("Begin RTTY transmission")));
+  //POUTPUTLN((F("Begin RTTY transmission")));
   rf_on();
   char msgRTTY[] = "\r\n\r\n";
   rtty.sendText(msgRTTY);
-  rtty.sendText("  .... KD9TVR HAMSCI Becon Balloon RTTY  \r\n");
-  rtty.sendText(" If you receive notify K9YO(at)aarl.net \r\n\r\n");
-  rtty.sendText(" https://sites.google.com/view/picoballoonsbyk9yo/home  K9YO AR \r\n\r\n");
+  rtty.sendText("  .... KE9LSI HAMSCI Balloon RTTY  \r\n");
+  rtty.sendText(" If you rx notify K9YO(at)aarl.net \r\n\r\n");
+  rtty.sendText(" http://bit.ly/4bt5K0s  KE9LSI AR \r\n\r\n");
   rf_off();
-  POUTPUTLN((F("End RTTY transmission")));
+  //POUTPUTLN((F("End RTTY transmission")));
 
-  delay(10*1000); // delay 15 sec
+  delay(5*1000); // delay 10 sec
 
  POUTPUTLN((F("Begin FSQ transmission")));
+
   //Serial.println(FQSMessage());
   rf_on();
   setModeFSQ(MODE_FSQ_2, FQSMessage());
-    //setModeFSQ(MODE_FSQ_2, "TEST TEST TEST");
-  setFrequencyFQS(WSPR_FREQ1 + 500);
+  setFrequencyFQS(WSPR_FREQ1 - 500);
+  transmit();
+  rf_off();
+  delay(5 * 1000);
+
+  rf_on();
+  setModeFSQ(  MODE_FSQ_4_5, FQSMessage());
+  setFrequencyFQS(WSPR_FREQ1 - 500);
+  transmit();
+  rf_off();
+
+  delay(5 * 1000);
+
+  rf_on();
+  setModeFSQ(  MODE_FSQ_6, FQSMessage());
+  setFrequencyFQS(WSPR_FREQ1 - 500);
   transmit();
   rf_off();
   POUTPUTLN((F("End FSQ transmission")));
 
-  delay(10*1000); 
-  POUTPUTLN((F("Begin CW transmission")));
-  cw.setFrequency(WSPR_FREQ1 + 500 );
-  cw.sendText(" 73  de KD9TVR SK");
-  POUTPUTLN((F("End CW transmission")));
-    rf_off();
+  // delay(10*1000); 
+  // POUTPUTLN((F("Begin CW transmission")));
+  // cw.setFrequency(WSPR_FREQ1 + 500 );
+  // cw.sendText(" 73  de KD9TVR SK");
+  // POUTPUTLN((F("End CW transmission")));
+  //   rf_off();
 
   // Send additional telen message
   //POUTPUTLN((F("Waiting for Additional Telemetry Message ")));

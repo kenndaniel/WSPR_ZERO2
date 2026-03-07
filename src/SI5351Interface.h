@@ -258,19 +258,19 @@ void sendDitDah(unsigned long frequency, float duration)
   //Serial.print(" ");
   //Serial.println(frequency);
     //Inable output
-  si5351.output_enable(SI5351_CLK0, 1); 
+  si5351.output_enable(XMIT_CLOCK0, 1); 
   //si5351.output_enable(XMIT_CLOCK0, 1); 
   si5351.output_enable(XMIT_CLOCK1, 1);
   unsigned long time_now = 0;
     //Serial.println("sendBit");
     time_now = millis();
 
-    si5351.set_freq(frequency * 100 , SI5351_CLK0); // clock 1 will follow this
+    si5351.set_freq(frequency * 100 , XMIT_CLOCK0); // clock 1 will follow this
     
     while ((millis() - time_now) <= millisec) // Found to be more accruate than delay()
     { yield();}
       //Disable output
-  si5351.output_enable(SI5351_CLK0, 0); 
+  si5351.output_enable(XMIT_CLOCK0, 0); 
   //si5351.output_enable(XMIT_CLOCK0, 0); 
   si5351.output_enable(XMIT_CLOCK1, 0);
   
@@ -305,7 +305,7 @@ void sendTone(unsigned long frequency, float duration)
   unsigned long time_now = 0;
 
     time_now = millis();
-    si5351.set_freq((frequency ) , SI5351_CLK0); // clock 1 will follow this
+    si5351.set_freq((frequency*100ULL ) , XMIT_CLOCK0); // clock 1 will follow this
     
     while ((millis() - time_now) <= millsec) // Found to be more accruate than delay()
     {yield();}

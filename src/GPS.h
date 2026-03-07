@@ -50,7 +50,6 @@ bool SetCPUClock(TinyGPSPlus gps)
     }
   }
   #ifdef PICO
- // setSyncInterval(15*60);// set the number of seconds between re-sync
   
   setTime((int)h, (int)m, (int)s, (int)d, (int)mon, (int)y);
   if (timeStatus() != timeSet)
