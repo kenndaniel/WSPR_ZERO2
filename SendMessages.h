@@ -5,8 +5,8 @@
 // #include <wdt_samd21.h>
 #include "Morse.h"
 #include "Rtty.h"
-Rtty rtty(WSPR_FREQ1 - 500 );
-Morse cw(CW,WSPR_FREQ1 - 500 );
+Rtty rtty(WSPR_FREQ1 WSPR_OFFSET );
+Morse cw(CW,WSPR_FREQ1 WSPR_OFFSET );
 //Morse qrss(QRSS,WSPR_FREQ1 + 500 );  
 
 void resetFunc() // Reset the Arduino
@@ -42,12 +42,12 @@ void SendWSPRMessages() // Timing
     POUTPUT((F("Speed (knots)= ")));
   POUTPUTLN((gpsSpeedKnots));
   POUTPUT((F("Standard Message ")));
+
   setModeWSPR();     // set WSPR standard message mode
   setToFrequency1(); // Initialize the transmit frequency
 #ifdef DEBUG_SI5351_wo_GPS
   transmit(); // begin radio transmission
 #endif
-
 
   int stopSecond = 0;
   int curSecond = 0;
@@ -122,6 +122,14 @@ void SendWSPRMessages() // Timing
   #endif
   
   //Third Message -----------------
+  ExTelemEncode1();  // Traquito extended telemetery 
+  POUTPUTLN((F("Sending Extended Telemetry Message - Slot 2 ")));
+  setModeWSPR_telem(); // set WSPR telemetry message mode
+  waitForEvenMinute();
+  digitalWrite(DBGPIN, HIGH);
+  transmit();            // begin radio transmission
+
+  //Fourth Message -----------------
   ExTelemEncode2();  // Traquito extended telemetery 
   POUTPUTLN((F("Sending Extended Telemetry Message - Slot 2 ")));
   setModeWSPR_telem(); // set WSPR telemetry message mode
@@ -129,48 +137,53 @@ void SendWSPRMessages() // Timing
   digitalWrite(DBGPIN, HIGH);
   transmit();            // begin radio transmission
 
-  delay(5*1000); 
-  POUTPUTLN((F("Begin CW transmission")));
-  cw.setCWSpeeed(14);
-  cw.setFrequency(WSPR_FREQ1 + 500 );
-  cw.sendText(".. KD9TVR HAMSCI Balloon RTTY 45 then FQS 2, 4.5, 6 AR ");
-  POUTPUTLN((F("End CW transmission")));
+  // delay(5*1000); 
+  // POUTPUTLN((F("Begin CW transmission")));
+  // cw.setCWSpeeed(14);
+  // cw.setFrequency(WSPR_FREQ1 WSPR_OFFSET );
+  // cw.sendText("... ");
+  // cw.sendText(call) ;
+  // cw.sendText(" HAMSCI Balloon RTTY 45 then FQS 2, 4.5, 6 AR ");
+  // POUTPUTLN((F("End CW transmission")));
 
   delay(5*1000); 
 
   //POUTPUTLN((F("Begin RTTY transmission")));
-  rf_on();
-  char msgRTTY[] = "\r\n\r\n";
-  rtty.sendText(msgRTTY);
-  rtty.sendText("  .... KD9TVR HAMSCI Balloon RTTY  \r\n");
-  rtty.sendText(" If you rx notify K9YO(at)aarl.net \r\n\r\n");
-  rtty.sendText(" http://bit.ly/4bt5K0s  KD9TVR AR \r\n\r\n");
-  rf_off();
+  // rf_on();
+  // char msgRTTY[] = "\r\n\r\n";
+  // rtty.sendText(msgRTTY);
+  // rtty.sendText("  ....");
+  // rtty.sendText(call) ;
+  //  rtty.sendText(" HAMSCI Balloon RTTY  \r\n");
+  // rtty.sendText(" If you rx notify K9YO(at)aarl.net \r\n\r\n");
+  // rtty.sendText(" http://bit.ly/4bt5K0s");
+  //   rtty.sendText("  KE9LSI AR \r\n\r\n");
+  // rf_off();
   //POUTPUTLN((F("End RTTY transmission")));
 
-  delay(5*1000); // delay 10 sec
+  //delay(5*1000); // delay 10 sec
 
  POUTPUTLN((F("Begin FSQ transmission")));
 
   //Serial.println(FQSMessage());
   rf_on();
   setModeFSQ(MODE_FSQ_2, FQSMessage());
-  setFrequencyFQS(WSPR_FREQ1 - 500);
+  setFrequencyFQS(WSPR_FREQ1 WSPR_OFFSET);
   transmit();
   rf_off();
   delay(5 * 1000);
 
-  rf_on();
-  setModeFSQ(  MODE_FSQ_4_5, FQSMessage());
-  setFrequencyFQS(WSPR_FREQ1 - 500);
-  transmit();
-  rf_off();
+  // rf_on();
+  // setModeFSQ(  MODE_FSQ_4_5, FQSMessage());
+  // setFrequencyFQS(WSPR_FREQ1 WSPR_OFFSET);
+  // transmit();
+  // rf_off();
 
   delay(5 * 1000);
 
   rf_on();
   setModeFSQ(  MODE_FSQ_6, FQSMessage());
-  setFrequencyFQS(WSPR_FREQ1 - 500);
+  setFrequencyFQS(WSPR_FREQ1 WSPR_OFFSET);
   transmit();
   rf_off();
   POUTPUTLN((F("End FSQ transmission")));

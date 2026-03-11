@@ -53,7 +53,7 @@ char * FQSMessage()
    HFDataAppendFloat(gpsAltitude);  // Altitude GPS
    //HFDataAppendFloat(gpsCourse);  // GPS Course
    HFDataAppendFloat(gpsSpeed);  // GPS speed kph
-   HFDataAppendChars(" KD9TVR AR"); 
+   HFDataAppendChars(" KI9LSI AR"); 
    
   //Serial.println(APRSdata);
   return APRSdata;

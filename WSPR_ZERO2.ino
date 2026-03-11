@@ -212,10 +212,16 @@ void loop() //*********************  Loop *********************
   bool getInfo = gpsGetData(); // try to sync before every transmission
   if (getInfo == false)  // time out on getting a gps sync
   {                           
-    if (clockSetOverride == true) // since boot the clock has been set, so use the previous information in message
+    if (clockSetOverride == true) 
+    // since boot the clock has been set, 
+    //use the previous information in message and get altitude from pressure calculation
     { 
+      if(gpsAltitude < 8000)
+     { 
       MS5611TakeData();
-      gpsAltitude = MS5611GetAltitude(); // get altitude based on pressure
+      gpsAltitude = MS5611GetAltitude(); // get altitude based on pressure}
+      }
+      else return;// try getting a sync again
     }
     else return; // try getting a sync again
   }
