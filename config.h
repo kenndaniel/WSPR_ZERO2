@@ -18,7 +18,8 @@
 //#define DEBUG_SI5351  // Send on first even minute regardless of send_time_slot & Beep is 30 sec long
 //#define DEBUG_SI5351_wo_GPS // sends first message immediately after beep ends 
 
-const char call[] = "KD9TVR";     // Amateur callsign
+char call[] = "KI9LSI";     // Amateur callsign
+
 //const char call[] = "KF8IA";     // Amateur callsign
 // WSPR Band Center Frequencies (Do not change)
 #define WSPR_30m      10140200UL  // Center of WSPR 30m band 
@@ -29,7 +30,7 @@ const char call[] = "KD9TVR";     // Amateur callsign
 #define WSPR_10m      28126100UL  // Center of WSPR 10m band 
 // Technician license holders should set WSPR_FREQ to WSPR_10m
 
-// Band to transmit on
+// Band to transmit on. 
 #define WSPR_FREQ1      WSPR_15m 
 
 const char std_telemID[] = "Q3";  // Standard telemetry prefix e.g. Q1 is Qx1xxx
@@ -37,10 +38,10 @@ const char std_telemID[] = "Q3";  // Standard telemetry prefix e.g. Q1 is Qx1xxx
 //(WSPRTV or Traquito is the time of the standard wspr message which is 2 less than the time slot)
 // The standard WSPR transmission will start two minutes before the lu7aa send_time_slot
 // lu7aa Time-Slot below    
-const int send_time_slot = 4;    
+const int send_time_slot = 2;    
 
 // Standard Telemetry Type
-//#define WB8ELK
+//#define WB8ELK.  
 #define U4B
 
 // FREQ_BIAS is added to the center frequency
@@ -54,6 +55,9 @@ const int send_time_slot = 4;
 // For U4B protocol this should be 0
 // For WB8ELK protocol this should be 20
 #define SPREAD_SPECTRUM 0  // random +- change to frequency
+
+// FSQ, RTTY, CW offset from center of the band
+#define WSPR_OFFSET -500
 
 // gps must lock position within 11 minutes or system will use the previous location and system clock
 #define GPS_TIMEOUT 660000 
