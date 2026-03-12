@@ -21,15 +21,15 @@ void ExTelemEncode1()
     // name, low value, high value, resolution
     // The total number of values must be below 165
    // codecGpsMsg.DefineField("MSAltitude",    240, 15000, 30);
-    codecGpsMsg.DefineField("LM75Temp", -60, 30, 1);
+    codecGpsMsg.DefineField("LM75Temp", -600, 300, 5);
     codecGpsMsg.DefineField("Pressure", 1000, 5000, 1);
-    codecGpsMsg.DefineField("MS5611Temp", -60, 30, 1);
+    codecGpsMsg.DefineField("MS5611Temp", -600, 300, 5);
 
 // Example Message Definition -- modify then save!
 /* 
-{ "name": "LM75Temp",     "unit": "C",   "lowValue":   -60,    "highValue": 30,    "stepSize": 1   },
-{ "name": "Pressure",      "unit": "hPa",    "lowValue":  1000,    "highValue":    5000,    "stepSize":  1   },
-{ "name": "MS5611Temp",     "unit": "C",  "lowValue":   -60,    "highValue":   30,    "stepSize":  1   },
+{ "name": "LM75Temp",  "unit": "C",      "lowValue":   -600,    "highValue": 300,    "stepSize": 5   },
+{ "name": "Pressure",  "unit": "10xhPa", "lowValue":  1000,    "highValue": 5000,    "stepSize":  1   },
+{ "name": "MS5611Temp","unit": "C",      "lowValue":   -600,    "highValue":  300,    "stepSize": 5 },
  */
     /////////////////////////////////////////////////////////////////
     // Set fields (based on GPS data sourced elsewhere)
@@ -48,9 +48,9 @@ void ExTelemEncode1()
     float MS5611Temp = MS5611GetTemperature();
     //pressure = 200.; // for testing only
 
-    codecGpsMsg.Set("LM75Temp",   LM75Temp);      
+    codecGpsMsg.Set("LM75Temp",   LM75Temp*10+2.5);      
     codecGpsMsg.Set("Pressure",  pressure*10);
-    codecGpsMsg.Set("MS5611Temp", MS5611Temp); 
+    codecGpsMsg.Set("MS5611Temp", MS5611Temp*10+2.5); 
 
     // Serial.print("LM75Temp: ");
     // Serial.println(LM75Temp);
@@ -110,6 +110,7 @@ void ExTelemEncode1()
     // Serial.println(grid4);
     // Serial.print("PowerDbm: ");
     // Serial.println(powerDbm);
+    // Serial.println( "=== Encoded 1 =="  );
     // Serial.print("Slot: ");
     // Serial.println(slot);
 
@@ -119,6 +120,7 @@ void ExTelemEncode1()
     // Serial.println(loc4_telemetry);
     // Serial.print("PowerDbm: ");
     // Serial.println(dbm_telemetry);
+
 
 
 }
@@ -164,6 +166,14 @@ void ExTelemEncode2()
     codecGpsMsg.Set("GPSAlt",  gpsAltitude);      
     codecGpsMsg.Set("PresFrac",  100*fracPressure);
     codecGpsMsg.Set("AltDiff",  altDif);
+
+    // Serial.println( "=== Telemetry Fields ==="  );
+    // Serial.print("GPSAlt: ");
+    // Serial.println(gpsAltitude);
+    // Serial.print("PresFrac: ");
+    // Serial.println(100*fracPressure);
+    // Serial.print("AltDiff: ");
+    // Serial.println(altDif);
 
     /////////////////////////////////////////////////////////////////
     // Look up channel details for use in encoding
@@ -217,6 +227,7 @@ void ExTelemEncode2()
     // Serial.println(grid4);
     // Serial.print("PowerDbm: ");
     // Serial.println(powerDbm);
+    // Serial.println( "=== Encoded 2 =="  );
     // Serial.print("Slot: ");
     // Serial.println(slot);
 
