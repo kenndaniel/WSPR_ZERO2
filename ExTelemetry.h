@@ -72,15 +72,12 @@ void ExTelemEncode1()
 
     /////////////////////////////////////////////////////////////////
     // slot is obtained from the chanel map time colum
-    // 
-    // - start minute = slot 0
-    // - +2 min       = slot 1
-    // - +4 min       = slot 2
-    // - +6 min       = slot 3
-    // - +8 min       = slot 4 
+    // Slot 1 is typically callsign (sent automatically)
+    // Slot 2 is typically Basic Telemetry (sent automatically)
+    // Slot 3+ is where most people send ET.
     /////////////////////////////////////////////////////////////////
 
-    uint8_t slot = 2;
+    uint8_t slot = 3;
     /////////////////////////////////////////////////////////////////
     // Encode the data in preparation to transmit
     /////////////////////////////////////////////////////////////////
@@ -189,15 +186,12 @@ void ExTelemEncode2()
 
     /////////////////////////////////////////////////////////////////
     // slot is obtained from the chanel map time colum
-    // 
-    // - start minute = slot 0
-    // - +2 min       = slot 1
-    // - +4 min       = slot 2
-    // - +6 min       = slot 3
-    // - +8 min       = slot 4 
+    // Slot 1 is typically callsign (sent automatically)
+    // Slot 2 is typically Basic Telemetry (sent automatically)
+    // Slot 3+ is where most people send ET.
     /////////////////////////////////////////////////////////////////
 
-    uint8_t slot = 3;
+    uint8_t slot = 4;
     /////////////////////////////////////////////////////////////////
     // Encode the data in preparation to transmit          
     /////////////////////////////////////////////////////////////////
