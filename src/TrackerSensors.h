@@ -45,8 +45,8 @@ int readVcc()
   analogReadResolution(12);
   unsigned int sensorValue = analogRead(PANEL_VOLTS);
   result = (100*29.42*sensorValue*3.3f) / 4095.;
-  Serial.print(" Voltage ===== ");
-  Serial.println(result);
+ // Serial.print(" Voltage ===== ");
+ // Serial.println(result);
 
   #else // SAMD21
 
