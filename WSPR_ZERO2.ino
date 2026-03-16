@@ -83,9 +83,6 @@ int Sats = 0;
 double latitude = 42.2833;
 double longitude = -87.5639;
 
-// Function prototypes below
-void sleep();
-void waitForEvenMinute();
 
 #ifdef DEBUG
 #define POUTPUT(x) Serial.print x

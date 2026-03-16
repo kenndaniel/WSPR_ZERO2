@@ -3,14 +3,14 @@
 #include <cstdint>
 
 using namespace std;
-float fracPressure = 0;  // decimal part of pressure 
+
 void charArrayCpy(char dest[], char src[], int cnt);
 
 void ExTelemEncode1()
 {
     // Create User-Defined Telemetry object for the number of
     // fields you want, maximum of 29 1-bit fields possible.
-    WsprMessageTelemetryExtendedUserDefined<5> codecGpsMsg;
+    WsprMessageTelemetryExtendedUserDefined<2> codecGpsMsg;
     //Serial.begin(9600);
     //delay(5000);
     //Serial.println("Starting");
@@ -21,15 +21,13 @@ void ExTelemEncode1()
     // name, low value, high value, resolution
     // The total number of values must be below 165
    // codecGpsMsg.DefineField("MSAltitude",    240, 15000, 30);
-    codecGpsMsg.DefineField("LM75Temp", -600, 300, 5);
-    codecGpsMsg.DefineField("Pressure", 1000, 5000, 1);
-    codecGpsMsg.DefineField("MS5611Temp", -600, 300, 5);
+    codecGpsMsg.DefineField("LM75Temp", -600, 300, 2);
+    codecGpsMsg.DefineField("Pressure", 1000, 4000, 1);
 
 // Example Message Definition -- modify then save!
 /* 
-{ "name": "LM75Temp",  "unit": "C",      "lowValue":   -600,    "highValue": 300,    "stepSize": 5   },
-{ "name": "Pressure",  "unit": "10xhPa", "lowValue":  1000,    "highValue": 5000,    "stepSize":  1   },
-{ "name": "MS5611Temp","unit": "C",      "lowValue":   -600,    "highValue":  300,    "stepSize": 5 },
+{ "name": "LM75Temp",  "unit": "C",      "lowValue":   -600,    "highValue": 300,    "stepSize": 2   },
+{ "name": "Pressure",  "unit": "dPa", "lowValue":  1000,    "highValue": 4000,    "stepSize":  1   },
  */
     /////////////////////////////////////////////////////////////////
     // Set fields (based on GPS data sourced elsewhere)
@@ -38,26 +36,20 @@ void ExTelemEncode1()
 
     // codecGpsMsg.Set("LM75Temp",  -45.);      
     //  codecGpsMsg.Set("Pressure",  225.);
-    //  codecGpsMsg.Set("MS5611Temp",    -32.4);
-
-
 
     float pressure = MS5611GetPressure();
-    fracPressure = pressure - (int)pressure; // extract the fractional part of the pressure
     float LM75Temp = LM75GetTemperature();
-    float MS5611Temp = MS5611GetTemperature();
     //pressure = 200.; // for testing only
 
-    codecGpsMsg.Set("LM75Temp",   LM75Temp*10+2.5);      
-    codecGpsMsg.Set("Pressure",  pressure*10);
-    codecGpsMsg.Set("MS5611Temp", MS5611Temp*10+2.5); 
+    codecGpsMsg.Set("LM75Temp",   LM75Temp*10);      
+    codecGpsMsg.Set("Pressure",  pressure*10); 
 
+    // Serial.println( "=== Telemetry Fields ==="  );
     // Serial.print("LM75Temp: ");
-    // Serial.println(LM75Temp);
+    // Serial.println(LM75Temp*10);
     // Serial.print("Pressure: ");
     // Serial.println(pressure*10);
-    // Serial.print("MS5611Temp: ");
-    // Serial.println(MS5611Temp);
+
     /////////////////////////////////////////////////////////////////
     // Look up channel details for use in encoding
     /////////////////////////////////////////////////////////////////
@@ -71,13 +63,13 @@ void ExTelemEncode1()
 
 
     /////////////////////////////////////////////////////////////////
-    // slot is obtained from the chanel map time colum
-    // Slot 1 is typically callsign (sent automatically)
-    // Slot 2 is typically Basic Telemetry (sent automatically)
-    // Slot 3+ is where most people send ET.
+    // Define HdrSlots --- 
+    // HdrSlot 0 is typically callsign (Traquito Chanel Map min is the start time for this msg) 
+    // HdrSlot 1 is typically Basic Telemetry (U4B or WB8ELK)
+    // HdrSlot 2 is where to send the first ET. (Display slot 3 Traquito, display slot 2 for WSPRTV)
     /////////////////////////////////////////////////////////////////
 
-    uint8_t slot = 3;
+    uint8_t slot = 2; // Hdrslot 
     /////////////////////////////////////////////////////////////////
     // Encode the data in preparation to transmit
     /////////////////////////////////////////////////////////////////
@@ -126,7 +118,7 @@ void ExTelemEncode2()
 {
     // Create User-Defined Telemetry object for the number of
     // fields you want, maximum of 29 1-bit fields possible.
-    WsprMessageTelemetryExtendedUserDefined<5> codecGpsMsg;
+    WsprMessageTelemetryExtendedUserDefined<3> codecGpsMsg;
     //Serial.begin(9600);
     //delay(5000);
     //Serial.println("Starting");
@@ -136,15 +128,15 @@ void ExTelemEncode2()
 
     // name, low value, high value, resolution
 
-    codecGpsMsg.DefineField("GPSAlt", 8500, 14000, 1);
-    codecGpsMsg.DefineField("PresFrac", 0, 100, 5);
-    codecGpsMsg.DefineField("AltDiff", -3000, 3000, 5);   
+    codecGpsMsg.DefineField("GPSAlt", 0, 20, 1);
+    codecGpsMsg.DefineField("MS5611Temp", -600, 300, 2);
+    codecGpsMsg.DefineField("AltDiff", -400, 400, 5);   
 
 // Example Message Definition -- modify then save!
 /* 
-{ "name": "GPSAlt",     "unit": "m",   "lowValue":   8500,    "highValue": 14000,    "stepSize": 1   },
-{ "name": "PresFrac",      "unit": "hPa",    "lowValue":   0,    "highValue":    100,    "stepSize":  5   },
-{ "name": "AltDiff",     "unit": "m",  "lowValue":   -3000,    "highValue":   3000,    "stepSize":  5   },
+{ "name": "GPSAltFine",     "unit": "m",   "lowValue":   0,    "highValue": 20,    "stepSize": 1   },
+{ "name": "MS5611Temp",     "unit": "C",   "lowValue":   -600,    "highValue": 300,    "stepSize": 2   },
+{ "name": "AltDiff",     "unit": "m",  "lowValue":   -400,    "highValue":   400,    "stepSize":  5   },
  */
     /////////////////////////////////////////////////////////////////
     // Set fields (based on GPS data sourced elsewhere)
@@ -158,17 +150,18 @@ void ExTelemEncode2()
     // codecGpsMsg.Set("Temperature",    -32.4); 
     
    // codecGpsMsg.Set("MSAltitude",  MS5611GetAltitude());
-
-  float altDif = gpsAltitude - MS5611GetAltitude();
-    codecGpsMsg.Set("GPSAlt",  gpsAltitude);      
-    codecGpsMsg.Set("PresFrac",  100*fracPressure);
+    float temp = MS5611GetTemperature();
+    int gpsAltFine = (int)gpsAltitude%20;
+    float altDif = gpsAltitude - MS5611GetAltitude();
+    codecGpsMsg.Set("GPSAlt",  gpsAltFine);      
+    codecGpsMsg.Set("MS5611Temp",  temp*10.);
     codecGpsMsg.Set("AltDiff",  altDif);
 
     // Serial.println( "=== Telemetry Fields ==="  );
     // Serial.print("GPSAlt: ");
-    // Serial.println(gpsAltitude);
-    // Serial.print("PresFrac: ");
-    // Serial.println(100*fracPressure);
+    // Serial.println(gpsAltFine);
+    // Serial.print("MS5611Temp: ");
+    // Serial.println(temp*10.);
     // Serial.print("AltDiff: ");
     // Serial.println(altDif);
 
@@ -191,7 +184,7 @@ void ExTelemEncode2()
     // Slot 3+ is where most people send ET.
     /////////////////////////////////////////////////////////////////
 
-    uint8_t slot = 4;
+    uint8_t slot = 3;
     /////////////////////////////////////////////////////////////////
     // Encode the data in preparation to transmit          
     /////////////////////////////////////////////////////////////////

@@ -18,7 +18,7 @@
 //#define DEBUG_SI5351  // Send on first even minute regardless of send_time_slot & Beep is 30 sec long
 //#define DEBUG_SI5351_wo_GPS // sends first message immediately after beep ends 
 
-char call[] = "KI9LSI";     // Amateur callsign
+char call[] = "KE9LSI";     // Amateur callsign
 
 //const char call[] = "KF8IA";     // Amateur callsign
 // WSPR Band Center Frequencies (Do not change)

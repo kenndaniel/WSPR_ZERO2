@@ -9,6 +9,10 @@ Rtty rtty(WSPR_FREQ1 WSPR_OFFSET );
 Morse cw(CW,WSPR_FREQ1 WSPR_OFFSET );
 //Morse qrss(QRSS,WSPR_FREQ1 + 500 );  
 
+// Function prototypes below
+void sleep();
+int waitForEvenMinute();
+
 void resetFunc() // Reset the Arduino
 {
   return;
@@ -146,7 +150,7 @@ void SendWSPRMessages() // Timing
   // cw.sendText(" HAMSCI Balloon RTTY 45 then FQS 2, 4.5, 6 AR ");
   // POUTPUTLN((F("End CW transmission")));
 
-  delay(5*1000); 
+  // delay(5*1000); 
 
   //POUTPUTLN((F("Begin RTTY transmission")));
   // rf_on();
@@ -166,12 +170,12 @@ void SendWSPRMessages() // Timing
  POUTPUTLN((F("Begin FSQ transmission")));
 
   //Serial.println(FQSMessage());
-  rf_on();
-  setModeFSQ(MODE_FSQ_2, FQSMessage());
-  setFrequencyFQS(WSPR_FREQ1 WSPR_OFFSET);
-  transmit();
-  rf_off();
-  delay(5 * 1000);
+  // rf_on();
+  // setModeFSQ(MODE_FSQ_2, FQSMessage());
+  // setFrequencyFQS(WSPR_FREQ1 WSPR_OFFSET);
+  // transmit();
+  // rf_off();
+  // delay(5 * 1000);
 
   // rf_on();
   // setModeFSQ(  MODE_FSQ_4_5, FQSMessage());
@@ -179,14 +183,14 @@ void SendWSPRMessages() // Timing
   // transmit();
   // rf_off();
 
-  delay(5 * 1000);
+  // delay(2 * 1000);
 
-  rf_on();
-  setModeFSQ(  MODE_FSQ_6, FQSMessage());
-  setFrequencyFQS(WSPR_FREQ1 WSPR_OFFSET);
-  transmit();
-  rf_off();
-  POUTPUTLN((F("End FSQ transmission")));
+  // rf_on();
+  // setModeFSQ(  MODE_FSQ_6, FQSMessage());
+  // setFrequencyFQS(WSPR_FREQ1 WSPR_OFFSET);
+  // transmit();
+  // rf_off();
+  // POUTPUTLN((F("End FSQ transmission")));
 
   // delay(10*1000); 
   // POUTPUTLN((F("Begin CW transmission")));
@@ -221,7 +225,7 @@ void SendWSPRMessages() // Timing
 }
 
 
-void waitForEvenMinute()
+int waitForEvenMinute()
 {
   POUTPUTLN((F(" Waiting for Even Minute ")));
    int stopSecond = 0;
@@ -253,6 +257,7 @@ void waitForEvenMinute()
       }
     
   }
+  return (int)minute();
 }
 
 void sleep()

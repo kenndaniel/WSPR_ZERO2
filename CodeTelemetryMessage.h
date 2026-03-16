@@ -18,8 +18,8 @@ int intA = (int)'A';
   double altM = gpsAltitude;
   if (altM < 0)     { altM = 0;     }
   if (altM > 21340) { altM = 21340; }
-  uint16_t altFracM =  round((double)altM/ 20);
-
+  //uint16_t altFracM =  round((double)altM/ 20);
+  uint16_t altFracM =  altM/ 20;
     // convert inputs into a big number
       uint32_t val = 0;
       val *=   24; val += grid5Val;
