@@ -1,6 +1,16 @@
 // Contains pin definitions for the NIBBB tracker and the Traquito (PICO)tracker
 
 
+
+#ifdef PICO  // Traquito tracker pin definitions
+#define SI5351_XTAL 26000000UL  // use for Arduino Adafruit module or equivalent
+#endif
+
+#ifdef PICO_THREE_PART
+#define SI5351_XTAL 25000000UL  // use for Adafruit module or equivalent
+#define PICO
+#endif
+
 #ifdef PICO
 //#define CLOCKCAL 18  // 2.5 MHz signal from Si5351
 //#define COUNTER_PIN CLOCKCAL
@@ -19,11 +29,11 @@
 #define GPS_PWR  2 // High for gps operation
 #define GPS_VBAT 3
 #define GPS_nRESET 6   // Low for gps operation
-#define SI5351_XTAL 26000000UL  // use for Arduino Adafruit module or equivalent
 #define XMIT_CLOCK0 SI5351_CLK0  // Must be CLKO for fanout to work
 #define XMIT_CLOCK1 SI5351_CLK1
-
 #endif
+
+
 #ifdef NIBBB
 // NIBBB424V1 pin definitions
 // Tracability to cpu schematic definitions dated 9/8/24
@@ -53,3 +63,5 @@
 #define XMIT_CLOCK1 SI5351_CLK3
 
 #endif
+
+

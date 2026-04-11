@@ -18,7 +18,7 @@
 //#define DEBUG_SI5351  // Send on first even minute regardless of send_time_slot & Beep is 30 sec long
 //#define DEBUG_SI5351_wo_GPS // sends first message immediately after beep ends 
 
-char call[] = "KE9LSI";     // Amateur callsign
+char call[] = "KD9TVR";     // Amateur callsign
 
 //const char call[] = "KF8IA";     // Amateur callsign
 // WSPR Band Center Frequencies (Do not change)
@@ -49,7 +49,7 @@ const int send_time_slot = 2;
 // *** -- Note do not use a plus sign for positive numbers 
 // For U4B channel conversion information see https://traquito.github.io/channelmap/
 // For WB8ELK FREQ_BIAS should be 0
-#define FREQ_BIAS   -80   // added to WSPR_FREQ1 e.g. -40 or 40 (no + sign) This can also be used to correct txco error e.g. 71 instead of 80
+#define FREQ_BIAS   80   // added to WSPR_FREQ1 e.g. -40 or 40 (no + sign) This can also be used to correct txco error e.g. 71 instead of 80
 
 // SPREAD_SPECTRUM will randomly change the transmit frequenc per set of transmission bu a random amount
 // For U4B protocol this should be 0
@@ -57,7 +57,7 @@ const int send_time_slot = 2;
 #define SPREAD_SPECTRUM 0  // random +- change to frequency
 
 // FSQ, RTTY, CW offset from center of the band
-#define WSPR_OFFSET -500
+#define WSPR_OFFSET +500
 
 // gps must lock position within 11 minutes or system will use the previous location and system clock
 #define GPS_TIMEOUT 660000 
