@@ -9,8 +9,9 @@
    Please see readme file for more information.
 */
 // Define the tracker
-#define PICO
+//#define PICO
 //#define NIBBB
+#define PICO_THREE_PART
 
 // Debug flags
 //#define DEBUG // Serial.println debug output is generated if DEBUG is defined

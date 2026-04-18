@@ -8,6 +8,8 @@
 
 #ifdef PICO_THREE_PART
 #define SI5351_XTAL 25000000UL  // use for Adafruit module or equivalent
+#define COUNTER_PIN 7  // Pin connected to SI5351 CLK2 for pulse counting
+#define INTERRUPT_PIN 10  // Pin connected to gps pps pin 
 #define PICO
 #endif
 

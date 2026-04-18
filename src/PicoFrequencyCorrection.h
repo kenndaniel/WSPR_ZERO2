@@ -2,8 +2,7 @@
 #include <hardware/dma.h>
 #include <pico/time.h>
 
-#define COUNTER_PIN 5  // Pin connected to SI5351 CLK2 for pulse counting
-#define INTERRUPT_PIN 6  // Pin for 4-second interrupt pulse
+
 
 // PIO program for counting pulses on pin 0 (relative)
 static const uint16_t pulse_counter_program_instructions[] = {
@@ -71,9 +70,9 @@ uint32_t count_pulses_pio(uint pin, uint32_t timeout_ms) {
 
 // Global variables for asynchronous counting
 PIO pio_global;
-uint sm_global;
-uint offset_global;
-int dma_chan_global;
+volatile uint sm_global;
+volatile uint offset_global;
+volatile int dma_chan_global;
 
 void start_pulse_count(uint pin) {
     pio_global = pio0;
@@ -118,62 +117,32 @@ void setupPinInterrupt() {
     gpio_set_irq_enabled_with_callback(INTERRUPT_PIN, GPIO_IRQ_EDGE_RISE, true, &pinInterruptISR);
 }
 
-// GPIO interrupt ISR triggered every 4 seconds by a pulse on INTERRUPT_PIN
+// GPIO interrupt ISR triggered every 1 seconds by a pulse on INTERRUPT_PIN
 void __isr pinInterruptISR(uint gpio, uint32_t events) {
     // Clear the interrupt
     gpio_acknowledge_irq(gpio, events);
     
-    // Code to execute every 4 seconds
-    // For example, perform some action like logging or adjusting settings
-    // This is a placeholder - replace with actual functionality
-    // e.g., Serial.println("Interrupted every 4 seconds");
+    PPSinterruptPico();
 }
 
-void PPSinterrupt()
+void PPSinterruptPico()
 {
-  // Calibration function that counts SI5351 clock 2 for 40 seconds
+  // Calibration function that counts SI5351 clock 2  for 10 seconds
   // Called on every pulse per second after gps sat lock
   if (CalibrationDone == true) return;
   tcount++;
-  if (tcount == 4)  // Start counting the 2.5 MHz signal from Si5351A CLK0
-  {
-    TCCR1B = 7;    //Count on rising edge of pin 5
-    TCNT1  = 0;    //Reset counter to zero
-  }
-  else if (tcount == 44)  //The 40 second counting time has elapsed - stop counting
-  {     
-    TCCR1B = 0;                                  //Turn off counter
-    // XtalFreq = overflow count + current count
-    XtalFreq = 50 + (mult * 0x10000 + TCNT1)/4;  // Actual crystal frequency
-    correction = 25000000./(float)XtalFreq;
-    // I found that adjusting the transmit freq gives a cleaner signal
 
-    mult = 0;
-    tcount = 0;                              //Reset the seconds counter
-    CalibrationDone = true;                  
-  }
-}
-
-
-
-PPSinterruptPico()
-{
-  // Calibration function that counts SI5351 clock 2 for 40 seconds
-  // Called on every pulse per second after gps sat lock
-  if (CalibrationDone == true) return;
-  tcount++;
   if (tcount == 4)  // Start counting the 2.5 MHz signal from Si5351A CLK2
   {
     start_pulse_count(COUNTER_PIN);
   }
-  else if (tcount == 44)  //The 40 second counting time has elapsed - stop counting
+  else if (tcount == 14)  //The 40 second counting time has elapsed - stop counting
   {     
     uint32_t total_pulses = stop_pulse_count();
-    XtalFreq = total_pulses / 4;  // Actual crystal frequency
+    XtalFreq = total_pulses  // Actual crystal frequency
     correction = 25000000./(float)XtalFreq;
     // I found that adjusting the transmit freq gives a cleaner signal
-
-    mult = 0;
+    si5351_calibrate_off();
     tcount = 0;                              //Reset the seconds counter
     CalibrationDone = true;                  
   }

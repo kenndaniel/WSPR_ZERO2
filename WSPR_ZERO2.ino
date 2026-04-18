@@ -95,21 +95,15 @@ double longitude = -87.5639;
 #else
 #define POUTPUTLN(x)
 #endif
-// ** Calibration is not functional 
+// ** Calibration is used only for the pico three part option
 //  There is code in this project that can calibrate the SI5351 frequency against the
 // highly accurate gps pulse per second (pps).  This requires a pin for the clock and a pin for the pps.
 // This was necessary in the past when using commericial
-// SI5351 Arduino modules with inexpensive TXCOs
-// When CALIBRATION is defined, The calibration code is included in the compile.
-// #define CALIBRATION
-
-// COUNTER_PIN is the PA04 of SAMD21 processor and is connected to CLK_CAL of the SI 5351
-//  OF THE Si5351.  This depends on the porcessor board
-// #define COUNTER_PIN 1 // Use cpu pin 1 for XIOA this corresponds to pin A1.
-// #define COUNTER_PIN 18  //  Use cpu pin 18 for MKE Zero this coresponds to pin A3
-
-// #define interruptPinPPS 2 // pin connected to the GPS pps output pin for XIAO
-// #define interruptPinPPS 0 // pin connected to the GPS pps output pin for mkr zero
+// SI5351 Arduino modules with inexpensive crystals that had significant frequency error. 
+// When PICO_THREE_PART is defined, The calibration code is included in the compile.
+// COUNTER_PIN is the gpo 7 processor and is connected to clock 2 of the SI 5351
+// The gps pps pin is connected to gpo 6
+// 
 
 #define DBGPIN LED_BUILTIN
 
@@ -124,8 +118,8 @@ double longitude = -87.5639;
 #include "LM75.h" // read temperature from a LM75
 #include "ExTelemetry.h"
 #include "SendMessages.h" // schedules the sending of messages
-#ifdef CALIBRATION
-#include "./src/FrequencyCorrection.h"
+#ifdef PICO_THREE_PART
+#include "./src/PicoFrequencyCorrection.h"
 #endif
 
 
@@ -157,6 +151,7 @@ POUTPUT(F(" Version 4 "));
 
   sensorSetup();
   pinMode(DBGPIN, OUTPUT);
+  digitalWrite(DBGPIN,HIGH );
   pinMode(RF_PWR, OUTPUT);
 
   pinMode(GPS_PWR, OUTPUT);
@@ -225,22 +220,20 @@ void loop() //*********************  Loop *********************
  
 
 // calibrateFreq(); // calibrate the SI5351 frequency
-#ifdef CALIBRATION
+#ifdef PICO_THREE_PART
+  setupPinInterrupt();
   // Calibrate Si5351 Xtal
   si5351_calibrate_init();
-  pinMode(interruptPinPPS, INPUT_PULLUP);
   tcount = 0;
   // Set 1PPS pin for external interrupt input
-  attachInterrupt(digitalPinToInterrupt(interruptPinPPS), PPSinterrupt, RISING);
-  Si5351InterruptSetup();
   POUTPUTLN((F(" Waiting for SI5351 calibration to complete ")));
-  int ical = 14;
+  int ical = 15;
   CalibrationDone == false;
   while (CalibrationDone == false)
   {
-#ifdef DEBUG_SI5351
-    CalibrationDone = true;
-#endif
+      #ifdef DEBUG_SI5351
+          CalibrationDone = true;  // skip calibration for testing
+      #endif
     delay(1000);
     ical--;
     POUTPUTLN((ical));
@@ -252,13 +245,12 @@ void loop() //*********************  Loop *********************
   }
   POUTPUT(F("  Init Correction "));
   POUTPUTLN(CalibrationDone);
+  POUTPUTLN(correction);
   if (correction > 1.01 || correction < .99)
   {
     POUTPUTLN((F(" Error calibration count too large or too small ")));
     correction = 1;
   }
-  detachInterrupt(digitalPinToInterrupt(interruptPinPPS)); // Disable the gps pps interrupt
-
   si5351_calibrate_off();
 #else
   CalibrationDone = true;

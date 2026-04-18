@@ -35,7 +35,7 @@ JTEncode jtencode;
 #define FSQ_6_DELAY             167          // Delay value for 6 baud FSQ
 #define FT8_DELAY               159          // Delay value for FT8
 
-#define CLK_CAL SI5351_CLK4 // the clock used for crystal calibration
+#define CLK_CAL SI5351_CLK2 // the clock used for crystal calibration
 #define BUFFER_SIZE 325  // Nunver of tones in a message - A character can expand to up to 3 tones
 
 char message1[14] = ""; // Message1 (13 char limit) for JT9 and FT8
