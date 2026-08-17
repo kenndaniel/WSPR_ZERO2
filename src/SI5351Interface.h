@@ -171,7 +171,7 @@ bool si5351_init()
   POUTPUTLN(F(""));
   POUTPUTLN((F(" SI5351 Start Initialization "))); 
   //i2cdetect();
-  bool checkI2C = si5351.init(SI5351_CRYSTAL_LOAD_0PF, SI5351_XTAL, 0);
+  bool checkI2C = si5351.init(SI5351_CRYSTAL_LOAD_8PF, SI5351_XTAL, 0);
   if (checkI2C == false)
   {
    POUTPUTLN((F("  XXXXXXXXX Si5351 i2c failure - Check wiring")));
