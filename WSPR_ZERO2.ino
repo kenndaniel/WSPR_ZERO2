@@ -30,7 +30,7 @@
 
 volatile bool CalibrationDone = false;
 volatile unsigned long SiCnt = 0;
-volatile unsigned long mult = 0;
+volatile unsigned long zeroCount = 0;
 volatile unsigned int tcount = 0;
 volatile float correction = 1;
 unsigned long freq = (unsigned long)(WSPR_FREQ1);
@@ -203,7 +203,8 @@ void loop() //*********************  Loop *********************
  
   bool getInfo = gpsGetData(); // try to sync before every transmission
   if (getInfo == false)  // time out on getting a gps sync
-  {                           
+  {       
+    CalibrationDone = true  ; // skip calibration if gps no sync     
     if (clockSetOverride == true) 
     // since boot the clock has been set, 
     //use the previous information in message and get altitude from pressure calculation
@@ -217,44 +218,123 @@ void loop() //*********************  Loop *********************
     }
     else return; // try getting a sync again
   }
- 
 
 // calibrateFreq(); // calibrate the SI5351 frequency
-#ifdef PICO_THREE_PART
-  setupPinInterrupt();
-  // Calibrate Si5351 Xtal
-  si5351_calibrate_init();
-  tcount = 0;
-  // Set 1PPS pin for external interrupt input
-  POUTPUTLN((F(" Waiting for SI5351 calibration to complete ")));
-  int ical = 15;
-  CalibrationDone == false;
-  while (CalibrationDone == false)
+#ifdef PICO_THREE_PART // This option includes code to calibrate the SI5351 frequency against the gps pulse per second signal.  This is used to improve the accuracy of the transmit frequency.  The calibration is only done once after power on and gps lock.  If there is no gps lock, the calibration is skipped and the transmit sequence starts using the uncalibrated frequency.
+
+    CalibrationDone = false;
+#ifdef DEBUG_SI5351
+      CalibrationDone = true; // skip calibration for testing
+#endif
+// Calibrate Si5351 Xtal frequency against the gps pulse per second signal.  This is used to improve the accuracy of the transmit frequency.  The calibration is only done once after power on and gps lock.  If there is no gps lock, the calibration is skipped and the transmit sequence starts using the uncalibrated frequency.
+  if (getInfo == true || CalibrationDone == false ) // no gps lock, skip calibration and start transmit sequence
   {
-      #ifdef DEBUG_SI5351
-          CalibrationDone = true;  // skip calibration for testing
-      #endif
-    delay(1000);
-    ical--;
-    POUTPUTLN((ical));
-    if (ical < 0)
+    POUTPUTLN((F(" Waiting for SI5351 calibration to complete ")));
+    setupPinInterrupt();
+    si5351_calibrate_init();
+    int ical = 25;
+
+    tcount = 0;
+    attachPinInterrupt(); // enable the interrupt for the pps signal
+
+    while (CalibrationDone == false)
     {
-      POUTPUTLN((F(" Error no pps calibration signal ")));
-      break;
+
+      delay(1000);
+      ical--;
+      POUTPUTLN((ical));
+      if (ical < 0)
+      {
+        POUTPUTLN((F(" Error no pps calibration signal ")));
+        break;
+      }
+    }
+    CalibrationOff(); // disable the interrupt and end the calibration process
+    si5351_calibrate_off();
+    if (CalibrationDone == true)
+    {
+      POUTPUTLN((F(" SI5351 Calibration Completed ")));
+      POUTPUT(F(" SI5351 Correction Factor "));
+     POUTPUTLN((correction));
+     POUTPUT(F(" SI5351 Frequency Count "));
+     POUTPUTLN((SiCnt));
+     POUTPUT(F(" PPS Count "));
+     POUTPUTLN((tcount));
+    }
+    else
+    {
+      POUTPUTLN((F(" SI5351 Calibration Failed ")));
+      CalibrationDone = true; // skip calibration if it failed
     }
   }
-  POUTPUT(F("  Init Correction "));
-  POUTPUTLN(CalibrationDone);
-  POUTPUTLN(correction);
   if (correction > 1.01 || correction < .99)
   {
     POUTPUTLN((F(" Error calibration count too large or too small ")));
     correction = 1;
   }
-  si5351_calibrate_off();
+
 #else
   CalibrationDone = true;
+  correction = 1; // no calibration, use the uncorrected frequency
 #endif
+
+// calibrateFreq(); // calibrate the SI5351 frequency
+#ifdef PICO_THREE_PART // This option includes code to calibrate the SI5351 frequency against the gps pulse per second signal.  This is used to improve the accuracy of the transmit frequency.  The calibration is only done once after power on and gps lock.  If there is no gps lock, the calibration is skipped and the transmit sequence starts using the uncalibrated frequency.
+
+    CalibrationDone = false;
+#ifdef DEBUG_SI5351
+      CalibrationDone = true; // skip calibration for testing
+#endif
+// Calibrate Si5351 Xtal frequency against the gps pulse per second signal.  This is used to improve the accuracy of the transmit frequency.  The calibration is only done once after power on and gps lock.  If there is no gps lock, the calibration is skipped and the transmit sequence starts using the uncalibrated frequency.
+  if (getInfo == true || CalibrationDone == false ) // no gps lock, skip calibration and start transmit sequence
+  {
+    POUTPUTLN((F(" Waiting for SI5351 calibration to complete ")));
+    setupPinInterrupt();
+    si5351_calibrate_init();
+    int ical = 25;
+
+    tcount = 0;
+    attachPinInterrupt(); // enable the interrupt for the pps signal
+
+    while (CalibrationDone == false)
+    {
+
+      delay(1000);
+      ical--;
+      POUTPUTLN((ical));
+      if (ical < 0)
+      {
+        POUTPUTLN((F(" Error no pps calibration signal ")));
+        break;
+      }
+    }
+    CalibrationOff(); // disable the interrupt and end the calibration process
+    si5351_calibrate_off();
+    if (CalibrationDone == true)
+    {
+      POUTPUTLN((F(" SI5351 Calibration Completed ")));
+    }
+    else
+    {
+      POUTPUTLN((F(" SI5351 Calibration Failed ")));
+      CalibrationDone = true; // skip calibration if it failed
+    }
+
+     POUTPUT(F(" SI5351 Correction Factor "));
+     POUTPUTLN((correction));
+     POUTPUT(F(" SI5351 Frequency Count "));
+     POUTPUTLN((SiCnt));
+     POUTPUT(F(" PPS Count "));
+     POUTPUTLN((tcount));
+
+  }
+  if (correction > 1.01 || correction < .99)
+  {
+    POUTPUTLN((F(" Error calibration count too large or too small ")));
+    correction = 1;
+  }
+#endif
+
 
   POUTPUTLN((F(" Starting Transmit Logic")));
 
