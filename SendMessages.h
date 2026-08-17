@@ -125,29 +125,39 @@ void SendWSPRMessages() // Timing
   transmit();            // begin radio transmission
   #endif
   
-  //Third Message -----------------
-  ExTelemEncode1();  // Traquito extended telemetery 
-  POUTPUTLN((F("Sending Extended Telemetry Message - Slot 2 ")));
-  setModeWSPR_telem(); // set WSPR telemetry message mode
-  waitForEvenMinute();
-  digitalWrite(DBGPIN, HIGH);
-  transmit();            // begin radio transmission
+  // //Third Message -----------------
+  // ExTelemEncode1();  // Traquito extended telemetery 
+  // POUTPUTLN((F("Sending Extended Telemetry Message - Slot 2 ")));
+  // setModeWSPR_telem(); // set WSPR telemetry message mode
+  // waitForEvenMinute();
+  // digitalWrite(DBGPIN, HIGH);
+  // transmit();            // begin radio transmission
 
-  //Fourth Message -----------------
-  ExTelemEncode2();  // Traquito extended telemetery 
-  POUTPUTLN((F("Sending Extended Telemetry Message - Slot 2 ")));
-  setModeWSPR_telem(); // set WSPR telemetry message mode
-  waitForEvenMinute();
-  digitalWrite(DBGPIN, HIGH);
-  transmit();            // begin radio transmission
+  // //Fourth Message -----------------
+  // ExTelemEncode2();  // Traquito extended telemetery 
+  // POUTPUTLN((F("Sending Extended Telemetry Message - Slot 2 ")));
+  // setModeWSPR_telem(); // set WSPR telemetry message mode
+  // waitForEvenMinute();
+  // digitalWrite(DBGPIN, HIGH);
+  // transmit();            // begin radio transmission
 
+  
+  // // Send standard message
+  // code_location();       // convert latitude and longitude to grid square
+  // code_standard_power(); // Update WSPR power level (standard message -> coded altitude)
+  // setModeWSPR();     // set WSPR standard message mode
+  // POUTPUTLN((F("Waiting for second standard message ")));
+  // waitForEvenMinute();
+  // digitalWrite(DBGPIN, HIGH);
+  // transmit();            // begin radio transmission
+  
   // delay(5*1000); 
   // POUTPUTLN((F("Begin CW transmission")));
   // cw.setCWSpeeed(14);
   // cw.setFrequency(WSPR_FREQ1 WSPR_OFFSET );
   // cw.sendText("... ");
   // cw.sendText(call) ;
-  // cw.sendText(" HAMSCI Balloon RTTY 45 then FQS 2, 4.5, 6 AR ");
+  // cw.sendText(" HAMSCI Balloon RTTY 45 then FQS 2, 3, 6 AR ");
   // POUTPUTLN((F("End CW transmission")));
 
   // delay(5*1000); 
@@ -161,13 +171,13 @@ void SendWSPRMessages() // Timing
   //  rtty.sendText(" HAMSCI Balloon RTTY  \r\n");
   // rtty.sendText(" If you rx notify K9YO(at)aarl.net \r\n\r\n");
   // rtty.sendText(" http://bit.ly/4bt5K0s");
-  //   rtty.sendText("  KE9LSI AR \r\n\r\n");
+  //   rtty.sendText("  K9YO SK \r\n\r\n");
   // rf_off();
   //POUTPUTLN((F("End RTTY transmission")));
 
   //delay(5*1000); // delay 10 sec
 
- POUTPUTLN((F("Begin FSQ transmission")));
+ //POUTPUTLN((F("Begin FSQ transmission")));
 
   //Serial.println(FQSMessage());
   // rf_on();
@@ -175,13 +185,13 @@ void SendWSPRMessages() // Timing
   // setFrequencyFQS(WSPR_FREQ1 WSPR_OFFSET);
   // transmit();
   // rf_off();
-  // delay(5 * 1000);
+  delay(5 * 1000);
 
-  // rf_on();
-  // setModeFSQ(  MODE_FSQ_4_5, FQSMessage());
-  // setFrequencyFQS(WSPR_FREQ1 WSPR_OFFSET);
-  // transmit();
-  // rf_off();
+  rf_on();
+  setModeFSQ(  MODE_FSQ_3, FQSMessage());
+  setFrequencyFQS(WSPR_FREQ1 WSPR_OFFSET);
+  transmit();
+  rf_off();
 
   // delay(2 * 1000);
 
