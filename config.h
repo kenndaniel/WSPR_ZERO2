@@ -10,16 +10,15 @@
 */
 // Define the tracker
 //#define PICO
-//#define NIBBB
-#define PICO_THREE_PART
+#define NIBBB
+//#define PICO_THREE_PART
 
 // Debug flags
-//#define DEBUG // Serial.println debug output is generated if DEBUG is defined
-// Normally when the program boots, a 10 sec signal will be generated (beep) 200 Hz below band center
-//#define DEBUG_SI5351  // Send on first even minute regardless of send_time_slot & Beep is 30 sec long
+#define DEBUG // Serial.println debug output is generated if DEBUG is defined
+//#define DEBUG_SI5351  // Send on first even minute regardless of send_time_slot 
 //#define DEBUG_SI5351_wo_GPS // sends first message immediately after beep ends 
 
-char call[] = "KD9TVR";     // Amateur callsign
+char call[] = "K9YO";     // Amateur callsign
 
 //const char call[] = "KF8IA";     // Amateur callsign
 // WSPR Band Center Frequencies (Do not change)
