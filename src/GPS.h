@@ -87,6 +87,16 @@ int hour()
 {
   return clock.getHours();
 }
+int day()
+{
+  // Serial.println(clock.getSeconds()); 
+  return clock.getDay();
+}
+
+int month()
+{
+  return clock.getMonth();
+}
 #endif
 
 bool gpsSearch = true;
@@ -235,8 +245,12 @@ bool gpsGetData()
       gpsBeep(); // still looking for satellites
 
     if(loopi % 2000000 == 0) 
-      POUTPUTLN((F("Still waiting")));
-
+      {POUTPUTLN((F("Still waiting")));
+        POUTPUT((locSet));
+        POUTPUT((speedSet));
+        POUTPUT((altitudeSet));
+        POUTPUTLN((clockSet));
+      }
     if (gps.charsProcessed() < 15 && millis() % 1500 < 5)
     {
 
