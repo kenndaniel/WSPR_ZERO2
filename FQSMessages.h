@@ -1,61 +1,60 @@
-char APRSdata[257];
-void HFDataInit(char dtype)
-{ // Initialize the APRSdata string with the data type in the first position
+char FSQdata[130];
+int FXQMsgMaxLength = 130; // maximum length of FSQ message
+void HFDataInit()
+{ // Initialize the FSQdata string with the data type in the first position
   // Data type is a user defined character designating the type of data to follow
-  APRSdata[0] = dtype;
-  APRSdata[1] = '\0';
+  FSQdata[0] = '\0';
 }
 
 bool HFDataAppendFloat(float value)
 { // Append a comma and then float value to the end of the data string.
   String str = (String)value;
-  str = (String)APRSdata + (String) "," + str;
-  if (str.length() > 250)
+      if (str.length()+strlen(FSQdata) > FXQMsgMaxLength)
     return false;
-  strcpy(APRSdata, str.c_str());
+  str = (String)FSQdata + (String) "," + str;
+  strcpy(FSQdata, str.c_str());
   return true;
 }
 
 bool HFDataAppendInt(int value)
-{ // Append a comma and then the int to the end of the APRSdata string.
+{ // Append a comma and then the int to the end of the FSQdata string.
   String str = (String)value;
-  str = (String)APRSdata + (String) "," + str;
-  if (str.length() > 250)
+    if (str.length()+strlen(FSQdata) > FXQMsgMaxLength)
     return false;
-  strcpy(APRSdata, str.c_str());
+  str = (String)FSQdata + (String) "," + str;
+  strcpy(FSQdata, str.c_str());
   return true;
 }
 
 bool HFDataAppendChars(char *value)
-{ // Append a comma and then the char string to the end of the APRSdata string.
+{ // Append a comma and then the char string to the end of the FSQdata string.
   String str = (String)value;
-  str = (String)APRSdata + (String) "," + str;
-  if (str.length() > 250)
+      if (str.length()+strlen(FSQdata) > FXQMsgMaxLength)
     return false;
-
-  strcpy(APRSdata, str.c_str());
+  str = (String)FSQdata + (String) "," + str;
+  strcpy(FSQdata, str.c_str());
   return true;
 }
 
-char * FQSMessage()
+char * FQSMessage(float fsqType)
 { 
   // a comma will be appended betweek each data item
-  HFDataInit('B');
+  HFDataInit();
    HFDataAppendInt((int)month()); // month
    HFDataAppendInt((int)day()); // day
    HFDataAppendInt((int)hour()); // hr
    HFDataAppendInt((int)minute()); // min
-   HFDataAppendChars(loc8); // Madenhead
-  HFDataAppendFloat(LM75GetTemperature()); // Temperature LM75
-   HFDataAppendFloat(MS5611GetTemperature()); // temperature MS5611
-   HFDataAppendFloat(MS5611GetPressure()); // pressure MS5611
-   HFDataAppendFloat(MS5611GetAltitude());  // Altitude MS5611
+   HFDataAppendChars(" FSQ");
+   HFDataAppendFloat(fsqType); // FSQ type
+  //HFDataAppendFloat(LM75GetTemperature()); // Temperature LM75
+   HFDataAppendChars(" HI from Sunset Ridge Elementary School"); // Greeting
    HFDataAppendFloat(gpsAltitude);  // Altitude GPS
    //HFDataAppendFloat(gpsCourse);  // GPS Course
    HFDataAppendFloat(gpsSpeed);  // GPS speed kph
-   HFDataAppendChars(" KI9LSI AR"); 
+   HFDataAppendChars(loc8); // Madenhead
+   HFDataAppendChars(" KD9TVR SK"); 
    
-  //Serial.println(APRSdata);
-  return APRSdata;
+  //Serial.println(FSQdata);
+  return FSQdata;
 }
 
