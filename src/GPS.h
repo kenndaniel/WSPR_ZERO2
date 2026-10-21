@@ -7,13 +7,13 @@ static const uint32_t GPSBaud = 9600;
 
 void atgm336h_SingleGPSworkingMode()
 {
-  Serial1.write("$PCAS04,1*18\r\n"); //Sets navsystem of the ATGM to GPS only new code for ATGM335H 021922 BB
+  SerialGPS.write("$PCAS04,1*18\r\n"); //Sets navsystem of the ATGM to GPS only new code for ATGM335H 021922 BB
 }
 
 void SetHighAltitude()
 {
   // put the gps in high altitude mode
-  Serial1.write("$PMTK886,3*2B\r\n");
+  SerialGPS.write("$PMTK886,3*2B\r\n");
 }
 
 bool SetCPUClock(TinyGPSPlus gps)
@@ -172,13 +172,13 @@ bool gpsGetData()
   gpsOn();
   bool clockSet = false, locSet = false, altitudeSet = false, speedSet = false;
 #ifdef PICO
-  Serial2.setRX(GPS_RX);
-  Serial2.setTX(GPS_TX);
-  Serial2.setFIFOSize(128);
-  Serial2.begin(GPSBaud);
+  SerialGPS.setRX(GPS_RX);
+  SerialGPS.setTX(GPS_TX);
+  SerialGPS.setFIFOSize(128);
+  SerialGPS.begin(GPSBaud);
 #endif
 #ifdef NIBBB
-  Serial1.begin(GPSBaud);
+  SerialGPS.begin(GPSBaud);
 #endif
 
   delay(400); // wait for serial port to start
@@ -188,12 +188,12 @@ bool gpsGetData()
   while (millis() < gpsStartTime + gpsTimeout)
   {
   #ifdef PICO
-    while (Serial2.available() > 0)
-          gps.encode(Serial2.read());
+    while (SerialGPS.available() > 0)
+          gps.encode(SerialGPS.read());
   #endif
   #ifdef NIBBB
-    while (Serial1.available() > 0)
-          gps.encode(Serial1.read());
+    while (SerialGPS.available() > 0)
+          gps.encode(SerialGPS.read());
   #endif
 
     if (gps.charsProcessed() > 10 && hiAltitudeSet == false)
@@ -233,7 +233,8 @@ bool gpsGetData()
       gpsSpeed = gps.speed.kmph();
       gpsSpeedKnots = gps.speed.knots();
       gpsCourse = gps.course.deg();
-      clockSetOverride = true;  // Indicates that the clock has been set regardless of subsequent gps synch failures
+      // Below indicates that the clock has been set at least once.
+      clockSetOverride = true;  // Indicates that the clock has the correct  regardless of subsequent gps synch failures
 
       // start transmission loop
       return true;
