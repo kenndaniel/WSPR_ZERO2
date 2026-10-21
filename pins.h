@@ -25,6 +25,7 @@
 #define RF_PWR 28 // pin used to turn off SI5351
 #define RF_ON  LOW
 #define RF_OFF  HIGH
+#define SerialGPS Serial2
 #define GPS_RX 9
 #define GPS_TX 8
 #define ON_OFF LED_BUILTIN 
@@ -52,6 +53,7 @@
 #define RF_OFF  LOW
 #define RF_PWR PWR_CTRL
 #define GPS_PPS 0 // GPS pulse per second
+#define SerialGPS Serial1
 #define interruptPinPPS GPS_PPS
 //#define GPS_RX D13
 //#define GPS_TX D14
