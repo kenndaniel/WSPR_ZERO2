@@ -88,7 +88,7 @@ void setModeFSQ(FSQmode Mode,  char *message)
     // 32 characters A-Z, 0-9, .  ,  ?  !  /  -  @
     // 33 tones one per character
     // tx_buffer will be the same length as the message
-    // This code limits the message size to 100 characters.
+    // This code limits the message size to 130 characters.
   cur_mode = Mode;
   switch (Mode)
   {
@@ -118,13 +118,14 @@ void setModeFSQ(FSQmode Mode,  char *message)
       break;
   }
 
-  if(sizeof(message) > 100) // for reliability, limit the message length to 100 characters
+  if(sizeof(message) > 130) // for reliability, limit the message length to 100 characters
   {
-    message[100] = '\n';
+    message[130] = '\n';
   }
 
   memset(tx_buffer, 0, BUFFER_SIZE); // Clears Tx buffer from previous operation.
-  jtencode.fsq_encode(call,  message , tx_buffer);
+  //jtencode.fsq_encode(call,  message , tx_buffer);
+  jtencode.fsq_dir_encode(call,"allcall" ,'B', message , tx_buffer);
     uint8_t j = 0;
     while(tx_buffer[j++] != 0xff)
     {
@@ -219,7 +220,7 @@ void rf_on()
   #ifdef NIBBB
   si5351.set_clock_source(XMIT_CLOCK1, SI5351_CLK_SRC_MS0); // clock 1 gets freq from clock 0
   si5351.set_clock_invert(XMIT_CLOCK1, 1);
-  si5351.set_clock_source(XMIT_CLOCK0, SI5351_CLK_SRC_MS0); // clock 1 gets freq from clock 0
+  //si5351.set_clock_source(XMIT_CLOCK0, SI5351_CLK_SRC_MS0); // clock 1 gets freq from clock 0
   #endif
 
 
@@ -230,19 +231,20 @@ void rf_on()
   
 }
 
+void rf_pwr_off()
+{  
+
+  digitalWrite(RF_PWR, RF_OFF);
+
+}
+
 void rf_off()
 {
   //Disable output
   si5351.output_enable(XMIT_CLOCK0, 0); 
   si5351.output_enable(XMIT_CLOCK1, 0);
   POUTPUTLN((F(" SI5351 End Transmission ")));
-}
-
-void rf_pwr_off()
-{  
-
-  digitalWrite(RF_PWR, RF_OFF);
-
+  rf_pwr_off();
 }
 
 /*
