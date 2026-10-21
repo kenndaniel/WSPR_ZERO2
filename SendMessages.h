@@ -5,9 +5,9 @@
 // #include <wdt_samd21.h>
 #include "Morse.h"
 #include "Rtty.h"
-Rtty rtty(WSPR_FREQ1 WSPR_OFFSET );
-Morse cw(CW,WSPR_FREQ1 WSPR_OFFSET );
-//Morse qrss(QRSS,WSPR_FREQ1 + 500 );  
+//Rtty rtty(WSPR_FREQ1, WSPR_OFFSET );
+// Morse Morse(CW, WSPR_FREQ1  WSPR_OFFSET );
+// Qrss Morse(QRSS,WSPR_FREQ1  WSPR_OFFSET );
 
 // Function prototypes below
 void sleep();
@@ -49,6 +49,7 @@ void SendWSPRMessages() // Timing
 
   setModeWSPR();     // set WSPR standard message mode
   setToFrequency1(); // Initialize the transmit frequency
+  
 #ifdef DEBUG_SI5351_wo_GPS
   transmit(); // begin radio transmission
 #endif
@@ -160,9 +161,17 @@ void SendWSPRMessages() // Timing
   // cw.sendText(" HAMSCI Balloon RTTY 45 then FQS 2, 3, 6 AR ");
   // POUTPUTLN((F("End CW transmission")));
 
-  // delay(5*1000); 
+    delay(10 * 1000);
+  POUTPUTLN((F("Sending FSQ Message ")));
+  rf_on();
+  setModeFSQ(  MODE_FSQ_15,  FQSMessage(1.5));
+  setFrequencyFQS(WSPR_FREQ1 WSPR_OFFSET);
+  transmit();
+  rf_off();
 
-  //POUTPUTLN((F("Begin RTTY transmission")));
+  //delay(5*1000); 
+
+  // POUTPUTLN((F("Begin RTTY transmission")));
   // rf_on();
   // char msgRTTY[] = "\r\n\r\n";
   // rtty.sendText(msgRTTY);
@@ -171,9 +180,9 @@ void SendWSPRMessages() // Timing
   //  rtty.sendText(" HAMSCI Balloon RTTY  \r\n");
   // rtty.sendText(" If you rx notify K9YO(at)aarl.net \r\n\r\n");
   // rtty.sendText(" http://bit.ly/4bt5K0s");
-  //   rtty.sendText("  K9YO SK \r\n\r\n");
+  //   rtty.sendText("  KI9LSI SK \r\n\r\n");
   // rf_off();
-  //POUTPUTLN((F("End RTTY transmission")));
+  // POUTPUTLN((F("End RTTY transmission")));
 
   //delay(5*1000); // delay 10 sec
 
@@ -185,10 +194,10 @@ void SendWSPRMessages() // Timing
   // setFrequencyFQS(WSPR_FREQ1 WSPR_OFFSET);
   // transmit();
   // rf_off();
-  delay(5 * 1000);
-
+  delay(10 * 1000);
+  POUTPUTLN((F("Sending FSQ Message ")));
   rf_on();
-  setModeFSQ(  MODE_FSQ_3, FQSMessage());
+  setModeFSQ(  MODE_FSQ_3,  FQSMessage(3));
   setFrequencyFQS(WSPR_FREQ1 WSPR_OFFSET);
   transmit();
   rf_off();
@@ -203,11 +212,20 @@ void SendWSPRMessages() // Timing
   // POUTPUTLN((F("End FSQ transmission")));
 
   // delay(10*1000); 
+  // rf_on();
   // POUTPUTLN((F("Begin CW transmission")));
   // cw.setFrequency(WSPR_FREQ1 + 500 );
   // cw.sendText(" 73  de KD9TVR SK");
   // POUTPUTLN((F("End CW transmission")));
-  //   rf_off();
+  // rf_off();
+
+  delay(10 * 1000);
+  POUTPUTLN((F("Sending FSQ Message ")));
+  rf_on();
+  setModeFSQ(  MODE_FSQ_6,  FQSMessage(6));
+  setFrequencyFQS(WSPR_FREQ1 WSPR_OFFSET);
+  transmit();
+  rf_off();
 
   // Send additional telen message
   //POUTPUTLN((F("Waiting for Additional Telemetry Message ")));
